@@ -127,6 +127,7 @@ class Membership extends Utility
                 $responseBuilder['response_token'] = $jwt;
 
                 $responseBuilder['response_access'] = array();
+                $responseBuilder['response_data'] = $query['response_data'];
 
             } else {
                 $responseBuilder['response_result'] = 0;
