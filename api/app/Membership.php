@@ -31,10 +31,43 @@ class Membership extends Utility
             case 'login':
                 return self::login($parameter);
                 break;
+            case 'register':
+                return self::register($parameter);
+                break;
             default:
                 return array();
                 break;
         }
+    }
+
+    private function register($parameter) {
+        $uid = parent::gen_uuid();
+        //Check Email
+        $Mailer = new Mailer();
+        $Email = $Mailer->send(array(
+            'server' => 'mail.pondokcoder.com',
+            'secure_type' => false,
+            'port' => 587,
+            'username' => 'belanja_sukses@pondokcoder.com',
+            //'username' => 'belanja_sukses',
+            'password' => __MAIL_PASSWORD__,
+            'fromMail' => 'belanja_sukses@pondokcoder.com',
+            'fromName' => 'Belanja Sukses',
+            'replyMail' => 'belanja_sukses@pondokcoder.com',
+            'replyName' => 'Belanja Sukses',
+            'template' => 'miscellaneous/email_template/register.phtml'
+        ), array(
+            '__HOSTNAME__' => __HOSTNAME__,
+            '__PC_CUSTOMER__' => __PC_CUSTOMER__,
+            '__NAMA__' => 'Uji',
+            '__UID__' => $uid
+        ), 'Registrasi ' . __PC_CUSTOMER__,'Uji html','text mail:uji html',array(
+            'tanaka@pondokcoder.com' => 'Hendry Tanaka'
+        ));
+
+        return array(
+            'email_result' => $Email
+        );
     }
 
 
