@@ -52,18 +52,22 @@
 				// Attachments
 				//$mail->addAttachment("/var/tmp/file.tar.gz");         // Add attachments
 				//$mail->addAttachment("/tmp/image.jpg", "new.jpg");    // Optional name
-				$body = file_get_contents("email_template/register.phtml");
-				foreach($parameter as $k=>$v){
-					$body = str_replace("{".strtoupper($k)."}", $v, $body);
-				}
-				$mail->Subject = $subject;
-				//$mail->Body    = $body;
-                $mail->Body    = '123';
-				//$mail->isHTML(true);
-				$mail->AltBody = $content_alt;
+                if(file_exists('../miscellaneous/email_template/register.phtml')) {
+                    $body = file_get_contents('../miscellaneous/email_template/register.phtml');
+                    foreach($parameter as $k=>$v){
+                        $body = str_replace("{".strtoupper($k)."}", $v, $body);
+                    }
+                    $mail->Subject = $subject;
+                    $mail->Body    = $body;
+                    //$mail->isHTML(true);
+                    $mail->AltBody = $content_alt;
 
-				$mail->send();
-				return 200;
+                    $mail->send();
+                    return 200;
+                } else {
+                    return 404;
+                }
+
 			} catch (Exception $e) {
 				return "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
 			}
