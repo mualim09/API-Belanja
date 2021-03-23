@@ -282,7 +282,8 @@ class Membership extends Utility
                 'check' => $data,
                 'status' => 200,
                 'verif_result' => $Verif,
-                'query_result' => $new
+                'query_result' => $new,
+                'message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar')
             );
         }
     }

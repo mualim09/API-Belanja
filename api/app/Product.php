@@ -26,7 +26,7 @@ class Product extends Utility
                 return self::detail_produk($parameter);
                 break;
             default:
-                return 'Tidak tau';
+                return self::all_product();
         }
     }
 
@@ -34,17 +34,41 @@ class Product extends Utility
     {
         switch ($parameter['request']) {
             case 'tambah_produk':
-                return self::tambah_produk($parameter);
+                return array();
+                //return self::tambah_produk($parameter);
                 break;
             case 'edit_produk':
-                return self::edit_produk($parameter);
+                return array();
+                //return self::edit_produk($parameter);
                 break;
             case 'tambah_kategori_produk':
-                return self::tambah_kategori_produk($parameter);
+                return array();
+                //return self::tambah_kategori_produk($parameter);
                 break;
             default:
                 return 'Tidak tau';
         }
+    }
+
+    private function all_product() {
+        $data = self::$query->select('master_inv', array())
+            ->where(array(
+                'master_inv.deleted_at' => 'IS NULL'
+            ), array())
+            ->execute();
+        $data['response_message'] = (count($data['response_data']) > 0) ? 'Data Tersedia' : 'Data Tidak Tersedia';
+        foreach ($data['response_data'] as $key => $value) {
+            $data['response_data'][$key]['nama_produk'] = $value['nama'];
+            $data['response_data'][$key]['harga'] = $value['het'];
+            $data['response_data'][$key]['rating'] = 5.0;
+            if(file_exists('../images/produk/' . $value['uid'] . '.png')) {
+                $data['response_data'][$key]['url_gambar'] = 'images/produk/' . $value['uid'] . '.png';
+            } else {
+                $data['response_data'][$key]['url_gambar'] = 'images/product.png';
+            }
+
+        }
+        return $data;
     }
 
 
