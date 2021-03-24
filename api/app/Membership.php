@@ -3,6 +3,7 @@
 namespace PondokCoder;
 
 use Firebase\JWT\JWT;
+use PondokCoder\Authorization as Authorization;
 use PondokCoder\Utility as Utility;
 
 class Membership extends Utility
@@ -22,130 +23,12 @@ class Membership extends Utility
 
     public function __GET__($parameter = array())
     {
-        switch ($parameter[1]) {
-            case 'activate':
-                self::activate($parameter[2]);
-                break;
-            case 'decline':
-                self::decline($parameter[2]);
-                break;
-        }
+        //
     }
 
-    public function check_status($parameter) {
-        $data = self::$query->select('membership', array(
-            'status_member'
-        ))
-            ->where(array(
-                'membership.uid' => '= ?',
-                'AND',
-                'membership.deleted_at' => 'IS NULL'
-            ), array(
-                $parameter
-            ))
-            ->execute();
-        if(count($data['response_data']) > 0) {
-            $status = '';
-            switch ($data['response_data'][0]['status_member']) {
-                case 'N':
-                    $status = 'Member Nonaktif (Belum Verifikasi)';
-                    break;
-                case 'V':
-                    $status = 'Member sudah diverifikasi. Harap melakukan pembayararan';
-                    break;
-                case 'A':
-                    $status = 'Member aktif';
-                    break;
-                case 'S':
-                    $status = 'Member di suspend';
-                    break;
-                default:
-                    $status = 'Status tidak dikenali';
-            }
-
-            return array(
-                'status' => $data['response_data'][0]['status_member'],
-                'keterangan' => $status
-            );
-        } else {
-            return array(
-                'status' => 404,
-                'keterangan' => 'Tidak ditemukan'
-            );
-        }
-    }
-
-    public function activate($parameter) {
-        $status = self::check_status($parameter);
-        if($status['status'] !== 404) {
-            if($status['status'] === 'N') {
-                $update = self::$query->update('membership', array(
-                    'status_member' => 'V'
-                ))
-                    ->where(array(
-                        'membership.uid' => '= ?',
-                        'AND',
-                        'membership.deleted_at' => 'IS NULL'
-                    ), array(
-                        $parameter
-                    ))
-                    ->execute();
-                /*return array(
-                    'status' => $update['response_result'],
-                    'keterangan' => ($update['response_result'] > 0) ? 'Berhasil Verifikasi' : 'Gagal Verifikasi'
-                );*/
-
-                $format = array(
-                    '__HOSTNAME__' => __HOSTNAME__,
-                    '__HOSTAPI__' => __HOSTAPI__,
-                    '__PC_CUSTOMER__' => __PC_CUSTOMER__,
-                    '__PESAN__' => ($update['response_result'] > 0) ? 'Berhasil Verifikasi' : 'Gagal Verifikasi'
-                );
-            } else {
-                $format = array(
-                    '__HOSTNAME__' => __HOSTNAME__,
-                    '__HOSTAPI__' => __HOSTAPI__,
-                    '__PC_CUSTOMER__' => __PC_CUSTOMER__,
-                    '__PESAN__' => $status['keterangan']
-                );
-            }
-        } else {
-            $format = array(
-                '__HOSTNAME__' => __HOSTNAME__,
-                '__HOSTAPI__' => __HOSTAPI__,
-                '__PC_CUSTOMER__' => __PC_CUSTOMER__,
-                '__PESAN__' => $status['keterangan']
-            );
-        }
-
-        echo parent::parse_template('../miscellaneous/email_template/membership_info.phtml', $format);
-    }
-
-    public function decline($parameter) {
-        $status = self::check_status($parameter);
-        if($status['status'] !== 404) {
-            if($status['status'] === 'N') {
-                $update = self::$query->update('membership', array(
-                    'status_member' => 'S'
-                ))
-                    ->where(array(
-                        'membership.uid' => '= ?',
-                        'AND',
-                        'membership.deleted_at' => 'IS NULL'
-                    ), array(
-                        $parameter
-                    ))
-                    ->execute();
-                return array(
-                    'status' => $update['response_result'],
-                    'keterangan' => ($update['response_result'] > 0) ? 'Berhasil Suspend' : 'Gagal Suspend'
-                );
-            } else {
-                return $status;
-            }
-        } else {
-            return $status;
-        }
+    public function __DELETE__($parameter = array())
+    {
+        return self::delete($parameter);
     }
 
     public function __POST__($parameter = array())
@@ -154,6 +37,9 @@ class Membership extends Utility
             case 'login':
                 return self::login($parameter);
                 break;
+            case 'get_customer':
+                return self::get_customer($parameter);
+                break;
             case 'register':
                 return self::register($parameter);
                 break;
@@ -161,6 +47,46 @@ class Membership extends Utility
                 return array();
                 break;
         }
+    }
+
+    private function delete($parameter)
+    {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+
+        $worker = self::$query
+            ->delete($parameter[6])
+            ->where(array(
+                $parameter[6] . '.uid' => '= ?'
+            ), array(
+                $parameter[7]
+            ))
+            ->execute();
+        if ($worker['response_result'] > 0) {
+            $log = parent::log(array(
+                'type' => 'activity',
+                'column' => array(
+                    'unique_target',
+                    'user_uid',
+                    'table_name',
+                    'action',
+                    'logged_at',
+                    'status',
+                    'login_id'
+                ),
+                'value' => array(
+                    $parameter[7],
+                    $UserData['data']->uid,
+                    $parameter[6],
+                    'D',
+                    parent::format_date(),
+                    'N',
+                    $UserData['data']->log_id
+                ),
+                'class' => __CLASS__
+            ));
+        }
+        return $worker;
     }
 
     private function register($parameter) {
@@ -288,6 +214,172 @@ class Membership extends Utility
         }
     }
 
+    private function get_customer($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+
+        if (isset($parameter['search']['value']) && !empty($parameter['search']['value'])) {
+            if($parameter['jenis'] === 'A') {
+                $paramData = array(
+                    'membership.deleted_at' => 'IS NULL',
+                    'AND',
+                    '(membership.nama' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\'',
+                    'OR',
+                    'membership.nik' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\')'
+                );
+
+                $paramValue = array();
+            } else {
+                $paramData = array(
+                    'membership.deleted_at' => 'IS NULL',
+                    'AND',
+                    'membership.jenis_member' => '= ?',
+                    'AND',
+                    '(membership.nama' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\'',
+                    'OR',
+                    'membership.nik' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\')'
+                );
+
+                $paramValue = array($parameter['jenis']);
+            }
+
+        } else {
+            if($parameter['jenis'] === 'A') {
+                $paramData = array(
+                    'membership.deleted_at' => 'IS NULL'
+                );
+
+                $paramValue = array();
+            } else {
+                $paramData = array(
+                    'membership.deleted_at' => 'IS NULL',
+                    'AND',
+                    'membership.jenis_member' => '= ?'
+                );
+
+                $paramValue = array($parameter['jenis']);
+            }
+        }
+
+
+        if ($parameter['length'] < 0) {
+            $data = self::$query->select('membership', array(
+                'uid',
+                'nik',
+                'nama',
+                'tempat_lahir',
+                'tanggal_lahir',
+                'email',
+                'kontak_telp',
+                'kontak_whatsapp',
+                'npwp',
+                'alamat_ktp',
+                'kelurahan',
+                'kecamatan',
+                'kabupaten',
+                'provinsi',
+                'kode_pos',
+                'alamat_domisili',
+                'rt',
+                'rw',
+                'patokan',
+                'kelurahan_domisili',
+                'kecamatan_domisili',
+                'kabupaten_domisili',
+                'provinsi_domisili',
+                'kode_pos_domisili',
+                'nomor_rekening',
+                'bank',
+                'nama_pemilik_rekening',
+                'nama_ahli_waris',
+                'hubungan_ahli_waris',
+                'kontak_telp_ahli_waris',
+                'kontak_whatsapp_ahli_waris',
+                'saldo',
+                'password',
+                'jenis_member',
+                'status_member',
+                'created_at',
+                'updated_at'
+            ))
+                ->where($paramData, $paramValue)
+                ->execute();
+        } else {
+            $data = self::$query->select('membership', array(
+                'uid',
+                'nik',
+                'nama',
+                'tempat_lahir',
+                'tanggal_lahir',
+                'email',
+                'kontak_telp',
+                'kontak_whatsapp',
+                'npwp',
+                'alamat_ktp',
+                'kelurahan',
+                'kecamatan',
+                'kabupaten',
+                'provinsi',
+                'kode_pos',
+                'alamat_domisili',
+                'rt',
+                'rw',
+                'patokan',
+                'kelurahan_domisili',
+                'kecamatan_domisili',
+                'kabupaten_domisili',
+                'provinsi_domisili',
+                'kode_pos_domisili',
+                'nomor_rekening',
+                'bank',
+                'nama_pemilik_rekening',
+                'nama_ahli_waris',
+                'hubungan_ahli_waris',
+                'kontak_telp_ahli_waris',
+                'kontak_whatsapp_ahli_waris',
+                'saldo',
+                'password',
+                'jenis_member',
+                'status_member',
+                'created_at',
+                'updated_at'
+            ))
+                ->where($paramData, $paramValue)
+                ->offset(intval($parameter['start']))
+                ->limit(intval($parameter['length']))
+                ->execute();
+        }
+
+        $data['response_draw'] = $parameter['draw'];
+        $autonum = intval($parameter['start']) + 1;
+        foreach ($data['response_data'] as $key => $value) {
+
+
+            $data['response_data'][$key]['autonum'] = $autonum;
+            $data['response_data'][$key]['created_at_parsed'] = date('d F Y', strtotime($value['created_at']));
+            /*if(file_exists('../images/produk/' . $value['uid'] . '.png')) {
+                $data['response_data'][$key]['image'] = 'images/produk/' . $value['uid'] . '.png';
+            } else {
+                $data['response_data'][$key]['image'] = 'images/product.png';
+            }*/
+
+            $autonum++;
+        }
+
+        $itemTotal = self::$query->select('membership', array(
+            'uid'
+        ))
+            ->where($paramData, $paramValue)
+            ->execute();
+
+        $data['recordsTotal'] = count($itemTotal['response_data']);
+        $data['recordsFiltered'] = count($itemTotal['response_data']);
+        $data['length'] = intval($parameter['length']);
+        $data['start'] = intval($parameter['start']);
+
+        return $data;
+    }
+
 
     private function login($parameter) {
         $responseBuilder = array();
@@ -317,7 +409,7 @@ class Membership extends Utility
             'provinsi_domisili',
             'kode_pos_domisili',
             'nomor_rekening',
-            'nama_bank',
+            'bank',
             'nama_pemilik_rekening',
             'nama_ahli_waris',
             'hubungan_ahli_waris',
