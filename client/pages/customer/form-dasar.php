@@ -25,7 +25,7 @@
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="form-group">
-                                        <label for="txt_nik">NIK:</label>
+                                        <label for="txt_nik">NIK: <b id="checker_nik" class="text-success checker_notation"></b></label>
                                         <input type="text" class="form-control uppercase" id="txt_nik" placeholder="Nomor KTP" required />
                                     </div>
                                 </div>
@@ -40,37 +40,37 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="txt_nama">Nama:</label>
+                                        <label for="txt_nama">Nama: <b id="checker_nama" class="text-success checker_notation"></b></label>
                                         <input type="text" class="form-control uppercase" id="txt_nama" placeholder="Nama Customer Sesuai KTP" required />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="txt_email">Email:</label>
+                                        <label for="txt_email">Email: <b id="checker_email" class="text-success checker_notation"></b></label>
                                         <input type="text" class="form-control" id="txt_email" placeholder="Email Customer" required />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="txt_tempat_lahir">Tempat Lahir:</label>
-                                        <input type="text" class="form-control" id="txt_tempat_lahir" placeholder="Tempat Lahir" />
+                                        <input type="text" class="form-control uppercase" id="txt_tempat_lahir" placeholder="Tempat Lahir" />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="txt_tanggal_lahir">Tanggal Lahir:</label>
-                                        <input type="text" class="form-control" id="txt_tanggal_lahir" placeholder="Tanggal Lahir" />
+                                        <input type="date" class="form-control" id="txt_tanggal_lahir" placeholder="Tanggal Lahir" />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="txt_wa">Nomor WhatsApp:</label>
+                                        <label for="txt_wa">Nomor WhatsApp: <b id="checker_wa" class="text-success checker_notation"></b></label>
                                         <input type="text" class="form-control" id="txt_wa" placeholder="Nomor WhatsApp Customer" />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="txt_telp">Nomor Telpon:</label>
+                                        <label for="txt_telp">Nomor Telpon: <b id="checker_telp" class="text-success checker_notation"></b></label>
                                         <input type="text" class="form-control" id="txt_telp" placeholder="Nomor Telepon Customer" required />
                                     </div>
                                 </div>
@@ -120,7 +120,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <div class="form-group">
-                                        <label for="txt_mentor">Mentor:</label>
+                                        <label for="txt_mentor">Mentor: <b id="checker_mentor" class="text-success checker_notation"></b></label>
                                         <select class="form-control" id="txt_mentor"></select>
                                     </div>
                                 </div>
@@ -129,6 +129,22 @@
                     </div>
                 </div>
                 <div class="tab-pane show fade" id="info-dasar-2">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="txt_npwp">Nomor NPWP:</label>
+                                <input type="text" class="form-control" id="txt_npwp" placeholder="NPWP" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label for="txt_patokan">Patokan:</label>
+                                <textarea type="text" class="form-control" id="txt_patokan" placeholder="Patokan"></textarea>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">

@@ -1,127 +1,218 @@
 <script type="text/javascript">
     $(function () {
-        $("#txt_nik").inputmask('9999-9999-9999-9999').on("keyup", function () {
-            var nik_check = $(this).inputmask("unmaskedvalue");
 
-            if(nik_check.length < 16) {
-                $("#checker_nik").html("<i class=\"fa fa-times-circle\"></i> Panjang Harus 16 karakter").removeClass("text-success").addClass("text-danger");
-            } else {
-                $.ajax({
-                    async: false,
-                    url: __HOSTAPI__ + "/Membership",
-                    beforeSend: function(request) {
-                        request.setRequestHeader("Authorization", "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>);
-                    },
-                    type: "POST",
-                    data: {
-                        request: "check_nik",
-                        nik: nik_check
-                    },
-                    success: function(response) {
-                        if(response.response_package.response_result > 0) {
-                            $("#checker_nik").html("<i class=\"fa fa-times-circle\"></i> NIK sudah terdaftar").removeClass("text-success").addClass("text-danger");
+        //get detail customer
+        var UID = __PAGES__[2];
+        $.ajax({
+            async: false,
+            url: __HOSTAPI__ + "/Membership/detail/" + UID,
+            beforeSend: function(request) {
+                request.setRequestHeader("Authorization", "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>);
+            },
+            type: "GET",
+            success: function(response) {
+                if(
+                    response.response_package !== undefined &&
+                    response.response_package.response_data !== undefined &&
+                    response.response_package.response_data.length > 0) {
+                    var data = response.response_package.response_data[0];
+
+
+                    $("#txt_nik").val(data.nik).inputmask('9999-9999-9999-9999').on("keyup", function () {
+                        var nik_check = $(this).inputmask("unmaskedvalue");
+
+                        if(nik_check.length < 16) {
+                            $("#checker_nik").html("<i class=\"fa fa-times-circle\"></i> Panjang Harus 16 karakter").removeClass("text-success").addClass("text-danger");
                         } else {
-                            $("#checker_nik").html("<i class=\"fa fa-check-circle\"></i> Validasi Unik").removeClass("text-danger").addClass("text-success");
+                            $.ajax({
+                                async: false,
+                                url: __HOSTAPI__ + "/Membership",
+                                beforeSend: function(request) {
+                                    request.setRequestHeader("Authorization", "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>);
+                                },
+                                type: "POST",
+                                data: {
+                                    request: "check_nik",
+                                    nik: nik_check
+                                },
+                                success: function(response) {
+                                    if(response.response_package.response_result > 0) {
+                                        $("#checker_nik").html("<i class=\"fa fa-times-circle\"></i> NIK sudah terdaftar").removeClass("text-success").addClass("text-danger");
+                                    } else {
+                                        $("#checker_nik").html("<i class=\"fa fa-check-circle\"></i> Validasi Unik").removeClass("text-danger").addClass("text-success");
+                                    }
+                                },
+                                error: function(response) {
+                                    console.log(response);
+                                }
+                            });
                         }
-                    },
-                    error: function(response) {
+                    });
+
+                    $("#txt_bank_nomor_rekening").val(data.nomor_rekening).inputmask('99999999999999999999');
+                    $("#txt_nama").val(data.nama);
+                    $("#txt_email").val(data.email);
+                    $("#txt_tempat_lahir").val(data.tempat_lahir);
+                    $("#txt_tanggal_lahir").val(data.tanggal_lahir);
+                    $("#txt_telp").val(data.kontak_telp);
+                    $("#txt_wa").val(data.kontak_whatsapp);
+                    $("#txt_alamat_domisili").val(data.alamat_domisili);
+                    $("#txt_rt").val(data.rt);
+                    $("#txt_rw").val(data.rw);
+                    $("#txt_domisili_kodepos").val(data.kode_pos_domisili);
+                    $("#txt_ktp_kodepos").val(data.kode_pos);
+                    $("#txt_npwp").val(data.npwp);
+                    $("#txt_ktp_alamat").val(data.alamat_ktp);
+                    $("#txt_ahli_waris_nama").val(data.nama_ahli_waris);
+                    $("#txt_ahli_waris_hubungan").val(data.hubungan_ahli_waris);
+                    $("#txt_ahli_waris_wa").val(data.kontak_whatsapp_ahli_waris);
+                    $("#txt_ahli_waris_telp").val(data.kontak_telp_ahli_waris);
+                    $("#txt_bank_atas_nama").val(data.nama_pemilik_rekening);
+                    $("#txt_patokan").val(data.patokan);
+
+                    loadWilayah('txt_domisili_provinsi', 'provinsi', data.provinsi_domisili, 'Provinsi', data.provinsi_domisili);
+                    loadWilayah('txt_domisili_kabupaten', 'kabupaten', data.provinsi_domisili, 'Kabupaten', data.kabupaten_domisili);
+                    loadWilayah('txt_domisili_kecamatan', 'kecamatan', data.kabupaten_domisili, 'Kecamatan', data.kecamatan_domisili);
+                    loadWilayah('txt_domisili_kelurahan', 'kelurahan', data.kecamatan_domisili, 'Kelurahan', data.kelurahan_domisili);
+
+                    loadWilayah('txt_ktp_provinsi', 'provinsi', data.provinsi, 'Provinsi', data.provinsi);
+                    loadWilayah('txt_ktp_kabupaten', 'kabupaten', data.provinsi, 'Kabupaten', data.kabupaten);
+                    loadWilayah('txt_ktp_kecamatan', 'kecamatan', data.kabupaten, 'Kecamatan', data.kecamatan);
+                    loadWilayah('txt_ktp_kelurahan', 'kelurahan', data.kecamatan, 'Kelurahan', data.kelurahan);
+
+
+
+
+                    $("#txt_domisili_provinsi").select2();
+                    $("#txt_domisili_kabupaten").select2();
+                    $("#txt_domisili_kecamatan").select2();
+                    $("#txt_domisili_kelurahan").select2();
+                    $("#txt_jenis_customer").select2();
+                    $("#txt_mentor").select2({
+                        minimumInputLength: 2,
+                        "language": {
+                            "noResults": function(){
+                                return "Mentor tidak ditemukan";
+                            }
+                        },
+                        placeholder:"Cari Mentor",
+                        ajax: {
+                            dataType: "json",
+                            headers:{
+                                "Authorization" : "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>,
+                                "Content-Type" : "application/json",
+                            },
+                            url:__HOSTAPI__ + "/Pegawai/get_all_mentor_select2",
+                            type: "GET",
+                            data: function (term) {
+                                return {
+                                    search:term.term
+                                };
+                            },
+                            cache: true,
+                            processResults: function (response) {
+                                var data = response.response_package.response_data;
+
+                                return {
+                                    results: $.map(data, function (item) {
+                                        return {
+                                            text: item.nama,
+                                            id: item.uid
+                                        }
+                                    })
+                                };
+                            }
+                        }
+                    });
+                    $("#txt_mentor").append("<option value=\"" + data.mentor.uid + "\">" + data.mentor.nama + "</option>");
+                    $("#txt_mentor").select2("data", {id: data.mentor.uid, text: data.mentor.nama});
+                    $("#txt_mentor").trigger("change");
+
+                    $("#txt_bank").select2({
+                        minimumInputLength: 2,
+                        "language": {
+                            "noResults": function(){
+                                return "Bank tidak ditemukan";
+                            }
+                        },
+                        placeholder:"Cari Bank",
+                        ajax: {
+                            dataType: "json",
+                            headers:{
+                                "Authorization" : "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>,
+                                "Content-Type" : "application/json",
+                            },
+                            url:__HOSTAPI__ + "/Bank/get_bank_select2",
+                            type: "GET",
+                            data: function (term) {
+                                return {
+                                    search:term.term
+                                };
+                            },
+                            cache: true,
+                            processResults: function (response) {
+                                var data = response.response_package.response_data;
+
+                                return {
+                                    results: $.map(data, function (item) {
+                                        return {
+                                            text: item.kode_transaksi + " - " + item.nama,
+                                            id: item.uid
+                                        }
+                                    })
+                                };
+                            }
+                        }
+                    });
+                    $("#txt_bank").append("<option value=\"" + data.bank.uid + "\">" + data.bank.kode_transaksi + " - " + data.bank.nama + "</option>");
+                    $("#txt_bank").select2("data", {id: data.bank.uid, text: data.bank.kode_transaksi + " - " + data.bank.nama});
+                    $("#txt_bank").trigger("change");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    $("#txt_ktp_provinsi").select2();
+                    $("#txt_ktp_kabupaten").select2();
+                    $("#txt_ktp_kecamatan").select2();
+                    $("#txt_ktp_kelurahan").select2();
+
+
+
+                    var targetCropper = $("#image-uploader");
+                    var basic = targetCropper.croppie({
+                        enforceBoundary:false,
+                        viewport: {
+                            width: 220,
+                            height: 220
+                        },
+                    });
+
+                    basic.croppie("bind", {
+                        zoom: .5,
+                        url: __HOST__ + "/client/template/assets/images/avatar/demi.png"
+                    });
+                } else {
+                    Swal.fire(
+                        "Customer Management",
+                        "Customer tidak ditemukan",
+                        "error"
+                    ).then((result) => {
                         console.log(response);
-                    }
-                });
-            }
-        });
-
-        $("#txt_bank_nomor_rekening").inputmask('99999999999999999999');
-        /*$("#txt_tanggal_lahir").datepicker({
-            dateFormat: 'DD, dd MM yy',
-            autoclose: true
-        }).datepicker("setDate", new Date());*/
-        /*$("#txt_tanggal_lahir").datepicker({
-            autoclose: true
-        });*/
-
-        loadWilayah('txt_domisili_provinsi', 'provinsi', '', 'Provinsi');
-        resetSelectBox('txt_domisili_provinsi', "Provinsi");
-        resetSelectBox('txt_domisili_kabupaten', "Kabupaten");
-        resetSelectBox('txt_domisili_kecamatan', "Kecamatan");
-        resetSelectBox('txt_domisili_kelurahan', "Kelurahan");
-
-        $("#txt_domisili_provinsi").select2();
-        $("#txt_domisili_kabupaten").select2();
-        $("#txt_domisili_kecamatan").select2();
-        $("#txt_domisili_kelurahan").select2();
-        $("#txt_jenis_customer").select2();
-        $("#txt_mentor").select2({
-            minimumInputLength: 2,
-            "language": {
-                "noResults": function(){
-                    return "Mentor tidak ditemukan";
+                    });
                 }
             },
-            placeholder:"Cari Mentor",
-            ajax: {
-                dataType: "json",
-                headers:{
-                    "Authorization" : "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>,
-                    "Content-Type" : "application/json",
-                },
-                url:__HOSTAPI__ + "/Pegawai/get_all_mentor_select2",
-                type: "GET",
-                data: function (term) {
-                    return {
-                        search:term.term
-                    };
-                },
-                cache: true,
-                processResults: function (response) {
-                    var data = response.response_package.response_data;
-
-                    return {
-                        results: $.map(data, function (item) {
-                            return {
-                                text: item.nama,
-                                id: item.uid
-                            }
-                        })
-                    };
-                }
-            }
-        });
-
-        $("#txt_bank").select2({
-            minimumInputLength: 2,
-            "language": {
-                "noResults": function(){
-                    return "Bank tidak ditemukan";
-                }
-            },
-            placeholder:"Cari Bank",
-            ajax: {
-                dataType: "json",
-                headers:{
-                    "Authorization" : "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>,
-                    "Content-Type" : "application/json",
-                },
-                url:__HOSTAPI__ + "/Bank/get_bank_select2",
-                type: "GET",
-                data: function (term) {
-                    return {
-                        search:term.term
-                    };
-                },
-                cache: true,
-                processResults: function (response) {
-                    var data = response.response_package.response_data;
-
-                    return {
-                        results: $.map(data, function (item) {
-                            return {
-                                text: item.kode_transaksi + " - " + item.nama,
-                                id: item.uid
-                            }
-                        })
-                    };
-                }
+            error: function(response) {
+                console.log(response);
             }
         });
 
@@ -146,26 +237,6 @@
             loadWilayah('txt_domisili_kelurahan', 'kelurahan', id, "Kelurahan");
         });
 
-
-
-
-
-
-
-
-
-
-        loadWilayah('txt_ktp_provinsi', 'provinsi', '', 'Provinsi');
-        resetSelectBox('txt_ktp_provinsi', "Provinsi");
-        resetSelectBox('txt_ktp_kabupaten', "Kabupaten");
-        resetSelectBox('txt_ktp_kecamatan', "Kecamatan");
-        resetSelectBox('txt_ktp_kelurahan', "Kelurahan");
-
-        $("#txt_ktp_provinsi").select2();
-        $("#txt_ktp_kabupaten").select2();
-        $("#txt_ktp_kecamatan").select2();
-        $("#txt_ktp_kelurahan").select2();
-
         $("#txt_ktp_provinsi").on('change', function(){
             var id = $(this).val();
 
@@ -187,30 +258,17 @@
             loadWilayah('txt_ktp_kelurahan', 'kelurahan', id, "Kelurahan");
         });
 
-        var targetCropper = $("#image-uploader");
-        var basic = targetCropper.croppie({
-            enforceBoundary:false,
-            viewport: {
-                width: 220,
-                height: 220
-            },
-        });
-
-        basic.croppie("bind", {
-            zoom: .5,
-            url: __HOST__ + "/client/template/assets/images/avatar/demi.png"
-        });
 
         $("#upload-image").change(function(){
             readURL(this, basic);
         });
 
         $("#btn_save_data").click(function () {
-            simpanData(false);
+            simpanData(UID);
         });
 
         $("#btn_save_data_stay").click(function () {
-            simpanData(true);
+            simpanData(UID, true);
         });
 
         function readURL(input, cropper) {
@@ -234,7 +292,7 @@
         }
 
 
-        function loadWilayah(selector, parent, id, name){
+        function loadWilayah(selector, parent, id, name, selected = ""){
 
             resetSelectBox(selector, name);
 
@@ -247,13 +305,14 @@
                 success: function(response){
                     var MetaData = response.response_package.response_data;
 
-                    if (MetaData != ""){
+                    if (MetaData !== undefined && MetaData !== null){
                         for(i = 0; i < MetaData.length; i++){
                             var selection = document.createElement("OPTION");
 
                             $(selection).attr("value", MetaData[i].id).html(MetaData[i].nama);
-
-                            // autoSelect(selector, MetaData[i].id , params);
+                            if(MetaData[i].id === selected) {
+                                $(selection).attr("selected", "selected");
+                            }
 
                             $("#" + selector).append(selection);
                         }
@@ -272,7 +331,7 @@
             $("#" + selector).append(opti_null);
         }
 
-        function simpanData(stay) {
+        function simpanData(UID, stay) {
             console.clear();
             var nik = $("#txt_nik").inputmask("unmaskedvalue");
             var nama = $("#txt_nama").val();
@@ -306,7 +365,7 @@
             var ahli_waris_wa = $("#txt_ahli_waris_wa").val();
 
             var bank = $("#txt_bank").val();
-            var bank_norek = $("#txt_bank_nomor_rekening").val();
+            var bank_norek = $("#txt_bank_nomor_rekening").inputmask("unmaskedvalue");
             var bank_an = $("#txt_bank_atas_nama").val();
             if(
                 nik !== "" &&
@@ -342,7 +401,8 @@
                             },
                             type: "POST",
                             data: {
-                                request: "tambah_customer",
+                                request: "edit_customer",
+                                uid: UID,
                                 nik: nik,
                                 nama: nama,
                                 tempat_lahir: tempat_lahir,
@@ -379,22 +439,18 @@
                             success: function(response) {
                                 if(response.response_package.response_result > 0) {
                                     Swal.fire(
-                                        "Pendaftaran",
-                                        "Customer berhasil ditambahan",
+                                        "Customer Management",
+                                        "Customer berhasil diedit",
                                         "success"
                                     ).then((result) => {
                                         if(!stay) {
                                             location.href = __HOSTNAME__ + "/customer";
-                                        } else {
-                                            $("input").val("");
-                                            $("select option").remove();
-                                            $("textarea").val("");
                                         }
                                     });
                                 } else {
                                     Swal.fire(
-                                        "Pendaftaran",
-                                        "Customer gagal ditambahan",
+                                        "Customer Management",
+                                        "Customer gagal diedit",
                                         "error"
                                     ).then((result) => {
                                         console.log(response);
@@ -447,7 +503,6 @@
                 if(bank === "" || bank === null || bank === undefined) {
                     $("#checker_bank").html("<i class=\"fa fa-times-circle\"></i> Pilih bank</b>").removeClass("text-success").addClass("text-danger");
                 } else {
-                    alert(bank);
                     $("#checker_bank").html("<i class=\"fa fa-check-circle\"></i>").removeClass("text-danger").addClass("text-success");
                 }
 

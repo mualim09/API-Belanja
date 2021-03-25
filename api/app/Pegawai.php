@@ -1442,6 +1442,7 @@ class Pegawai extends Utility {
             'worker_perawat' => $worker_poli_perawat
         );
     }
+
     private function get_all_mentor_select2(){
 	    $data = self::$query->select('pegawai', array(
 	        'uid',

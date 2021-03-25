@@ -87,20 +87,31 @@
         $("body").on("click", ".btn-delete-customer", function(){
             var id = $(this).attr("id").split("_");
             id = id[id.length - 1];
-
-            var conf = confirm("Hapus customer?");
-            if(conf) {
-                $.ajax({
-                    url:__HOSTAPI__ + "/Membership/customer/" + id,
-                    beforeSend: function(request) {
-                        request.setRequestHeader("Authorization", "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>);
-                    },
-                    type:"DELETE",
-                    success:function(resp) {
-                        tableCustomer.ajax.reload();
-                    }
-                });
-            }
+            Swal.fire({
+                title: "Hapus Customer?",
+                showDenyButton: true,
+                type: "warning",
+                confirmButtonText: "Ya",
+                confirmButtonColor: "#1297fb",
+                denyButtonText: "Tidak",
+                denyButtonColor: "#ff2a2a"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url:__HOSTAPI__ + "/Membership/membership/" + id,
+                        beforeSend: function(request) {
+                            request.setRequestHeader("Authorization", "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>);
+                        },
+                        type:"DELETE",
+                        success:function(resp) {
+                            tableCustomer.ajax.reload();
+                        },
+                        error: function (resp) {
+                            console.log(resp);
+                        }
+                    });
+                }
+            });
         });
 
 

@@ -4,11 +4,11 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="<?php echo __HOSTNAME__; ?>/">Home</a></li>
-                    <li class="breadcrumb-item"><a href="<?php echo __HOSTNAME__; ?>/master/inventori">Master Item</a></li>
-                    <li class="breadcrumb-item active" aria-current="page" id="mode_item">Tambah</li>
+                    <li class="breadcrumb-item"><a href="<?php echo __HOSTNAME__; ?>/customer">Customer</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" id="mode_item">Edit</li>
                 </ol>
             </nav>
-            <h4><span id="nama-departemen"></span>Tambah Inventori</h4>
+            <h4><span id="nama-departemen"></span>Edit Customer</h4>
         </div>
     </div>
 </div>
@@ -23,18 +23,16 @@
                         <a href="#tab-informasi" class="nav-link active" data-toggle="tab" role="tab" aria-selected="true" aria-controls="tab-informasi" >
 							<span class="nav-link__count">
 								<i class="fa fa-info-circle"></i>
-								<b class="inv-tab-status text-success" id="status-informasi"><i class="fa fa-check-circle"></i></b>
 							</span>
                             Informasi Customer
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#tab-satuan" class="nav-link" data-toggle="tab" role="tab" aria-selected="false">
+                        <a href="#tab-rekening" class="nav-link" data-toggle="tab" role="tab" aria-selected="true" aria-controls="tab-rekening" >
 							<span class="nav-link__count">
-								<i class="fa fa-cubes"></i>
-								<b class="inv-tab-status text-success" id="status-satuan"><i class="fa fa-check-circle"></i></b>
+								<i class="fa fa-credit-card"></i>
 							</span>
-                            Satuan
+                            Informasi Rekening
                         </a>
                     </li>
                 </ul>
@@ -42,22 +40,13 @@
                     <div class="tab-pane active show fade" id="tab-informasi">
                         <?php require 'form-dasar.php'; ?>
                     </div>
-                    <div class="tab-pane show fade" id="tab-satuan">
-                        <?php require 'form-satuan.php'; ?>
-                    </div>
-                    <div class="tab-pane show fade" id="tab-penjamin">
-                        <?php require 'form-penjamin.php'; ?>
-                    </div>
-                    <div class="tab-pane show fade" id="tab-lokasi">
-                        <?php require 'form-lokasi.php'; ?>
-                    </div>
-                    <div class="tab-pane show fade" id="tab-monitoring">
-                        <?php require 'form-monitoring.php'; ?>
+                    <div class="tab-pane show fade" id="tab-rekening">
+                        <?php require 'form-rekening.php'; ?>
                     </div>
                     <div class="col-md-12">
-                        <button type="submit" id="btn_save_data" class="btn btn-success"><i class="fa fa-save"></i> Simpan & Keluar</button>
-                        <button type="submit" id="btn_save_data_stay" class="btn btn-info"><i class="fa fa-save"></i> Simpan & Tetap Disini</button>
-                        <a href="<?php echo __HOSTNAME__; ?>/master/inventori" class="btn btn-danger"><i class="fa fa-ban"></i> Kembali</a>
+                        <button type="submit" id="btn_save_data" class="btn btn-success"><i class="fa fa-save"></i> Simpan - Keluar</button>
+                        <button type="submit" id="btn_save_data_stay" class="btn btn-info"><i class="fa fa-save"></i> Simpan - Tetap disini</button>
+                        <a href="<?php echo __HOSTNAME__; ?>/customer" class="btn btn-danger"><i class="fa fa-ban"></i> Kembali</a>
                     </div>
                 </div>
             </div>

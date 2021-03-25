@@ -4,6 +4,7 @@ namespace PondokCoder;
 
 use Firebase\JWT\JWT;
 use PondokCoder\Authorization as Authorization;
+use PondokCoder\QueryException as QueryException;
 use PondokCoder\Utility as Utility;
 
 class Membership extends Utility
@@ -23,7 +24,18 @@ class Membership extends Utility
 
     public function __GET__($parameter = array())
     {
-        //
+        try {
+            switch ($parameter[1]) {
+                case 'detail':
+                    return self::customer_detail($parameter[2]);
+                    break;
+                default:
+                    return array();
+                    break;
+            }
+        } catch (QueryException $e) {
+            return 'Error => ' . $e;
+        }
     }
 
     public function __DELETE__($parameter = array())
@@ -37,8 +49,17 @@ class Membership extends Utility
             case 'login':
                 return self::login($parameter);
                 break;
+            case 'check_nik':
+                return self::check_nik($parameter);
+                break;
             case 'get_customer':
                 return self::get_customer($parameter);
+                break;
+            case 'tambah_customer':
+                return self::tambah_customer($parameter);
+                break;
+            case 'edit_customer':
+                return self::edit_customer($parameter);
                 break;
             case 'register':
                 return self::register($parameter);
@@ -47,6 +68,184 @@ class Membership extends Utility
                 return array();
                 break;
         }
+    }
+
+    public function customer_detail($parameter) {
+        $data = self::$query->select('membership', array(
+            'uid',
+            'nik',
+            'nama',
+            'tempat_lahir',
+            'tanggal_lahir',
+            'email',
+            'kontak_telp',
+            'kontak_whatsapp',
+            'npwp',
+            'alamat_ktp',
+            'kelurahan',
+            'kecamatan',
+            'kabupaten',
+            'provinsi',
+            'kode_pos',
+            'alamat_domisili',
+            'rt',
+            'rw',
+            'bank',
+            'mentor',
+            'patokan',
+            'kelurahan_domisili',
+            'kecamatan_domisili',
+            'kabupaten_domisili',
+            'provinsi_domisili',
+            'kode_pos_domisili',
+            'nomor_rekening',
+            'bank',
+            'nama_pemilik_rekening',
+            'nama_ahli_waris',
+            'hubungan_ahli_waris',
+            'kontak_telp_ahli_waris',
+            'kontak_whatsapp_ahli_waris',
+            'saldo',
+            'password',
+            'jenis_member',
+            'status_member',
+            'created_at',
+            'updated_at'
+        ))
+            ->where(array(
+                'membership.deleted_at' => 'IS NULL',
+                'AND',
+                'membership.uid' => '= ?'
+            ), array(
+                $parameter
+            ))
+            ->execute();
+        $Bank = new Bank(self::$pdo);
+        $Pegawai = new Pegawai(self::$pdo);
+        foreach ($data['response_data'] as $key => $value) {
+            $data['response_data'][$key]['bank'] = $Bank->bank_detail($value['bank'])['response_data'][0];
+            $data['response_data'][$key]['mentor'] = $Pegawai->get_detail($value['mentor'])['response_data'][0];
+        }
+        return $data;
+    }
+
+    public function check_nik($parameter) {
+        $data = self::$query->select('membership', array(
+            'uid'
+        ))
+            ->where(array(
+                'membership.nik' => '= ?'
+            ), array(
+                $parameter['nik']
+            ))
+            ->execute();
+        return $data;
+    }
+
+    private function edit_customer($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+        $uid = parent::gen_uuid();
+        $password = parent::generatePassword(6);
+        $process = self::$query->update('membership', array(
+            'nik' => $parameter['nik'],
+            'nama' => strtoupper($parameter['nama']),
+            'tempat_lahir' => $parameter['tempat_lahir'],
+            'tanggal_lahir' => $parameter['tanggal_lahir'],
+            'email' => $parameter['email'],
+            'kontak_telp' => $parameter['kontak_telp'],
+            'kontak_whatsapp' => $parameter['kontak_whatsapp'],
+            'npwp' => $parameter['npwp'],
+            'alamat_ktp' => $parameter['alamat_ktp'],
+            'kelurahan' => intval($parameter['kelurahan']),
+            'kecamatan' => intval($parameter['kecamatan']),
+            'kabupaten' => intval($parameter['kabupaten']),
+            'provinsi' => intval($parameter['provinsi']),
+            'kode_pos' => $parameter['kode_pos'],
+            'alamat_domisili' => $parameter['alamat_domisili'],
+            'rt' => $parameter['rt'],
+            'rw' => $parameter['rw'],
+            'patokan' => $parameter['patokan'],
+            'kelurahan_domisili' => intval($parameter['kelurahan_domisili']),
+            'kecamatan_domisili' => intval($parameter['kecamatan_domisili']),
+            'kabupaten_domisili' => intval($parameter['kabupaten_domisili']),
+            'provinsi_domisili' => intval($parameter['provinsi_domisili']),
+            'kode_pos_domisili' => $parameter['kode_pos_domisili'],
+            'nomor_rekening' => $parameter['nomor_rekening'],
+            'bank' => $parameter['bank'],
+            'nama_pemilik_rekening' => $parameter['nama_pemilik_rekening'],
+            'nama_ahli_waris' => $parameter['nama_ahli_waris'],
+            'hubungan_ahli_waris' => $parameter['hubungan_ahli_waris'],
+            'kontak_telp_ahli_waris' => $parameter['kontak_telp_ahli_waris'],
+            'kontak_whatsapp_ahli_waris' => $parameter['kontak_whatsapp_ahli_waris'],
+            'saldo' => 0,
+            'mentor' => $parameter['mentor'],
+            'password' => password_hash('123456', PASSWORD_DEFAULT),
+            'jenis_member' => $parameter['jenis_member'],
+            'status_member' => 'N',
+            'creator' => $UserData['data']->uid,
+            'created_at' => parent::format_date(),
+            'updated_at' => parent::format_date()
+        ))
+            ->where(array(
+                'membership.deleted_at' => 'IS NULL',
+                'AND',
+                'membership.uid' => '= ?'
+            ), array(
+                $parameter['uid']
+            ))
+            ->execute();
+        return $process;
+    }
+
+    private function tambah_customer($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+        $uid = parent::gen_uuid();
+        $password = parent::generatePassword(6);
+        $process = self::$query->insert('membership', array(
+            'uid' => $uid,
+            'nik' => $parameter['nik'],
+            'nama' => strtoupper($parameter['nama']),
+            'tempat_lahir' => $parameter['tempat_lahir'],
+            'tanggal_lahir' => $parameter['tanggal_lahir'],
+            'email' => $parameter['email'],
+            'kontak_telp' => $parameter['kontak_telp'],
+            'kontak_whatsapp' => $parameter['kontak_whatsapp'],
+            'npwp' => $parameter['npwp'],
+            'alamat_ktp' => $parameter['alamat_ktp'],
+            'kelurahan' => intval($parameter['kelurahan']),
+            'kecamatan' => intval($parameter['kecamatan']),
+            'kabupaten' => intval($parameter['kabupaten']),
+            'provinsi' => intval($parameter['provinsi']),
+            'kode_pos' => $parameter['kode_pos'],
+            'alamat_domisili' => $parameter['alamat_domisili'],
+            'rt' => $parameter['rt'],
+            'rw' => $parameter['rw'],
+            'patokan' => $parameter['patokan'],
+            'kelurahan_domisili' => intval($parameter['kelurahan_domisili']),
+            'kecamatan_domisili' => intval($parameter['kecamatan_domisili']),
+            'kabupaten_domisili' => intval($parameter['kabupaten_domisili']),
+            'provinsi_domisili' => intval($parameter['provinsi_domisili']),
+            'kode_pos_domisili' => $parameter['kode_pos_domisili'],
+            'nomor_rekening' => $parameter['nomor_rekening'],
+            'bank' => $parameter['bank'],
+            'nama_pemilik_rekening' => $parameter['nama_pemilik_rekening'],
+            'nama_ahli_waris' => $parameter['nama_ahli_waris'],
+            'hubungan_ahli_waris' => $parameter['hubungan_ahli_waris'],
+            'kontak_telp_ahli_waris' => $parameter['kontak_telp_ahli_waris'],
+            'kontak_whatsapp_ahli_waris' => $parameter['kontak_whatsapp_ahli_waris'],
+            'saldo' => 0,
+            'mentor' => $parameter['mentor'],
+            'password' => password_hash('123456', PASSWORD_DEFAULT),
+            'jenis_member' => $parameter['jenis_member'],
+            'status_member' => 'N',
+            'creator' => $UserData['data']->uid,
+            'created_at' => parent::format_date(),
+            'updated_at' => parent::format_date()
+        ))
+            ->execute();
+        return $process;
     }
 
     private function delete($parameter)
