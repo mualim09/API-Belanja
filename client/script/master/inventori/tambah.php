@@ -18,7 +18,7 @@
 				}
 
 				load_kategori("#txt_kategori", invData);
-				load_manufacture("#txt_manufacture", invData);
+				//load_manufacture("#txt_manufacture", invData);
 				load_satuan("#txt_satuan_terkecil", invData);
 				if(selectedDariSatuanList.indexOf($("#txt_satuan_terkecil").val()) < 0) {
 					selectedDariSatuanList.push($("#txt_satuan_terkecil").val());
@@ -174,6 +174,140 @@
 				doSomething(this.loader.file);
 		    }
 		}
+
+		autoPaket();
+
+		function autoPaket() {
+		    var newPaketRow = document.createElement("TR");
+		    var newPaketID = document.createElement("TD");
+            var newPaketBarang = document.createElement("TD");
+            var newPaketQty = document.createElement("TD");
+            var newPaketSatuan = document.createElement("TD");
+            var newPaketAksi = document.createElement("TD");
+
+            var newSelectorBarang = document.createElement("SELECT");
+            var newSelectorQty = document.createElement("INPUT");
+            var newSelectorDelete = document.createElement("BUTTON");
+
+            $(newPaketBarang).append(newSelectorBarang);
+            $(newSelectorBarang).select2({
+                minimumInputLength: 2,
+                "language": {
+                    "noResults": function(){
+                        return "Barang tidak ditemukan";
+                    }
+                },
+                ajax: {
+                    dataType: "json",
+                    headers:{
+                        "Authorization" : "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>,
+                        "Content-Type" : "application/json",
+                    },
+                    url:__HOSTAPI__ + "/Inventori/get_item_select2/" + $(".select2-search__field").val(),
+                    type: "GET",
+                    data: function (term) {
+                        return {
+                            search:term.term
+                        };
+                    },
+                    cache: true,
+                    processResults: function (response) {
+                        var data = response.response_package.response_data;
+                        return {
+                            results: $.map(data, function (item) {
+                                return {
+                                    text: item.nama.toUpperCase(),
+                                    id: item.uid,
+                                    satuan_terkecil: item.satuan_terkecil
+                                }
+                            })
+                        };
+                    }
+                }
+            }).addClass("form-control item_paket").on("select2:select", function(e) {
+                var data = e.params.data;
+                if(data.satuan_terkecil !== undefined && data.satuan_terkecil !== null) {
+                    $(this).children("[value=\""+ data.id + "\"]").attr({
+                        "satuan-caption": data.satuan_terkecil
+                    });
+                    $(newPaketSatuan).html(data.satuan_terkecil.nama);
+                } else {
+                    return false;
+                }
+
+                var id = $(this).attr("id").split("_");
+                id = id[id.length - 1];
+
+                var currentValue = $("#paket_qty_" + id).inputmask("unmaskedvalue");
+                if(currentValue > 0 && $("#paket_row_" + id).hasClass("last_paket") && $("#paket_barang_" + id).val() !== null && $("#paket_barang_" + id).val() !== undefined) {
+                    autoPaket();
+                }
+            });
+
+            $(newPaketQty).append(newSelectorQty);
+            $(newSelectorQty).inputmask({
+                alias: 'decimal', rightAlign: true, placeholder: "0,00", prefix: "", groupSeparator: ".", autoGroup: false, digitsOptional: true
+            }).addClass("form-control qty_paket");
+
+            $(newPaketAksi).append(newSelectorDelete);
+            $(newSelectorDelete).addClass("btn btn-danger btn-sm paket_delete").html("<i class=\"fa fa-ban\"></i>");
+
+            $(newPaketSatuan).html("-");
+
+            $(newPaketRow).append(newPaketID);
+            $(newPaketRow).append(newPaketBarang);
+            $(newPaketRow).append(newPaketQty);
+            $(newPaketRow).append(newPaketSatuan);
+            $(newPaketRow).append(newPaketAksi);
+
+            //$(newPaketRow).addClass("last_paket");
+            $("#table-paket").append(newPaketRow);
+            rebasePaket();
+        }
+
+        function rebasePaket(){
+            $("#table-paket tbody tr").each(function(e) {
+                $(this).removeClass("last_paket");
+                var id = (e + 1);
+                $(this).attr({
+                    "id": "paket_row_" + id
+                });
+
+                $(this).find("td:eq(0)").html(id);
+
+                $(this).find("td:eq(1) select").attr({
+                    "id": "paket_barang_" + id
+                });
+
+                $(this).find("td:eq(2) input").attr({
+                    "id": "paket_qty_" + id
+                });
+
+                $(this).find("td:eq(4) button").attr({
+                    "id": "paket_delete_" + id
+                });
+            });
+            $("#table-paket tbody tr:last-child").addClass("last_paket");
+        }
+
+        $("body").on("keyup", ".qty_paket", function() {
+            var id = $(this).attr("id").split("_");
+            id = id[id.length - 1];
+
+            var currentValue = $(this).inputmask("unmaskedvalue");
+            if(currentValue > 0 && $("#paket_row_" + id).hasClass("last_paket") && $("#paket_barang_" + id).val() !== null && $("#paket_barang_" + id).val() !== undefined) {
+                autoPaket();
+            }
+        });
+
+        $("body").on("click", ".paket_delete", function() {
+            var id = $(this).attr("id").split("_");
+            id = id[id.length - 1];
+            if(!$("#paket_row_" + id).hasClass("last_paket")) {
+                $("#paket_row_" + id).remove();
+                rebasePaket();
+            }
+        });
 
 
 		function MyCustomUploadAdapterPlugin( editor ) {
@@ -550,7 +684,7 @@
 			});
 			return penjaminData;
 		}
-		autoHarga();
+		//autoHarga();
 
 
 
@@ -641,7 +775,7 @@
 			});
 			return gudangData;
 		}
-		autoGudang();
+		//autoGudang();
 
 		//==========================================================DASAR
 		function saveDasar() {
@@ -741,6 +875,21 @@
 			var nama = $("#txt_nama").val();
 			var kode = $("#txt_kode").val();
             var het = $("#txt_het").inputmask("unmaskedvalue");
+            var paketBarang = [];
+
+            $("#table-paket tbody tr").each(function(e) {
+                if(
+                    !$(this).hasClass("last_paket") &&
+                    $(this).find("td:eq(1) select").val() !== undefined && $(this).find("td:eq(1) select").val() !== null &&
+                    $(this).find("td:eq(2) input").inputmask("unmaskedvalue") > 0
+                ) {
+                    paketBarang.push({
+                        barang: $(this).find("td:eq(1) select").val(),
+                        qty: $(this).find("td:eq(2) input").inputmask("unmaskedvalue")
+                    });
+                }
+            });
+
 			if(nama != "" && kode != "" && het > 0) {
 				if(currentTab == "#tab-informasi" || currentTab == "#info-dasar-1") {
 					basic.croppie('result', {
@@ -852,7 +1001,8 @@
 								satuanKonversi:satuanKonversi,
 								penjaminList:penjaminList,
 								gudangMeta:gudangMeta,
-								monitoring:monitoring
+								monitoring:monitoring,
+                                paket:paketBarang
 							},
 							type:"POST",
 							success:function(response) {
@@ -972,7 +1122,8 @@
 							satuanKonversi:satuanKonversi,
 							penjaminList:penjaminList,
 							gudangMeta:gudangMeta,
-							monitoring:monitoring
+							monitoring:monitoring,
+                            paket:paketBarang
 						},
 						type:"POST",
 						success:function(response) {

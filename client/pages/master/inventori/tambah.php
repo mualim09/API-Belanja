@@ -37,16 +37,16 @@
 							Satuan
 						</a>
 					</li>
-					<!--li class="nav-item">
-						<a href="#tab-penjamin" class="nav-link" data-toggle="tab" role="tab" aria-selected="false">
+					<li class="nav-item">
+						<a href="#tab-paket" class="nav-link" data-toggle="tab" role="tab" aria-selected="false">
 							<span class="nav-link__count">
 								<i class="fa fa-cash-register"></i>
-								<b class="inv-tab-status text-success" id="status-penjamin"><i class="fa fa-check-circle"></i></b>
+								<b class="inv-tab-status text-success" id="status-paket"><i class="fa fa-check-circle"></i></b>
 							</span>
-							Harga Penjamin
+							Paket
 						</a>
 					</li>
-					<li class="nav-item">
+					<!--li class="nav-item">
 						<a href="#tab-lokasi" class="nav-link" data-toggle="tab" role="tab" aria-selected="false">
 							<span class="nav-link__count">
 								<i class="fa fa-clipboard-list"></i>
@@ -72,8 +72,8 @@
 					<div class="tab-pane show fade" id="tab-satuan">
 						<?php require 'form-satuan.php'; ?>
 					</div>
-					<div class="tab-pane show fade" id="tab-penjamin">
-						<?php require 'form-penjamin.php'; ?>
+					<div class="tab-pane show fade" id="tab-paket">
+						<?php require 'form-paket.php'; ?>
 					</div>
 					<div class="tab-pane show fade" id="tab-lokasi">
 						<?php require 'form-lokasi.php'; ?>

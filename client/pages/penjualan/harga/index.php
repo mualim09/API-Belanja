@@ -37,6 +37,10 @@
                                 <th class="wrap_content">No</th>
                                 <th>Produk</th>
                                 <th>Harga HET</th>
+                                <th>Harga Jual</th>
+                                <th>Tipe Diskon</th>
+                                <th>Diskon</th>
+                                <th>Harga Akhir</th>
                                 <th>Bonus Cashback</th>
                                 <th>Bonus Royalti</th>
                                 <th>Bonus Reward</th>

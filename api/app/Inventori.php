@@ -266,6 +266,17 @@ class Inventori extends Utility
                 'stokis_reward' => $parameter['s_rw'],
                 'stokis_insentif_personal' => $parameter['s_ip'],
 
+                'harga_jual_member' => $parameter['m_hj'],
+                'discount_type_member' => $parameter['m_dt'],
+                'discount_member' => $parameter['m_d'],
+                'harga_akhir_member' => $parameter['m_ha'],
+
+                'harga_jual_stokis' => $parameter['s_hj'],
+                'discount_type_stokis' => $parameter['s_dt'],
+                'discount_stokis' => $parameter['s_d'],
+                'harga_akhir_stokis' => $parameter['s_ha'],
+
+
                 'updated_at' => parent::format_date(),
                 'deleted_at' => NULL
             ))
@@ -299,7 +310,7 @@ class Inventori extends Utility
                     'value' => array(
                         $checker['response_data'][0]['id'],
                         $UserData['data']->uid,
-                        'strategi_pemasaran',
+                        'strategi_penjualan',
                         'U',
                         json_encode($checker['response_data'][0]),
                         json_encode($parameter),
@@ -325,6 +336,16 @@ class Inventori extends Utility
                 'stokis_royalti' => $parameter['s_ry'],
                 'stokis_reward' => $parameter['s_rw'],
                 'stokis_insentif_personal' => $parameter['s_ip'],
+
+                'harga_jual_member' => $parameter['m_hj'],
+                'discount_type_member' => $parameter['m_dt'],
+                'discount_member' => $parameter['m_d'],
+                'harga_akhir_member' => $parameter['m_ha'],
+
+                'harga_jual_stokis' => $parameter['s_hj'],
+                'discount_type_stokis' => $parameter['s_dt'],
+                'discount_stokis' => $parameter['s_d'],
+                'harga_akhir_stokis' => $parameter['s_ha'],
 
                 'created_at' => parent::format_date(),
                 'updated_at' => parent::format_date()
@@ -427,7 +448,16 @@ class Inventori extends Utility
             $dataHarga = self::$query->select('strategi_penjualan', array(
                 'id', 'produk', 'tanggal',
                 'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
-                'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal'
+                'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
+                'harga_jual_member',
+                'discount_type_member',
+                'discount_member',
+                'harga_akhir_member',
+
+                'harga_jual_stokis',
+                'discount_type_stokis',
+                'discount_stokis',
+                'harga_akhir_stokis'
             ))
                 ->where(array(
                     'strategi_penjualan.produk' => '= ?',
@@ -1786,7 +1816,6 @@ class Inventori extends Utility
                 'nama',
                 'kategori',
                 'satuan_terkecil',
-                'manufacture',
                 'created_at',
                 'updated_at'
             ))
@@ -1814,18 +1843,18 @@ class Inventori extends Utility
             $data['response_data'][$key]['kategori_obat'] = $kategori_obat;
             $data['response_data'][$key]['satuan_terkecil'] = self::get_satuan_detail($value['satuan_terkecil'])['response_data'][0];
             $data['response_data'][$key]['kategori'] = self::get_kategori_detail($value['kategori'])['response_data'][0];
-            $data['response_data'][$key]['manufacture'] = self::get_manufacture_detail($value['manufacture'])['response_data'][0];
+            //$data['response_data'][$key]['manufacture'] = self::get_manufacture_detail($value['manufacture'])['response_data'][0];
 
             //Data Penjamin
-            $PenjaminObat = new Penjamin(self::$pdo);
+            /*$PenjaminObat = new Penjamin(self::$pdo);
             $ListPenjaminObat = $PenjaminObat::get_penjamin_obat($value['uid'])['response_data'];
             foreach ($ListPenjaminObat as $PenjaminKey => $PenjaminValue) {
                 $ListPenjaminObat[$PenjaminKey]['profit'] = floatval($PenjaminValue['profit']);
             }
-            $data['response_data'][$key]['penjamin'] = $ListPenjaminObat;
+            $data['response_data'][$key]['penjamin'] = $ListPenjaminObat;*/
 
             //Cek Ketersediaan Stok
-            $TotalStock = 0;
+            /*$TotalStock = 0;
             $InventoriStockPopulator = self::get_item_batch($value['uid']);
             if (count($InventoriStockPopulator['response_data']) > 0) {
                 foreach ($InventoriStockPopulator['response_data'] as $TotalKey => $TotalValue) {
@@ -1835,7 +1864,7 @@ class Inventori extends Utility
                 $data['response_data'][$key]['batch'] = $InventoriStockPopulator['response_data'];
             } else {
                 $data['response_data'][$key]['stok'] = 0;
-            }
+            }*/
 
             $autonum++;
         }
@@ -2164,6 +2193,23 @@ class Inventori extends Utility
 
             //Kandungan
             //$data['response_data'][$key]['kandungan'] = self::get_kandungan($value['uid'])['response_data'];
+
+            //Paket
+            $getPaket = self::$query->select('master_inv_paket', array(
+                'id', 'barang', 'qty'
+            ))
+                ->where(array(
+                    'master_inv_paket.deleted_at' => 'IS NULL',
+                    'AND',
+                    'master_inv_paket.parent_barang' => '= ?'
+                ), array(
+                    $value['uid']
+                ))
+                ->execute();
+            foreach ($getPaket['response_data'] as $pakKey => $pakValue) {
+                $getPaket['response_data'][$pakKey]['barang'] = self::get_item_detail($pakValue['barang'])['response_data'][0];
+            }
+            $data['response_data'][$key]['paket'] = $getPaket['response_data'];
         }
         return $data;
     }
@@ -2552,6 +2598,54 @@ class Inventori extends Utility
                         'updated_at' => parent::format_date()
                     ))
                         ->execute();
+                }
+
+
+                //Paket barang
+                foreach ($parameter['paket'] as $paketKey => $paketValue) {
+                    //check
+                    $checkPaket = self::$query->select('master_inv_paket', array(
+                        'id'
+                    ))
+                        ->where(array(
+                            'master_inv_paket.parent_barang' => '= ?',
+                            'AND',
+                            'master_inv_paket.barang' => '= ?'
+                        ), array(
+                            $uid,
+                            $paketValue['barang']
+                        ))
+                        ->execute();
+                    if(count($checkPaket['response_data']) > 0) {
+                        //update
+                        $proceedPaket = self::$query->update('master_inv_paket', array(
+                            'qty' => $paketValue['qty'],
+                            'updated_at' => parent::format_date(),
+                            'deleted_at' => NULL
+                        ))
+                            ->where(array(
+                                'master_inv_paket.parent_barang' => '= ?',
+                                'AND',
+                                'master_inv_paket.barang' => '= ?',
+                                'AND',
+                                'master_inv_paket.id' => '= ?'
+                            ), array(
+                                $uid,
+                                $paketValue['barang'],
+                                $checkPaket['response_data'][0]['id']
+                            ))
+                            ->execute();
+                    } else {
+                        //insert
+                        $proceedPaket = self::$query->insert('master_inv_paket', array(
+                            'barang' => $paketValue['barang'],
+                            'parent_barang' => $uid,
+                            'qty' => $paketValue['qty'],
+                            'created_at' => parent::format_date(),
+                            'updated_at' => parent::format_date()
+                        ))
+                            ->execute();
+                    }
                 }
 
             } else {
@@ -3257,7 +3351,65 @@ class Inventori extends Utility
                 ))
                     ->execute();
             }
+            $paketStatus = array();
 
+            $resetPaket = self::$query->update('master_inv_paket', array(
+                'deleted_at' => parent::format_date()
+            ))
+                ->where(array(
+                    'master_inv_paket.parent_barang' => '= ?'
+                ), array(
+                    $uid
+                ))
+                ->execute();
+
+            //Paket barang
+            foreach ($parameter['paket'] as $paketKey => $paketValue) {
+                //check
+                $checkPaket = self::$query->select('master_inv_paket', array(
+                    'id'
+                ))
+                    ->where(array(
+                        'master_inv_paket.parent_barang' => '= ?',
+                        'AND',
+                        'master_inv_paket.barang' => '= ?'
+                    ), array(
+                        $uid,
+                        $paketValue['barang']
+                    ))
+                    ->execute();
+                if(count($checkPaket['response_data']) > 0) {
+                    //update
+                    $proceedPaket = self::$query->update('master_inv_paket', array(
+                        'qty' => $paketValue['qty'],
+                        'updated_at' => parent::format_date(),
+                        'deleted_at' => NULL
+                    ))
+                        ->where(array(
+                            'master_inv_paket.parent_barang' => '= ?',
+                            'AND',
+                            'master_inv_paket.barang' => '= ?',
+                            'AND',
+                            'master_inv_paket.id' => '= ?'
+                        ), array(
+                            $uid,
+                            $paketValue['barang'],
+                            $checkPaket['response_data'][0]['id']
+                        ))
+                        ->execute();
+                } else {
+                    //insert
+                    $proceedPaket = self::$query->insert('master_inv_paket', array(
+                        'barang' => $paketValue['barang'],
+                        'parent_barang' => $uid,
+                        'qty' => floatval($paketValue['qty']),
+                        'created_at' => parent::format_date(),
+                        'updated_at' => parent::format_date()
+                    ))
+                        ->execute();
+                }
+                array_push($paketStatus, $proceedPaket);
+            }
         } else {
             $error_count++;
         }

@@ -30,8 +30,6 @@
 			},
 			type:"GET",
 			success:function(response) {
-			    console.clear();
-			    console.log(response);
 			    if(response.response_package.response_data !== undefined) {
 					invData = response.response_package.response_data[0];
 				}
@@ -49,7 +47,6 @@
                 }
 
 				load_kategori("#txt_kategori", invData.kategori);
-				//console.log(invData.kandungan);
 				/*for(var kk = 0; kk < invData.kandungan.length; kk++) {
 				    autoKandungan({
                         kandungan: invData.kandungan[kk].kandungan,
@@ -121,6 +118,12 @@
                     //console.error( err.stack );
                 });
 
+                for(var pakKey in invData.paket) {
+                    autoPaket({
+                        barang: invData.paket[pakKey].barang,
+                        qty: invData.paket[pakKey].qty
+                    });
+                }
 			}
 		});
 
@@ -185,8 +188,6 @@
 		        xhr.addEventListener( 'load', () => {
 		            const response = xhr.response;
 
-		            //console.log(response);
-
 		            if ( !response || response.error ) {
 		                return reject( response && response.error ? response.error.message : genericErrorText );
 		            }
@@ -245,6 +246,158 @@
 				doSomething(this.loader.file);
 		    }
 		}
+
+
+        autoPaket();
+
+        function autoPaket(setter = {}) {
+            var newPaketRow = document.createElement("TR");
+            var newPaketID = document.createElement("TD");
+            var newPaketBarang = document.createElement("TD");
+            var newPaketQty = document.createElement("TD");
+            var newPaketSatuan = document.createElement("TD");
+            var newPaketAksi = document.createElement("TD");
+
+            var newSelectorBarang = document.createElement("SELECT");
+            var newSelectorQty = document.createElement("INPUT");
+            var newSelectorDelete = document.createElement("BUTTON");
+
+            $(newPaketBarang).append(newSelectorBarang);
+
+            $(newSelectorBarang).select2({
+                minimumInputLength: 2,
+                "language": {
+                    "noResults": function(){
+                        return "Barang tidak ditemukan";
+                    }
+                },
+                ajax: {
+                    dataType: "json",
+                    headers:{
+                        "Authorization" : "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>,
+                        "Content-Type" : "application/json",
+                    },
+                    url:__HOSTAPI__ + "/Inventori/get_item_select2/" + $(".select2-search__field").val(),
+                    type: "GET",
+                    data: function (term) {
+                        return {
+                            search:term.term
+                        };
+                    },
+                    cache: true,
+                    processResults: function (response) {
+                        var data = response.response_package.response_data;
+                        return {
+                            results: $.map(data, function (item) {
+                                return {
+                                    text: item.nama.toUpperCase(),
+                                    id: item.uid,
+                                    satuan_terkecil: item.satuan_terkecil
+                                }
+                            })
+                        };
+                    }
+                }
+            }).addClass("form-control item_paket").on("select2:select", function(e) {
+                var data = e.params.data;
+                if(data.satuan_terkecil !== undefined && data.satuan_terkecil !== null) {
+                    $(this).children("[value=\""+ data.id + "\"]").attr({
+                        "satuan-caption": data.satuan_terkecil
+                    });
+                    $(newPaketSatuan).html(data.satuan_terkecil.nama);
+                } else {
+                    return false;
+                }
+
+                var id = $(this).attr("id").split("_");
+                id = id[id.length - 1];
+
+                var currentValue = $("#paket_qty_" + id).inputmask("unmaskedvalue");
+                if(currentValue > 0 && $("#paket_row_" + id).hasClass("last_paket") && $("#paket_barang_" + id).val() !== null && $("#paket_barang_" + id).val() !== undefined) {
+                    autoPaket();
+                }
+            });
+
+            console.log(setter);
+
+            if(setter.barang !== undefined && setter.barang !== null) {
+                $(newSelectorBarang).append("<option value=\"" + setter.barang.uid + "\">" + setter.barang.nama.toUpperCase() + "</option>");
+                $(newSelectorBarang).select2("data", {id: setter.barang.uid, text: setter.barang.nama.toUpperCase()});
+                $(newSelectorBarang).trigger("change");
+
+                $(newPaketSatuan).html(setter.barang.satuan_terkecil_info.nama);
+            } else {
+                $(newPaketSatuan).html("-");
+            }
+
+            $(newPaketQty).append(newSelectorQty);
+            $(newSelectorQty).inputmask({
+                alias: 'decimal', rightAlign: true, placeholder: "0,00", prefix: "", groupSeparator: ".", autoGroup: false, digitsOptional: true
+            }).addClass("form-control qty_paket");
+
+            if(setter.qty !== undefined && setter.qty !== null) {
+                $(newSelectorQty).val(parseInt(setter.qty));
+            }
+
+            $(newPaketAksi).append(newSelectorDelete);
+            $(newSelectorDelete).addClass("btn btn-danger btn-sm paket_delete").html("<i class=\"fa fa-ban\"></i>");
+
+
+
+            $(newPaketRow).append(newPaketID);
+            $(newPaketRow).append(newPaketBarang);
+            $(newPaketRow).append(newPaketQty);
+            $(newPaketRow).append(newPaketSatuan);
+            $(newPaketRow).append(newPaketAksi);
+
+            //$(newPaketRow).addClass("last_paket");
+            $("#table-paket").append(newPaketRow);
+            rebasePaket();
+        }
+
+        function rebasePaket(){
+            $("#table-paket tbody tr").each(function(e) {
+                $(this).removeClass("last_paket");
+                var id = (e + 1);
+                $(this).attr({
+                    "id": "paket_row_" + id
+                });
+
+                $(this).find("td:eq(0)").html(id);
+
+                $(this).find("td:eq(1) select").attr({
+                    "id": "paket_barang_" + id
+                });
+
+                $(this).find("td:eq(2) input").attr({
+                    "id": "paket_qty_" + id
+                });
+
+                $(this).find("td:eq(4) button").attr({
+                    "id": "paket_delete_" + id
+                });
+            });
+            $("#table-paket tbody tr:last-child").addClass("last_paket");
+        }
+
+        $("body").on("keyup", ".qty_paket", function() {
+            var id = $(this).attr("id").split("_");
+            id = id[id.length - 1];
+
+            var currentValue = $(this).inputmask("unmaskedvalue");
+            if(currentValue > 0 && $("#paket_row_" + id).hasClass("last_paket") && $("#paket_barang_" + id).val() !== null && $("#paket_barang_" + id).val() !== undefined) {
+                autoPaket();
+            }
+        });
+
+        $("body").on("click", ".paket_delete", function() {
+            var id = $(this).attr("id").split("_");
+            id = id[id.length - 1];
+            if(!$("#paket_row_" + id).hasClass("last_paket")) {
+                $("#paket_row_" + id).remove();
+                rebasePaket();
+            }
+        });
 
 
 		function MyCustomUploadAdapterPlugin( editor ) {
@@ -556,7 +709,6 @@
 							autoGroup: false,
 							digitsOptional: true
 						}).val((setData[penjaminData[a].uid] == undefined) ? 0 : setData[penjaminData[a].uid].profit);
-						//console.log(setData[penjaminData[a].uid].profit);
 						$(newHargaRow).append(newCellPenjaminID);
 						$(newHargaRow).append(newCellPenjaminName);
 						$(newHargaRow).append(newCellPenjaminName);
@@ -761,11 +913,11 @@
 			var manufacture = $("#txt_manufacture").val();
 			var keterangan = editorKeterangan.getData();
 
-			console.log(nama);
+			/*console.log(nama);
 			console.log(kode);
 			console.log(kategori);
 			console.log(manufacture);
-			console.log(keterangan);
+			console.log(keterangan);*/
 		}
 
 		
@@ -859,6 +1011,29 @@
 			var nama = $("#txt_nama").val();
 			var kode = $("#txt_kode").val();
             var het = $("#txt_het").inputmask("unmaskedvalue");
+            var paketBarang = [];
+
+            $("#table-paket tbody tr").each(function(e) {
+                if(
+                    $(this).find("td:eq(1) select").val() !== undefined && $(this).find("td:eq(1) select").val() !== null &&
+                    $(this).find("td:eq(2) input").inputmask("unmaskedvalue") > 0
+                ) {
+                    paketBarang.push({
+                        barang: $(this).find("td:eq(1) select").val(),
+                        qty: $(this).find("td:eq(2) input").inputmask("unmaskedvalue")
+                    });
+                } else {
+                    paketBarang.push({
+                        barang: $(this).find("td:eq(1) select").val(),
+                        qty: $(this).find("td:eq(2) input").inputmask("unmaskedvalue")
+                    });
+                }
+            });
+
+            /*console.clear();
+            console.log(paketBarang);*/
+
+
 			if(nama != "" && kode != "" && het > 0) {
 				$(".action-panel").attr({
 					"disabled": "disabled"
@@ -949,9 +1124,7 @@
                             }
                         });
 
-                        console.log("Image Mode");
-                        console.log(monitoring);
-						$.ajax({
+                        $.ajax({
 							url:__HOSTAPI__ + "/Inventori",
 							async:false,
 							beforeSend: function(request) {
@@ -973,21 +1146,22 @@
                                 kandungan: kandungan,
 								penjaminList:penjaminList,
 								gudangMeta:gudangMeta,
-								monitoring:monitoring
+								monitoring:monitoring,
+                                paket:paketBarang
 							},
 							type:"POST",
 							success:function(response) {
 								if(response.response_package == 0) {
 									notification ("success", "Data berhasil diproses", 3000, "hasil_tambah");
 								} else {
-									console.log(response);
+									//console.log(response);
 								}
 								$(".action-panel").removeAttr("disabled");
 							},
 							error: function(response) {
 								$(".action-panel").removeAttr("disabled");
 								console.clear();
-								console.log(response);
+
 							}
 						});
 
@@ -1075,9 +1249,7 @@
                             });
                         }
                     });
-                    console.log("Non Image Mode");
-					console.log(monitoring);
-					$.ajax({
+                    $.ajax({
 						url:__HOSTAPI__ + "/Inventori",
 						async:false,
 						beforeSend: function(request) {
@@ -1099,11 +1271,11 @@
                             kandungan: kandungan,
 							penjaminList:penjaminList,
 							gudangMeta:gudangMeta,
-							monitoring:monitoring
+							monitoring:monitoring,
+                            paket:paketBarang
 						},
 						type:"POST",
 						success:function(response) {
-							console.log(response);
 							if(response.response_package == 0) {
 								notification ("success", "Data berhasil diproses", 3000, "hasil_tambah");
 							} else {
