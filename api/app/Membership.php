@@ -373,10 +373,15 @@ class Membership extends Utility
             ->execute();
 
         if(count($data['response_data']) > 0) {
-            return array(
+            /*return array(
                 'check' => $data,
                 'status' => 403,
                 'keterangan' => 'Email / NIK / Kontak telp / Kontak whatsapp sudah digunakan. Silahkan gunakan data lain'
+            );*/
+            return array(
+                'response_result' => 0,
+                'response_message' => 'Email / NIK sudah pernah di daftarkan',
+                'response_access' => ''
             );
         } else {
             $uid = parent::gen_uuid();
@@ -474,7 +479,8 @@ class Membership extends Utility
 
             return array(
                 'response_result' => $new['response_result'],
-                'response_message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar')
+                'response_message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar'),
+                'response_access' => ''
             );
         }
     }
