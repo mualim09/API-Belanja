@@ -1,0 +1,30 @@
+{
+	"response_result" : 3,
+	"response_message" : "Data Tersedia",
+	"response_token" : "",
+	"response_access" : [],
+	"response_data" : 
+	[
+		{
+			"uid" : "61c3fd79-7c55-4d70-b2fb-68ab4759002f",
+			"nama_produk" : "Beras Rantang Pelangi 10 kg",
+			"harga" : 110000,
+			"rating" : 4.5,
+			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/beras_1.png"
+		},
+		{
+			"uid" : "551704c1-a61d-4425-9f41-832137793298",
+			"nama_produk" : "Susu Dancouw",
+			"harga" : 85000,
+			"rating" : 5.0,
+			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/susu_1.png"
+		},
+		{
+			"uid" : "aa74e1db-4aa9-479d-936f-82d408bb41cd",
+			"nama_produk" : "Minyak Saniago",
+			"harga" : 45000,
+			"rating" : 4.0,
+			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/minyak_1.png"
+		}
+	]
+}
