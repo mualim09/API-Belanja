@@ -379,6 +379,7 @@ class Membership extends Utility
                 'keterangan' => 'Email / NIK / Kontak telp / Kontak whatsapp sudah digunakan. Silahkan gunakan data lain'
             );*/
             return array(
+                'response_package' => $parameter,
                 'response_result' => 0,
                 'response_message' => 'Email / NIK sudah pernah di daftarkan',
                 'response_access' => array()
