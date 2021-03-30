@@ -386,11 +386,6 @@ class Membership extends Utility
             ->execute();
 
         if(count($data['response_data']) > 0) {
-            /*return array(
-                'check' => $data,
-                'status' => 403,
-                'keterangan' => 'Email / NIK / Kontak telp / Kontak whatsapp sudah digunakan. Silahkan gunakan data lain'
-            );*/
             return array(
                 'response_package' => $parameter,
                 'response_result' => 0,
@@ -483,17 +478,9 @@ class Membership extends Utility
                 }
             }
 
-            /*return array(
-                'check' => $data,
-                'status' => 200,
-                'verif_result' => $Verif,
-                'query_result' => $new,
-                'message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar')
-            );*/
-
             return array(
                 'response_package' => $parameter,
-                'response_result' => (isset($new['response_result']) ? $new['response_result'] : 0),
+                'response_result' => $new['response_result'],
                 'response_message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar'),
                 'response_access' => array()
             );
