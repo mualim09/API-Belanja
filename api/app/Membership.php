@@ -437,8 +437,7 @@ class Membership extends Utility
                 ->execute();
             if($new['response_result'] > 0) {
                 if(intval($parameter['verif_by']) === 1) {
-                    $Mailer = new Mailer();
-                    $Verif = $Mailer->send(array(
+                    $Mailer = new Mailer(array(
                         'server' => 'mail.pondokcoder.com',
                         'secure_type' => false,
                         'port' => 587,
