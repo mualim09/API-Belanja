@@ -56,18 +56,74 @@
                 },
                 {
                     "data" : null, render: function(data, type, row, meta) {
-                        return "<h6 class=\"number_style\">" + number_format(row.het, 2, ".", ",") + "</h6>";
+                        return "<h6 class=\"number_style\" id=\"het_" + row.uid + "\">" + number_format(row.het, 2, ".", ",") + "</h6>";
                     }
                 },
                 {
                     "data" : null, render: function(data, type, row, meta) {
                         return "<div class=\"row\">" +
-                            "<div class=\"col-lg-6 text-right text-success\">S</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
+                            "<h6 class=\"number_style text-success\" id=\"hjs_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_jual_stokis : 0), 2, ".", ",") + "</h6>" +
+                            "</div>" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
+                            "<h6 class=\"number_style text-info\" id=\"hjm_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_jual_member : 0), 2, ".", ",") + "</h6>" +
+                            "</div>" +
+                            "</div>";
+                    }
+                },
+                {
+                    "data" : null, render: function(data, type, row, meta) {
+                        return "<div class=\"row\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
+                            "<h6 class=\"number_style text-success\" id=\"dts_" + row.uid + "\">" + ((row.harga !== undefined && row.harga !== null) ? row.harga.discount_type_stokis : "P") + "</h6>" +
+                            "</div>" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
+                            "<h6 class=\"number_style text-info\" id=\"dtm_" + row.uid + "\">" + ((row.harga !== undefined && row.harga !== null) ? row.harga.discount_type_member : "P") + "</h6>" +
+                            "</div>" +
+                            "</div>";
+                    }
+                },
+                {
+                    "data" : null, render: function(data, type, row, meta) {
+                        return "<div class=\"row\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
+                            "<h6 class=\"number_style text-success\" id=\"ds_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.discount_stokis : 0), 2, ".", ",") + "</h6>" +
+                            "</div>" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
+                            "<h6 class=\"number_style text-info\" id=\"dm_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.discount_member : 0), 2, ".", ",") + "</h6>" +
+                            "</div>" +
+                            "</div>";
+                    }
+                },
+                {
+                    "data" : null, render: function(data, type, row, meta) {
+                        return "<div class=\"row\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
+                            "<h6 class=\"number_style text-success\" id=\"has_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_akhir_stokis : 0), 2, ".", ",") + "</h6>" +
+                            "</div>" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
+                            "<h6 class=\"number_style text-info\" id=\"ham_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_akhir_member : 0), 2, ".", ",") + "</h6>" +
+                            "</div>" +
+                            "</div>";
+                    }
+                },
+                {
+                    "data" : null, render: function(data, type, row, meta) {
+                        return "<div class=\"row\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hscb_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.stokis_cashback : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
-                            "<div class=\"col-lg-6 text-right text-info\">M</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"hmcb_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.member_cashback : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
                             "</div>";
@@ -76,12 +132,12 @@
                 {
                     "data" : null, render: function(data, type, row, meta) {
                         return "<div class=\"row\">" +
-                            "<div class=\"col-lg-6 text-right text-success\">S</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hsry_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.stokis_royalti : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
-                            "<div class=\"col-lg-6 text-right text-info\">M</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"hmry_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.member_royalti : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
                             "</div>";
@@ -90,12 +146,12 @@
                 {
                     "data" : null, render: function(data, type, row, meta) {
                         return "<div class=\"row\">" +
-                            "<div class=\"col-lg-6 text-right text-success\">S</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hsrw_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.stokis_reward : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
-                            "<div class=\"col-lg-6 text-right text-info\">M</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"hmrw_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.member_reward : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
                             "</div>";
@@ -104,12 +160,12 @@
                 {
                     "data" : null, render: function(data, type, row, meta) {
                         return "<div class=\"row\">" +
-                            "<div class=\"col-lg-6 text-right text-success\">S</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hsip_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.stokis_insentif_personal : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
-                            "<div class=\"col-lg-6 text-right text-info\">M</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"hmip_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.member_insentif_personal : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
                             "</div>";
@@ -145,18 +201,130 @@
 
             $("#nama_produk").val($("#nama_" + uid).html());
             $("#tanggal_harga").val($("#txt_tanggal").val());
+            $("#het").val($("#het_" + uid).html());
 
-            $("#txt_cashback_member").val(parseInt($("#hmcb_" + uid).html()));
-            $("#txt_royalti_member").val(parseInt($("#hmry_" + uid).html()));
-            $("#txt_reward_member").val(parseInt($("#hmrw_" + uid).html()));
-            $("#txt_insentif_personal_member").val(parseInt($("#hmip_" + uid).html()));
+            $("#txt_cashback_member").val($("#hmcb_" + uid).html());
+            $("#txt_royalti_member").val($("#hmry_" + uid).html());
+            $("#txt_reward_member").val($("#hmrw_" + uid).html());
+            $("#txt_insentif_personal_member").val($("#hmip_" + uid).html());
 
-            $("#txt_cashback_stokis").val(parseInt($("#hscb_" + uid).html()));
-            $("#txt_royalti_stokis").val(parseInt($("#hsry_" + uid).html()));
-            $("#txt_reward_stokis").val(parseInt($("#hsrw_" + uid).html()));
-            $("#txt_insentif_personal_stokis").val(parseInt($("#hsip_" + uid).html()));
+            $("#txt_cashback_stokis").val($("#hscb_" + uid).html());
+            $("#txt_royalti_stokis").val($("#hsry_" + uid).html());
+            $("#txt_reward_stokis").val($("#hsrw_" + uid).html());
+            $("#txt_insentif_personal_stokis").val($("#hsip_" + uid).html());
+
+            $("#txt_harga_jual_stokis").val($("#hjs_" + uid).html());
+            $("#txt_tipe_diskon_stokis").val($("#dts_" + uid).html()).select2();
+            //$("#txt_tipe_diskon_stokis").trigger("change");
+            $("#txt_diskon_stokis").val($("#ds_" + uid).html());
+            $("#stokis_harga_akhir").html($("#has_" + uid).html());
+
+            $("#txt_harga_jual_member").val($("#hjm_" + uid).html());
+            $("#txt_tipe_diskon_member").val($("#dtm_" + uid).html()).select2();
+            //$("#txt_tipe_diskon_member").trigger("change");
+            $("#txt_diskon_member").val($("#dm_" + uid).html());
+            $("#member_harga_akhir").html($("#ham_" + uid).html());
+
+
+
 
             $("#form-harga").modal("show");
+        });
+
+        $("#txt_harga_jual_member").on("keyup", function () {
+            var m_hj = $("#txt_harga_jual_member").inputmask("unmaskedvalue");
+            var m_dt = $("#txt_tipe_diskon_member").val();
+            var m_d = $("#txt_diskon_member").inputmask("unmaskedvalue");
+            var m_ha = 0;
+            if(m_dt === "P") {
+                m_ha = m_hj - (m_d / 100 * m_hj);
+            } else if(m_dt === "N") {
+                m_ha = m_hj
+            } else {
+                m_ha = m_hj - m_d;
+            }
+            $("#member_harga_akhir").html(number_format(m_ha, 2, ".", ","));
+        });
+
+        $("#txt_diskon_member").on("keyup", function () {
+            var m_hj = $("#txt_harga_jual_member").inputmask("unmaskedvalue");
+            var m_dt = $("#txt_tipe_diskon_member").val();
+            var m_d = $("#txt_diskon_member").inputmask("unmaskedvalue");
+            var m_ha = 0;
+            if(m_dt === "P") {
+                m_ha = m_hj - (m_d / 100 * m_hj);
+            } else if(m_dt === "N") {
+                m_ha = m_hj
+            } else {
+                m_ha = m_hj - m_d;
+            }
+            $("#member_harga_akhir").html(number_format(m_ha, 2, ".", ","));
+        });
+
+        $("#txt_tipe_diskon_member").on("change", function () {
+            var m_hj = $("#txt_harga_jual_member").inputmask("unmaskedvalue");
+            var m_dt = $("#txt_tipe_diskon_member").val();
+            var m_d = $("#txt_diskon_member").inputmask("unmaskedvalue");
+            var m_ha = 0;
+            if(m_dt === "P") {
+                m_ha = m_hj - (m_d / 100 * m_hj);
+            } else if(m_dt === "N") {
+                m_ha = m_hj
+            } else {
+                m_ha = m_hj - m_d;
+            }
+            $("#member_harga_akhir").html(number_format(m_ha, 2, ".", ","));
+        });
+
+
+
+
+
+
+
+        $("#txt_harga_jual_stokis").on("keyup", function () {
+            var s_hj = $("#txt_harga_jual_stokis").inputmask("unmaskedvalue");
+            var s_dt = $("#txt_tipe_diskon_stokis").val();
+            var s_d = $("#txt_diskon_stokis").inputmask("unmaskedvalue");
+            var s_ha = 0;
+            if(s_dt === "P") {
+                s_ha = s_hj - (s_d / 100 * s_hj);
+            } else if(s_dt === "N") {
+                s_ha = s_hj
+            } else {
+                s_ha = s_hj - s_d;
+            }
+            $("#stokis_harga_akhir").html(number_format(s_ha, 2, ".", ","));
+        });
+
+        $("#txt_diskon_stokis").on("keyup", function () {
+            var s_hj = $("#txt_harga_jual_stokis").inputmask("unmaskedvalue");
+            var s_dt = $("#txt_tipe_diskon_stokis").val();
+            var s_d = $("#txt_diskon_stokis").inputmask("unmaskedvalue");
+            var s_ha = 0;
+            if(s_dt === "P") {
+                s_ha = s_hj - (s_d / 100 * s_hj);
+            } else if(s_dt === "N") {
+                s_ha = s_hj
+            } else {
+                s_ha = s_hj - s_d;
+            }
+            $("#stokis_harga_akhir").html(number_format(s_ha, 2, ".", ","));
+        });
+
+        $("#txt_tipe_diskon_stokis").on("change", function () {
+            var s_hj = $("#txt_harga_jual_stokis").inputmask("unmaskedvalue");
+            var s_dt = $("#txt_tipe_diskon_stokis").val();
+            var s_d = $("#txt_diskon_stokis").inputmask("unmaskedvalue");
+            var s_ha = 0;
+            if(s_dt === "P") {
+                s_ha = s_hj - (s_d / 100 * s_hj);
+            } else if(s_dt === "N") {
+                s_ha = s_hj
+            } else {
+                s_ha = s_hj - s_d;
+            }
+            $("#stokis_harga_akhir").html(number_format(s_ha, 2, ".", ","));
         });
 
         $("#btnProsesHarga").click(function () {
@@ -164,11 +332,35 @@
             var m_ry = $("#txt_royalti_member").inputmask("unmaskedvalue");
             var m_rw = $("#txt_reward_member").inputmask("unmaskedvalue");
             var m_ip = $("#txt_insentif_personal_member").inputmask("unmaskedvalue");
+            var m_hj = $("#txt_harga_jual_member").inputmask("unmaskedvalue");
+            var m_dt = $("#txt_tipe_diskon_member").val();
+            var m_d = $("#txt_diskon_member").inputmask("unmaskedvalue");
+            var m_ha = 0;
+            if(m_dt === "P") {
+                m_ha = m_hj - (m_d / 100 * m_hj);
+            } else if(m_dt === "N") {
+                m_ha = m_hj
+            } else {
+                m_ha = m_hj - m_d;
+            }
 
             var s_cb = $("#txt_cashback_stokis").inputmask("unmaskedvalue");
             var s_ry = $("#txt_royalti_stokis").inputmask("unmaskedvalue");
             var s_rw = $("#txt_reward_stokis").inputmask("unmaskedvalue");
             var s_ip = $("#txt_insentif_personal_stokis").inputmask("unmaskedvalue");
+            var s_hj = $("#txt_harga_jual_stokis").inputmask("unmaskedvalue");
+            var s_dt = $("#txt_tipe_diskon_stokis").val();
+            var s_d = $("#txt_diskon_stokis").inputmask("unmaskedvalue");
+            var s_ha = 0;
+            if(s_dt === "P") {
+                s_ha = s_hj - (s_d / 100 * s_hj);
+            } else if(s_dt === "N") {
+                s_ha = s_hj
+            } else {
+                s_ha = s_hj - s_d;
+            }
+
+
 
             Swal.fire({
                 title: "Data sudah benar?",
@@ -188,11 +380,20 @@
                             m_ry: m_ry,
                             m_rw: m_rw,
                             m_ip: m_ip,
+                            m_hj: m_hj,
+                            m_dt: m_dt,
+                            m_d: m_d,
+                            m_ha: m_ha,
+
 
                             s_cb: s_cb,
                             s_ry: s_ry,
                             s_rw: s_rw,
-                            s_ip: s_ip
+                            s_ip: s_ip,
+                            s_hj: s_hj,
+                            s_dt: s_dt,
+                            s_d: s_d,
+                            s_ha: s_ha
                         },
                         beforeSend: function(request) {
                             request.setRequestHeader("Authorization", "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>);
@@ -252,22 +453,49 @@
                                     <label>Tanggal</label>
                                     <input type="text" id="tanggal_harga" class="form-control" readonly />
                                 </div>
+                                <div class="col-6 col-md-6 form-group">
+                                    <label>HET</label>
+                                    <input type="text" id="het" class="form-control" readonly />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+
+                                </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-12">
                                     <table class="table table-bordered largeDataType">
                                         <thead class="thead-dark">
                                             <tr>
-                                                <th style="width: 30%;"></th>
-                                                <th style="width: 100px">Bonus Cashback</th>
-                                                <th style="width: 100px">Bonus Royalti</th>
-                                                <th style="width: 100px">Bonus Reward</th>
-                                                <th style="width: 100px">Insentif Personal</th>
+                                                <th style="width: 50px;"></th>
+                                                <th style="width: 90px">Harga Jual</th>
+                                                <th style="width: 90px">Tipe Diskon</th>
+                                                <th style="width: 90px">Diskon</th>
+                                                <th style="width: 90px">Harga Akhir</th>
+                                                <th style="width: 90px">Bonus Cashback</th>
+                                                <th style="width: 90px">Bonus Royalti</th>
+                                                <th style="width: 90px">Bonus Reward</th>
+                                                <th style="width: 90px">Insentif Personal</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td style="width: 30%;">Stokis</td>
+                                                <td style="width: 10%;">Stokis</td>
+                                                <td>
+                                                    <input type="text" id="txt_harga_jual_stokis" class="form-control editorHarga" />
+                                                </td>
+                                                <td>
+                                                    <select id="txt_tipe_diskon_stokis" class="form-control editorHarga">
+                                                        <option value="P">Percentage</option>
+                                                        <option value="A">Amount</option>
+                                                        <option selected value="N">Tidak Ada</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" id="txt_diskon_stokis" class="form-control editorHarga" />
+                                                </td>
+                                                <td class="number_style" id="stokis_harga_akhir"></td>
                                                 <td>
                                                     <input type="text" id="txt_cashback_stokis" class="form-control editorHarga" />
                                                 </td>
@@ -283,6 +511,20 @@
                                             </tr>
                                             <tr>
                                                 <td>Member</td>
+                                                <td>
+                                                    <input type="text" id="txt_harga_jual_member" class="form-control editorHarga" />
+                                                </td>
+                                                <td>
+                                                    <select id="txt_tipe_diskon_member" class="form-control editorHarga">
+                                                        <option value="P">Percentage</option>
+                                                        <option value="A">Amount</option>
+                                                        <option selected value="N">Tidak Ada</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" id="txt_diskon_member" class="form-control editorHarga" />
+                                                </td>
+                                                <td class="number_style" id="member_harga_akhir"></td>
                                                 <td>
                                                     <input type="text" id="txt_cashback_member" class="form-control editorHarga" />
                                                 </td>

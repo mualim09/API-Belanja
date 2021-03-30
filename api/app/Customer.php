@@ -24,6 +24,21 @@ class Customer extends Utility
         self::$query = new Query(self::$pdo);
     }
 
+    public function __GET__($parameter = array())
+    {
+        try {
+            switch ($parameter[1]) {
+                case 'get_customer_select2':
+                    return self::get_customer_select2($parameter);
+                    break;
+                default:
+                    return array();
+            }
+        } catch (QueryException $e) {
+            return 'Error => ' . $e;
+        }
+    }
+
     public function __POST__($parameter = array())
     {
         switch ($parameter['request']) {
@@ -31,6 +46,36 @@ class Customer extends Utility
                 return self::get_customer($parameter);
                 break;
         }
+    }
+
+    private function get_customer_select2($parameter) {
+        $data = self::$query
+            ->select('membership', array(
+                'uid',
+                'nik',
+                'nama',
+                'kategori',
+                'satuan_terkecil',
+                'created_at',
+                'updated_at'
+            ))
+            ->where(array(
+                'master_inv.deleted_at' => 'IS NULL',
+                'AND',
+                '(master_inv.kode_barang' => 'ILIKE ' . '\'%' . $_GET['search'] . '%\'',
+                'OR',
+                'master_inv.nama' => 'ILIKE ' . '\'%' . $_GET['search'] . '%\')'
+            ))
+            ->limit(10)
+            ->execute();
+
+        $autonum = 1;
+        foreach ($data['response_data'] as $key => $value) {
+            $data['response_data'][$key]['autonum'] = $autonum;
+
+            $autonum++;
+        }
+        return $data;
     }
 
     private function get_customer($parameter) {
