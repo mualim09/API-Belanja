@@ -67,6 +67,9 @@ class Membership extends Utility
             case 'register':
                 return self::register($parameter);
                 break;
+            case 'register_android':
+                return self::register_android($parameter);
+                break;
             default:
                 return array();
                 break;
@@ -347,6 +350,16 @@ class Membership extends Utility
             ));
         }
         return $worker;
+    }
+
+    private function register_android($parameter) {
+        $builder = $parameter;
+        $data = json_decode($parameter['data'], true);
+        foreach ($data as $key => $value) {
+            $builder[$key] = $value;
+        }
+
+        return self::register($builder);
     }
 
     private function register($parameter) {
