@@ -29,6 +29,9 @@ class Membership extends Utility
                 case 'detail':
                     return self::customer_detail($parameter[2]);
                     break;
+                case 'get_customer_select2':
+                    return self::get_customer_select2($parameter);
+                    break;
                 default:
                     return array();
                     break;
@@ -68,6 +71,64 @@ class Membership extends Utility
                 return array();
                 break;
         }
+    }
+
+    private function get_customer_select2($parameter) {
+        $data = self::$query
+            ->select('membership', array(
+                'uid',
+                'nik',
+                'nama',
+                'tempat_lahir',
+                'tanggal_lahir',
+                'email',
+                'kontak_telp',
+                'kontak_whatsapp',
+                'npwp',
+                'alamat_ktp',
+                'kelurahan',
+                'kecamatan',
+                'kabupaten',
+                'provinsi',
+                'kode_pos',
+                'alamat_domisili',
+                'rt',
+                'rw',
+                'patokan',
+                'kelurahan_domisili',
+                'kecamatan_domisili',
+                'kabupaten_domisili',
+                'provinsi_domisili',
+                'kode_pos_domisili',
+                'nomor_rekening',
+                'bank',
+                'nama_pemilik_rekening',
+                'nama_ahli_waris',
+                'hubungan_ahli_waris',
+                'kontak_telp_ahli_waris',
+                'kontak_whatsapp_ahli_waris',
+                'saldo',
+                'password',
+                'jenis_member',
+                'status_member'
+            ))
+            ->where(array(
+                'membership.deleted_at' => 'IS NULL',
+                'AND',
+                '(membership.nik' => 'ILIKE ' . '\'%' . $_GET['search'] . '%\'',
+                'OR',
+                'membership.nama' => 'ILIKE ' . '\'%' . $_GET['search'] . '%\')'
+            ))
+            ->limit(10)
+            ->execute();
+
+        $autonum = 1;
+        foreach ($data['response_data'] as $key => $value) {
+            $data['response_data'][$key]['autonum'] = $autonum;
+
+            $autonum++;
+        }
+        return $data;
     }
 
     public function customer_detail($parameter) {

@@ -1832,39 +1832,36 @@ class Inventori extends Utility
         $autonum = 1;
         foreach ($data['response_data'] as $key => $value) {
             $data['response_data'][$key]['autonum'] = $autonum;
-            $kategori_obat = self::get_kategori_obat_item($value['uid']);
-            foreach ($kategori_obat as $KOKey => $KOValue) {
-                $KategoriCaption = self::get_kategori_obat_detail($KOValue['kategori'])['response_data'][0]['nama'];
-                if(!empty($KategoriCaption)) {
-                    $kategori_obat[$KOKey]['kategori'] = $KategoriCaption;
-                }
-            }
-
-            $data['response_data'][$key]['kategori_obat'] = $kategori_obat;
             $data['response_data'][$key]['satuan_terkecil'] = self::get_satuan_detail($value['satuan_terkecil'])['response_data'][0];
             $data['response_data'][$key]['kategori'] = self::get_kategori_detail($value['kategori'])['response_data'][0];
-            //$data['response_data'][$key]['manufacture'] = self::get_manufacture_detail($value['manufacture'])['response_data'][0];
 
-            //Data Penjamin
-            /*$PenjaminObat = new Penjamin(self::$pdo);
-            $ListPenjaminObat = $PenjaminObat::get_penjamin_obat($value['uid'])['response_data'];
-            foreach ($ListPenjaminObat as $PenjaminKey => $PenjaminValue) {
-                $ListPenjaminObat[$PenjaminKey]['profit'] = floatval($PenjaminValue['profit']);
-            }
-            $data['response_data'][$key]['penjamin'] = $ListPenjaminObat;*/
 
-            //Cek Ketersediaan Stok
-            /*$TotalStock = 0;
-            $InventoriStockPopulator = self::get_item_batch($value['uid']);
-            if (count($InventoriStockPopulator['response_data']) > 0) {
-                foreach ($InventoriStockPopulator['response_data'] as $TotalKey => $TotalValue) {
-                    $TotalStock += floatval($TotalValue['stok_terkini']);
-                }
-                $data['response_data'][$key]['stok'] = $TotalStock;
-                $data['response_data'][$key]['batch'] = $InventoriStockPopulator['response_data'];
-            } else {
-                $data['response_data'][$key]['stok'] = 0;
-            }*/
+            $dataHarga = self::$query->select('strategi_penjualan', array(
+                'id', 'produk', 'tanggal',
+                'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
+                'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
+                'harga_jual_member',
+                'discount_type_member',
+                'discount_member',
+                'harga_akhir_member',
+
+                'harga_jual_stokis',
+                'discount_type_stokis',
+                'discount_stokis',
+                'harga_akhir_stokis'
+            ))
+                ->where(array(
+                    'strategi_penjualan.produk' => '= ?',
+                    'AND',
+                    'strategi_penjualan.tanggal' => '= ?',
+                    'AND',
+                    'strategi_penjualan.deleted_at' => 'IS NULL'
+                ), array(
+                    $value['uid'],
+                    date('Y-m-d')
+                ))
+                ->execute();
+            $data['response_data'][$key]['harga'] = $dataHarga['response_data'][0];
 
             $autonum++;
         }
@@ -2176,23 +2173,9 @@ class Inventori extends Utility
             //Prepare Image File
             $data['response_data'][$key]['image'] = file_exists('../images/produk/' . $value['uid'] . '.png');
 
-            //Konversi
-            //$data['response_data'][$key]['konversi'] = self::get_konversi($value['uid']);
-
-            //Penjamin
-            //$data['response_data'][$key]['penjamin'] = self::get_penjamin($value['uid']);
-
-            //Lokasi
-            //$data['response_data'][$key]['lokasi'] = self::get_rak($value['uid']);
-
-            //Monitoring
-            //$data['response_data'][$key]['monitoring'] = self::get_monitoring($value['uid']);
-
             //Satuan Terkecil
             $data['response_data'][$key]['satuan_terkecil_info'] = self::get_satuan_detail($value['satuan_terkecil'])['response_data'][0];
 
-            //Kandungan
-            //$data['response_data'][$key]['kandungan'] = self::get_kandungan($value['uid'])['response_data'];
 
             //Paket
             $getPaket = self::$query->select('master_inv_paket', array(
@@ -2210,6 +2193,36 @@ class Inventori extends Utility
                 $getPaket['response_data'][$pakKey]['barang'] = self::get_item_detail($pakValue['barang'])['response_data'][0];
             }
             $data['response_data'][$key]['paket'] = $getPaket['response_data'];
+
+
+
+
+            $dataHarga = self::$query->select('strategi_penjualan', array(
+                'id', 'produk', 'tanggal',
+                'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
+                'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
+                'harga_jual_member',
+                'discount_type_member',
+                'discount_member',
+                'harga_akhir_member',
+
+                'harga_jual_stokis',
+                'discount_type_stokis',
+                'discount_stokis',
+                'harga_akhir_stokis'
+            ))
+                ->where(array(
+                    'strategi_penjualan.produk' => '= ?',
+                    'AND',
+                    'strategi_penjualan.tanggal' => '= ?',
+                    'AND',
+                    'strategi_penjualan.deleted_at' => 'IS NULL'
+                ), array(
+                    $parameter,
+                    date('Y-m-d')
+                ))
+                ->execute();
+            $data['response_data'][$key]['harga'] = $dataHarga['response_data'][0];
         }
         return $data;
     }

@@ -37,14 +37,14 @@
                                 <th class="wrap_content">No</th>
                                 <th>Produk</th>
                                 <th>Harga HET</th>
-                                <th>Harga Jual</th>
-                                <th>Tipe Diskon</th>
-                                <th>Diskon</th>
-                                <th>Harga Akhir</th>
-                                <th>Bonus Cashback</th>
-                                <th>Bonus Royalti</th>
-                                <th>Bonus Reward</th>
-                                <th>Insentif Personal</th>
+                                <th style="width: 100px;">Harga Jual</th>
+                                <th style="width: 100px;">Tipe Diskon</th>
+                                <th style="width: 100px;">Diskon</th>
+                                <th style="width: 100px;">Harga Akhir</th>
+                                <th style="width: 100px;">Bonus Cashback</th>
+                                <th style="width: 100px;">Bonus Royalti</th>
+                                <th style="width: 100px;">Bonus Reward</th>
+                                <th style="width: 100px;">Insentif Personal</th>
                                 <th class="wrap_content">Aksi</th>
                             </tr>
                             </thead>

@@ -56,18 +56,18 @@
                 },
                 {
                     "data" : null, render: function(data, type, row, meta) {
-                        return "<h6 class=\"number_style\">" + number_format(row.het, 2, ".", ",") + "</h6>";
+                        return "<h6 class=\"number_style\" id=\"het_" + row.uid + "\">" + number_format(row.het, 2, ".", ",") + "</h6>";
                     }
                 },
                 {
                     "data" : null, render: function(data, type, row, meta) {
                         return "<div class=\"row\">" +
-                            "<div class=\"col-lg-6 text-right text-success\">S</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hjs_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_jual_stokis : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
-                            "<div class=\"col-lg-6 text-right text-info\">M</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"hjm_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_jual_member : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
                             "</div>";
@@ -76,12 +76,12 @@
                 {
                     "data" : null, render: function(data, type, row, meta) {
                         return "<div class=\"row\">" +
-                            "<div class=\"col-lg-6 text-right text-success\">S</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"dts_" + row.uid + "\">" + ((row.harga !== undefined && row.harga !== null) ? row.harga.discount_type_stokis : "P") + "</h6>" +
                             "</div>" +
-                            "<div class=\"col-lg-6 text-right text-info\">M</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"dtm_" + row.uid + "\">" + ((row.harga !== undefined && row.harga !== null) ? row.harga.discount_type_member : "P") + "</h6>" +
                             "</div>" +
                             "</div>";
@@ -90,12 +90,12 @@
                 {
                     "data" : null, render: function(data, type, row, meta) {
                         return "<div class=\"row\">" +
-                            "<div class=\"col-lg-6 text-right text-success\">S</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"ds_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.discount_stokis : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
-                            "<div class=\"col-lg-6 text-right text-info\">M</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"dm_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.discount_member : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
                             "</div>";
@@ -104,12 +104,12 @@
                 {
                     "data" : null, render: function(data, type, row, meta) {
                         return "<div class=\"row\">" +
-                            "<div class=\"col-lg-6 text-right text-success\">S</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"has_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_akhir_stokis : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
-                            "<div class=\"col-lg-6 text-right text-info\">M</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"ham_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_akhir_member : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
                             "</div>";
@@ -118,12 +118,12 @@
                 {
                     "data" : null, render: function(data, type, row, meta) {
                         return "<div class=\"row\">" +
-                            "<div class=\"col-lg-6 text-right text-success\">S</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hscb_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.stokis_cashback : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
-                            "<div class=\"col-lg-6 text-right text-info\">M</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"hmcb_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.member_cashback : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
                             "</div>";
@@ -132,12 +132,12 @@
                 {
                     "data" : null, render: function(data, type, row, meta) {
                         return "<div class=\"row\">" +
-                            "<div class=\"col-lg-6 text-right text-success\">S</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hsry_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.stokis_royalti : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
-                            "<div class=\"col-lg-6 text-right text-info\">M</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"hmry_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.member_royalti : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
                             "</div>";
@@ -146,12 +146,12 @@
                 {
                     "data" : null, render: function(data, type, row, meta) {
                         return "<div class=\"row\">" +
-                            "<div class=\"col-lg-6 text-right text-success\">S</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hsrw_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.stokis_reward : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
-                            "<div class=\"col-lg-6 text-right text-info\">M</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"hmrw_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.member_reward : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
                             "</div>";
@@ -160,12 +160,12 @@
                 {
                     "data" : null, render: function(data, type, row, meta) {
                         return "<div class=\"row\">" +
-                            "<div class=\"col-lg-6 text-right text-success\">S</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-success\">S</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hsip_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.stokis_insentif_personal : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
-                            "<div class=\"col-lg-6 text-right text-info\">M</div>" +
-                            "<div class=\"col-lg-6\">" +
+                            "<div class=\"col-lg-2 text-right text-info\">M</div>" +
+                            "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"hmip_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.member_insentif_personal : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
                             "</div>";
@@ -201,28 +201,29 @@
 
             $("#nama_produk").val($("#nama_" + uid).html());
             $("#tanggal_harga").val($("#txt_tanggal").val());
+            $("#het").val($("#het_" + uid).html());
 
-            $("#txt_cashback_member").val(parseInt($("#hmcb_" + uid).html()));
-            $("#txt_royalti_member").val(parseInt($("#hmry_" + uid).html()));
-            $("#txt_reward_member").val(parseInt($("#hmrw_" + uid).html()));
-            $("#txt_insentif_personal_member").val(parseInt($("#hmip_" + uid).html()));
+            $("#txt_cashback_member").val($("#hmcb_" + uid).html());
+            $("#txt_royalti_member").val($("#hmry_" + uid).html());
+            $("#txt_reward_member").val($("#hmrw_" + uid).html());
+            $("#txt_insentif_personal_member").val($("#hmip_" + uid).html());
 
-            $("#txt_cashback_stokis").val(parseInt($("#hscb_" + uid).html()));
-            $("#txt_royalti_stokis").val(parseInt($("#hsry_" + uid).html()));
-            $("#txt_reward_stokis").val(parseInt($("#hsrw_" + uid).html()));
-            $("#txt_insentif_personal_stokis").val(parseInt($("#hsip_" + uid).html()));
+            $("#txt_cashback_stokis").val($("#hscb_" + uid).html());
+            $("#txt_royalti_stokis").val($("#hsry_" + uid).html());
+            $("#txt_reward_stokis").val($("#hsrw_" + uid).html());
+            $("#txt_insentif_personal_stokis").val($("#hsip_" + uid).html());
 
-            $("#txt_harga_jual_stokis").val(parseInt($("#hjs_" + uid).html()));
+            $("#txt_harga_jual_stokis").val($("#hjs_" + uid).html());
             $("#txt_tipe_diskon_stokis").val($("#dts_" + uid).html()).select2();
-            $("#txt_tipe_diskon_stokis").trigger("change");
-            $("#txt_diskon_stokis").val(parseInt($("#ds_" + uid).html()));
-            $("#stokis_harga_akhir").html(parseInt($("#has_" + uid).html()));
+            //$("#txt_tipe_diskon_stokis").trigger("change");
+            $("#txt_diskon_stokis").val($("#ds_" + uid).html());
+            $("#stokis_harga_akhir").html($("#has_" + uid).html());
 
-            $("#txt_harga_jual_member").val(parseInt($("#hjm_" + uid).html()));
+            $("#txt_harga_jual_member").val($("#hjm_" + uid).html());
             $("#txt_tipe_diskon_member").val($("#dtm_" + uid).html()).select2();
-            $("#txt_tipe_diskon_member").trigger("change");
-            $("#txt_diskon_member").val(parseInt($("#dm_" + uid).html()));
-            $("#member_harga_akhir").html(parseInt($("#ham_" + uid).html()));
+            //$("#txt_tipe_diskon_member").trigger("change");
+            $("#txt_diskon_member").val($("#dm_" + uid).html());
+            $("#member_harga_akhir").html($("#ham_" + uid).html());
 
 
 
@@ -237,6 +238,8 @@
             var m_ha = 0;
             if(m_dt === "P") {
                 m_ha = m_hj - (m_d / 100 * m_hj);
+            } else if(m_dt === "N") {
+                m_ha = m_hj
             } else {
                 m_ha = m_hj - m_d;
             }
@@ -250,6 +253,8 @@
             var m_ha = 0;
             if(m_dt === "P") {
                 m_ha = m_hj - (m_d / 100 * m_hj);
+            } else if(m_dt === "N") {
+                m_ha = m_hj
             } else {
                 m_ha = m_hj - m_d;
             }
@@ -263,6 +268,8 @@
             var m_ha = 0;
             if(m_dt === "P") {
                 m_ha = m_hj - (m_d / 100 * m_hj);
+            } else if(m_dt === "N") {
+                m_ha = m_hj
             } else {
                 m_ha = m_hj - m_d;
             }
@@ -282,6 +289,8 @@
             var s_ha = 0;
             if(s_dt === "P") {
                 s_ha = s_hj - (s_d / 100 * s_hj);
+            } else if(s_dt === "N") {
+                s_ha = s_hj
             } else {
                 s_ha = s_hj - s_d;
             }
@@ -295,6 +304,8 @@
             var s_ha = 0;
             if(s_dt === "P") {
                 s_ha = s_hj - (s_d / 100 * s_hj);
+            } else if(s_dt === "N") {
+                s_ha = s_hj
             } else {
                 s_ha = s_hj - s_d;
             }
@@ -308,6 +319,8 @@
             var s_ha = 0;
             if(s_dt === "P") {
                 s_ha = s_hj - (s_d / 100 * s_hj);
+            } else if(s_dt === "N") {
+                s_ha = s_hj
             } else {
                 s_ha = s_hj - s_d;
             }
@@ -325,6 +338,8 @@
             var m_ha = 0;
             if(m_dt === "P") {
                 m_ha = m_hj - (m_d / 100 * m_hj);
+            } else if(m_dt === "N") {
+                m_ha = m_hj
             } else {
                 m_ha = m_hj - m_d;
             }
@@ -339,6 +354,8 @@
             var s_ha = 0;
             if(s_dt === "P") {
                 s_ha = s_hj - (s_d / 100 * s_hj);
+            } else if(s_dt === "N") {
+                s_ha = s_hj
             } else {
                 s_ha = s_hj - s_d;
             }
@@ -436,6 +453,10 @@
                                     <label>Tanggal</label>
                                     <input type="text" id="tanggal_harga" class="form-control" readonly />
                                 </div>
+                                <div class="col-6 col-md-6 form-group">
+                                    <label>HET</label>
+                                    <input type="text" id="het" class="form-control" readonly />
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
@@ -466,14 +487,15 @@
                                                 </td>
                                                 <td>
                                                     <select id="txt_tipe_diskon_stokis" class="form-control editorHarga">
+                                                        <option value="P">Percentage</option>
                                                         <option value="A">Amount</option>
-                                                        <option selected value="P">Percentage</option>
+                                                        <option selected value="N">Tidak Ada</option>
                                                     </select>
                                                 </td>
                                                 <td>
                                                     <input type="text" id="txt_diskon_stokis" class="form-control editorHarga" />
                                                 </td>
-                                                <td id="stokis_harga_akhir"></td>
+                                                <td class="number_style" id="stokis_harga_akhir"></td>
                                                 <td>
                                                     <input type="text" id="txt_cashback_stokis" class="form-control editorHarga" />
                                                 </td>
@@ -494,14 +516,15 @@
                                                 </td>
                                                 <td>
                                                     <select id="txt_tipe_diskon_member" class="form-control editorHarga">
+                                                        <option value="P">Percentage</option>
                                                         <option value="A">Amount</option>
-                                                        <option selected value="P">Percentage</option>
+                                                        <option selected value="N">Tidak Ada</option>
                                                     </select>
                                                 </td>
                                                 <td>
                                                     <input type="text" id="txt_diskon_member" class="form-control editorHarga" />
                                                 </td>
-                                                <td id="member_harga_akhir"></td>
+                                                <td class="number_style" id="member_harga_akhir"></td>
                                                 <td>
                                                     <input type="text" id="txt_cashback_member" class="form-control editorHarga" />
                                                 </td>
