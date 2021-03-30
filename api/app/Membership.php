@@ -478,6 +478,7 @@ class Membership extends Utility
             );*/
 
             return array(
+                'response_package' => $parameter,
                 'response_result' => (isset($new['response_result']) ? $new['response_result'] : 0),
                 'response_message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar'),
                 'response_access' => array()
