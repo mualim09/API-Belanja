@@ -1,0 +1,9 @@
+[24-Mar-2021 09:38:03 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function file_get_content() in /home/pondokco/belanjasukses.pondokcoder.com/json_tes/load_produk.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/pondokco/belanjasukses.pondokcoder.com/json_tes/load_produk.php on line 8
+[24-Mar-2021 09:38:15 UTC] PHP Notice:  Undefined index: page in /home/pondokco/belanjasukses.pondokcoder.com/json_tes/load_produk.php on line 4
+[24-Mar-2021 09:38:15 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function file_get_content() in /home/pondokco/belanjasukses.pondokcoder.com/json_tes/load_produk.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/pondokco/belanjasukses.pondokcoder.com/json_tes/load_produk.php on line 8
