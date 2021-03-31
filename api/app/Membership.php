@@ -67,6 +67,9 @@ class Membership extends Utility
             case 'register':
                 return self::register($parameter);
                 break;
+            case 'register_android':
+                return self::register_android($parameter);
+                break;
             default:
                 return array();
                 break;
@@ -349,6 +352,16 @@ class Membership extends Utility
         return $worker;
     }
 
+    private function register_android($parameter) {
+        $builder = $parameter;
+        $data = json_decode($parameter['data'], true);
+        foreach ($data as $key => $value) {
+            $builder[$key] = $value;
+        }
+
+        return self::register($builder);
+    }
+
     private function register($parameter) {
         //Check Email
         $data = self::$query->select('membership', array(
@@ -374,9 +387,10 @@ class Membership extends Utility
 
         if(count($data['response_data']) > 0) {
             return array(
-                'check' => $data,
-                'status' => 403,
-                'keterangan' => 'Email / NIK / Kontak telp / Kontak whatsapp sudah digunakan. Silahkan gunakan data lain'
+                'response_package' => $parameter,
+                'response_result' => 0,
+                'response_message' => 'Email / NIK sudah pernah di daftarkan',
+                'response_access' => array()
             );
         } else {
             $uid = parent::gen_uuid();
@@ -423,8 +437,7 @@ class Membership extends Utility
                 ->execute();
             if($new['response_result'] > 0) {
                 if(intval($parameter['verif_by']) === 1) {
-                    $Mailer = new Mailer();
-                    $Verif = $Mailer->send(array(
+                    $Mailer = new Mailer(array(
                         'server' => 'mail.pondokcoder.com',
                         'secure_type' => false,
                         'port' => 587,
@@ -464,17 +477,11 @@ class Membership extends Utility
                 }
             }
 
-            /*return array(
-                'check' => $data,
-                'status' => 200,
-                'verif_result' => $Verif,
-                'query_result' => $new,
-                'message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar')
-            );*/
-
             return array(
+                'response_package' => $parameter,
                 'response_result' => $new['response_result'],
-                'response_message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar')
+                'response_message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar'),
+                'response_access' => array()
             );
         }
     }
