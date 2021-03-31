@@ -76,7 +76,8 @@ class Membership extends Utility
         }
     }
 
-    private function get_customer_select2($parameter) {
+    private function get_customer_select2($parameter)
+    {
         $data = self::$query
             ->select('membership', array(
                 'uid',
@@ -113,14 +114,14 @@ class Membership extends Utility
                 'saldo',
                 'password',
                 'jenis_member',
-                'status_member'
+                'status_member',
             ))
             ->where(array(
                 'membership.deleted_at' => 'IS NULL',
                 'AND',
                 '(membership.nik' => 'ILIKE ' . '\'%' . $_GET['search'] . '%\'',
                 'OR',
-                'membership.nama' => 'ILIKE ' . '\'%' . $_GET['search'] . '%\')'
+                'membership.nama' => 'ILIKE ' . '\'%' . $_GET['search'] . '%\')',
             ))
             ->limit(10)
             ->execute();
@@ -134,7 +135,8 @@ class Membership extends Utility
         return $data;
     }
 
-    public function customer_detail($parameter) {
+    public function customer_detail($parameter)
+    {
         $data = self::$query->select('membership', array(
             'uid',
             'nik',
@@ -174,14 +176,14 @@ class Membership extends Utility
             'jenis_member',
             'status_member',
             'created_at',
-            'updated_at'
+            'updated_at',
         ))
             ->where(array(
                 'membership.deleted_at' => 'IS NULL',
                 'AND',
-                'membership.uid' => '= ?'
+                'membership.uid' => '= ?',
             ), array(
-                $parameter
+                $parameter,
             ))
             ->execute();
         $Bank = new Bank(self::$pdo);
@@ -193,20 +195,22 @@ class Membership extends Utility
         return $data;
     }
 
-    public function check_nik($parameter) {
+    public function check_nik($parameter)
+    {
         $data = self::$query->select('membership', array(
-            'uid'
+            'uid',
         ))
             ->where(array(
-                'membership.nik' => '= ?'
+                'membership.nik' => '= ?',
             ), array(
-                $parameter['nik']
+                $parameter['nik'],
             ))
             ->execute();
         return $data;
     }
 
-    private function edit_customer($parameter) {
+    private function edit_customer($parameter)
+    {
         $Authorization = new Authorization();
         $UserData = $Authorization->readBearerToken($parameter['access_token']);
         $uid = parent::gen_uuid();
@@ -249,20 +253,21 @@ class Membership extends Utility
             'status_member' => 'N',
             'creator' => $UserData['data']->uid,
             'created_at' => parent::format_date(),
-            'updated_at' => parent::format_date()
+            'updated_at' => parent::format_date(),
         ))
             ->where(array(
                 'membership.deleted_at' => 'IS NULL',
                 'AND',
-                'membership.uid' => '= ?'
+                'membership.uid' => '= ?',
             ), array(
-                $parameter['uid']
+                $parameter['uid'],
             ))
             ->execute();
         return $process;
     }
 
-    private function tambah_customer($parameter) {
+    private function tambah_customer($parameter)
+    {
         $Authorization = new Authorization();
         $UserData = $Authorization->readBearerToken($parameter['access_token']);
         $uid = parent::gen_uuid();
@@ -306,7 +311,7 @@ class Membership extends Utility
             'status_member' => 'N',
             'creator' => $UserData['data']->uid,
             'created_at' => parent::format_date(),
-            'updated_at' => parent::format_date()
+            'updated_at' => parent::format_date(),
         ))
             ->execute();
         return $process;
@@ -320,9 +325,9 @@ class Membership extends Utility
         $worker = self::$query
             ->delete($parameter[6])
             ->where(array(
-                $parameter[6] . '.uid' => '= ?'
+                $parameter[6] . '.uid' => '= ?',
             ), array(
-                $parameter[7]
+                $parameter[7],
             ))
             ->execute();
         if ($worker['response_result'] > 0) {
@@ -335,7 +340,7 @@ class Membership extends Utility
                     'action',
                     'logged_at',
                     'status',
-                    'login_id'
+                    'login_id',
                 ),
                 'value' => array(
                     $parameter[7],
@@ -344,15 +349,16 @@ class Membership extends Utility
                     'D',
                     parent::format_date(),
                     'N',
-                    $UserData['data']->log_id
+                    $UserData['data']->log_id,
                 ),
-                'class' => __CLASS__
+                'class' => __CLASS__,
             ));
         }
         return $worker;
     }
 
-    private function register_android($parameter) {
+    private function register_android($parameter)
+    {
         $builder = $parameter;
         $data = json_decode($parameter['data'], true);
         foreach ($data as $key => $value) {
@@ -362,10 +368,11 @@ class Membership extends Utility
         return self::register($builder);
     }
 
-    private function register($parameter) {
+    private function register($parameter)
+    {
         //Check Email
         $data = self::$query->select('membership', array(
-            'uid'
+            'uid',
         ))
             ->where(array(
                 '(membership.email' => '= ?',
@@ -376,21 +383,21 @@ class Membership extends Utility
                 'OR',
                 'membership.kontak_whatsapp' => '= ?)',
                 'AND',
-                'membership.deleted_at' => 'IS NULL'
+                'membership.deleted_at' => 'IS NULL',
             ), array(
                 $parameter['email'],
                 $parameter['nik'],
                 $parameter['kontak_telp'],
-                $parameter['kontak_whatsapp']
+                $parameter['kontak_whatsapp'],
             ))
             ->execute();
 
-        if(count($data['response_data']) > 0) {
+        if (count($data['response_data']) > 0) {
             return array(
                 'response_package' => $parameter,
                 'response_result' => 0,
                 'response_message' => 'Email / NIK sudah pernah di daftarkan',
-                'response_access' => array()
+                'response_access' => array(),
             );
         } else {
             $uid = parent::gen_uuid();
@@ -432,11 +439,11 @@ class Membership extends Utility
                 'jenis_member' => $parameter['jenis_member'],
                 'status_member' => 'N',
                 'created_at' => parent::format_date(),
-                'updated_at' => parent::format_date()
+                'updated_at' => parent::format_date(),
             ))
                 ->execute();
-            if($new['response_result'] > 0) {
-                if(intval($parameter['verif_by']) === 1) {
+            if ($new['response_result'] > 0) {
+                if (intval($parameter['verif_by']) === 1) {
                     $Mailer = new Mailer(array(
                         'server' => 'mail.pondokcoder.com',
                         'secure_type' => false,
@@ -447,32 +454,32 @@ class Membership extends Utility
                         'fromName' => 'Belanja Sukses',
                         'replyMail' => 'belanja_sukses@pondokcoder.com',
                         'replyName' => 'Belanja Sukses',
-                        'template' => 'miscellaneous/email_template/register.phtml'
+                        'template' => 'miscellaneous/email_template/register.phtml',
                     ), array(
                         '__HOSTNAME__' => __HOSTNAME__,
                         '__HOSTAPI__' => __HOSTAPI__,
                         '__PC_CUSTOMER__' => __PC_CUSTOMER__,
                         '__PASSWORD__' => $password,
                         '__NAMA__' => $parameter['nama'],
-                        '__UID__' => $uid
-                    ), 'Registrasi ' . __PC_CUSTOMER__,'Uji html','
-                    Selamat Bergabung, Anda telah terdaftar menjadi member pada ' . __PC_CUSTOMER__ .  '. Untuk menyelesaikan pendaftaran silahkan akses link ' . __HOSTAPI__ . '/Membership/activate/' . $uid, array(
-                        'tanaka@pondokcoder.com' => 'Hendry Tanaka'
+                        '__UID__' => $uid,
+                    ), 'Registrasi ' . __PC_CUSTOMER__, 'Uji html', '
+                    Selamat Bergabung, Anda telah terdaftar menjadi member pada ' . __PC_CUSTOMER__ . '. Untuk menyelesaikan pendaftaran silahkan akses link ' . __HOSTAPI__ . '/Membership/activate/' . $uid, array(
+                        'tanaka@pondokcoder.com' => 'Hendry Tanaka',
                     ));
-                } else if(intval($parameter['verif_by']) === 2) { //Whatsapp
+                } else if (intval($parameter['verif_by']) === 2) { //Whatsapp
                     $Verif = parent::postUrl('https://console.zenziva.net/wareguler/api/sendWA/', array(
                         'userkey' => __ZENZIVA_WA_USERKEY__,
                         'passkey' => __ZENZIVA_WA_PASSKEY__,
                         'to' => $parameter['kontak_whatsapp'],
                         //'link' => __HOSTAPI__ . '/Membership/activate/' . $uid,
-                        'message' => 'Belanja Sukses! Selamat bergabung dengan kami. Password Akun Anda adalah ' . $password
+                        'message' => 'Belanja Sukses! Selamat bergabung dengan kami. Password Akun Anda adalah ' . $password,
                     ));
                 } else { //SMS
                     $Verif = parent::postUrl('https://console.zenziva.net/reguler/api/sendsms/', array(
                         'userkey' => __ZENZIVA_WA_USERKEY__,
                         'passkey' => __ZENZIVA_WA_PASSKEY__,
                         'to' => $parameter['kontak_telp'],
-                        'message' => 'Belanja Sukses! Selamat bergabung dengan kami. Password Akun Anda adalah ' . $password
+                        'message' => 'Belanja Sukses! Selamat bergabung dengan kami. Password Akun Anda adalah ' . $password,
                     ));
                 }
             }
@@ -481,23 +488,24 @@ class Membership extends Utility
                 'response_package' => $parameter,
                 'response_result' => $new['response_result'],
                 'response_message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar'),
-                'response_access' => array()
+                'response_access' => array(),
             );
         }
     }
 
-    private function get_customer($parameter) {
+    private function get_customer($parameter)
+    {
         $Authorization = new Authorization();
         $UserData = $Authorization->readBearerToken($parameter['access_token']);
 
         if (isset($parameter['search']['value']) && !empty($parameter['search']['value'])) {
-            if($parameter['jenis'] === 'A') {
+            if ($parameter['jenis'] === 'A') {
                 $paramData = array(
                     'membership.deleted_at' => 'IS NULL',
                     'AND',
                     '(membership.nama' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\'',
                     'OR',
-                    'membership.nik' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\')'
+                    'membership.nik' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\')',
                 );
 
                 $paramValue = array();
@@ -509,16 +517,16 @@ class Membership extends Utility
                     'AND',
                     '(membership.nama' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\'',
                     'OR',
-                    'membership.nik' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\')'
+                    'membership.nik' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\')',
                 );
 
                 $paramValue = array($parameter['jenis']);
             }
 
         } else {
-            if($parameter['jenis'] === 'A') {
+            if ($parameter['jenis'] === 'A') {
                 $paramData = array(
-                    'membership.deleted_at' => 'IS NULL'
+                    'membership.deleted_at' => 'IS NULL',
                 );
 
                 $paramValue = array();
@@ -526,13 +534,12 @@ class Membership extends Utility
                 $paramData = array(
                     'membership.deleted_at' => 'IS NULL',
                     'AND',
-                    'membership.jenis_member' => '= ?'
+                    'membership.jenis_member' => '= ?',
                 );
 
                 $paramValue = array($parameter['jenis']);
             }
         }
-
 
         if ($parameter['length'] < 0) {
             $data = self::$query->select('membership', array(
@@ -572,7 +579,7 @@ class Membership extends Utility
                 'jenis_member',
                 'status_member',
                 'created_at',
-                'updated_at'
+                'updated_at',
             ))
                 ->where($paramData, $paramValue)
                 ->execute();
@@ -614,7 +621,7 @@ class Membership extends Utility
                 'jenis_member',
                 'status_member',
                 'created_at',
-                'updated_at'
+                'updated_at',
             ))
                 ->where($paramData, $paramValue)
                 ->offset(intval($parameter['start']))
@@ -626,20 +633,19 @@ class Membership extends Utility
         $autonum = intval($parameter['start']) + 1;
         foreach ($data['response_data'] as $key => $value) {
 
-
             $data['response_data'][$key]['autonum'] = $autonum;
             $data['response_data'][$key]['created_at_parsed'] = date('d F Y', strtotime($value['created_at']));
             /*if(file_exists('../images/produk/' . $value['uid'] . '.png')) {
-                $data['response_data'][$key]['image'] = 'images/produk/' . $value['uid'] . '.png';
+            $data['response_data'][$key]['image'] = 'images/produk/' . $value['uid'] . '.png';
             } else {
-                $data['response_data'][$key]['image'] = 'images/product.png';
+            $data['response_data'][$key]['image'] = 'images/product.png';
             }*/
 
             $autonum++;
         }
 
         $itemTotal = self::$query->select('membership', array(
-            'uid'
+            'uid',
         ))
             ->where($paramData, $paramValue)
             ->execute();
@@ -652,8 +658,8 @@ class Membership extends Utility
         return $data;
     }
 
-
-    private function login($parameter) {
+    private function login($parameter)
+    {
         $responseBuilder = array();
         $query = self::$query->select('membership', array(
             'uid',
@@ -690,22 +696,28 @@ class Membership extends Utility
             'saldo',
             'password',
             'jenis_member',
-            'status_member'
+            'status_member',
         ))
-            ->where(array(), array())
+            ->where(array(
+                'membership.email' => '= ?',
+                'AND',
+                'membership.deleted_at' => 'IS NULL',
+            ), array(
+                $parameter['email']
+            ))
             ->execute();
         //$query->execute(array($parameter['email']));
 
-        if(count($query['response_data']) > 0) {
+        if (count($query['response_data']) > 0) {
             //$read = $query->fetchAll(\PDO::FETCH_ASSOC);
             $read = $query['response_data'];
-            if(password_verify($parameter['password'], $read[0]['password'])) {
+            if (password_verify($parameter['password'], $read[0]['password'])) {
 
                 $log = parent::log(array(
                     'type' => 'login',
-                    'column' => array('user_uid','login_meta','logged_at'),
-                    'value' => array($read[0]['uid'],'[' . $read[0]['uid'] . '][' . $read[0]['email'] . '] Success Logged In.', parent::format_date()),
-                    'class' => 'User'
+                    'column' => array('user_uid', 'login_meta', 'logged_at'),
+                    'value' => array($read[0]['uid'], '[' . $read[0]['uid'] . '][' . $read[0]['email'] . '] Success Logged In.', parent::format_date()),
+                    'class' => 'User',
                 ));
 
                 //Register JWT
@@ -718,7 +730,7 @@ class Membership extends Utility
                     'uid' => $read[0]['uid'],
                     'email' => $read[0]['email'],
                     'nama' => $read[0]['nama'],
-                    'log_id' => $log
+                    'log_id' => $log,
                 );
                 //$secret_key = bin2hex(random_bytes(32));
                 $secret_key = file_get_contents('taknakal.pub');
@@ -756,4 +768,3 @@ class Membership extends Utility
         return $responseBuilder;
     }
 }
-?>
