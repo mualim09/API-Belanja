@@ -116,7 +116,19 @@ try {
                 $unauthorized = true;
             }
 		} else if($_SERVER['REQUEST_METHOD'] === 'GET') {
-            if($requestTarget == 'PondokCoder\\Inventori') {
+            if($requestTarget == 'PondokCoder\\Membership') {
+                if($ParameterBuilder[0] === 'activate') {
+                    $unauthorized = false;
+                    $ClassMethod = call_user_func_array('PondokCoder\\Membership::__GET__', array($ParameterBuilder));
+                    echo json_encode($ClassMethod);
+                } else if($ParameterBuilder[0] === 'activate') {
+                    $unauthorized = false;
+                    $ClassMethod = call_user_func_array('PondokCoder\\Membership::__GET__', array($ParameterBuilder));
+                    echo json_encode($ClassMethod);
+                } else {
+                    $unauthorized = true;
+                }
+            } else if($requestTarget == 'PondokCoder\\Inventori') {
                 $unauthorized = false;
                 $ClassMethod = call_user_func_array('PondokCoder\\Inventori::__GET__', array($ParameterBuilder));
                 echo json_encode($ClassMethod);
