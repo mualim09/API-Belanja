@@ -241,6 +241,10 @@ class Inventori extends Utility
                 return self::tambah_item_keranjang($parameter);
                 break;
 
+            case 'tambah_order_android':
+                return self::tambah_order_android($parameter);
+                break;
+
             default:
                 return $parameter;
                 break;
@@ -342,6 +346,21 @@ class Inventori extends Utility
             'response_message' => ($proceed['response_result'] > 0 && $proceedDetail['response_result'] > 0) ? 'Keranjang Berhasil Ditambahkan' : 'Keranjang Gagal Ditambahkan'
         );
     }
+
+    private function tambah_order($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+        //Get Keranjang
+
+        //$proceed = self::$query->insert('');
+        return array();
+    }
+
+    private function tambah_order_android($parameter) {
+        $parameter['created_on'] = 'A';
+        return self::tambah_order($parameter);
+    }
+
 
     private function get_keranjang($parameter) {
         $Authorization = new Authorization();

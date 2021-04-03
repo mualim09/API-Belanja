@@ -444,7 +444,8 @@ class Membership extends Utility
                 ->execute();
             if ($new['response_result'] > 0) {
                 if (intval($parameter['verif_by']) === 1) {
-                    $Mailer = new Mailer(array(
+                    $Mailer = new Mailer();
+                    $Verif = $Mailer->send(array(
                         'server' => 'mail.pondokcoder.com',
                         'secure_type' => false,
                         'port' => 587,
@@ -454,18 +455,26 @@ class Membership extends Utility
                         'fromName' => 'Belanja Sukses',
                         'replyMail' => 'belanja_sukses@pondokcoder.com',
                         'replyName' => 'Belanja Sukses',
-                        'template' => 'miscellaneous/email_template/register.phtml',
+                        'template' => '../miscellaneous/email_template/register.phtml',
                     ), array(
                         '__HOSTNAME__' => __HOSTNAME__,
                         '__HOSTAPI__' => __HOSTAPI__,
                         '__PC_CUSTOMER__' => __PC_CUSTOMER__,
                         '__PASSWORD__' => $password,
                         '__NAMA__' => $parameter['nama'],
-                        '__UID__' => $uid,
+                        '__UID__' => $uid
                     ), 'Registrasi ' . __PC_CUSTOMER__, 'Uji html', '
-                    Selamat Bergabung, Anda telah terdaftar menjadi member pada ' . __PC_CUSTOMER__ . '. Untuk menyelesaikan pendaftaran silahkan akses link ' . __HOSTAPI__ . '/Membership/activate/' . $uid, array(
+                    Selamat Bergabung, Anda telah terdaftar menjadi member pada ' . __PC_CUSTOMER__ . '. Password Anda : ' . $password . '.Untuk menyelesaikan pendaftaran silahkan akses link ' . __HOSTAPI__ . '/Membership/activate/' . $uid, array(
                         'tanaka@pondokcoder.com' => 'Hendry Tanaka',
                     ));
+
+                    /*$hard = self::$query->hard_delete('membership')
+                        ->where(array(
+                                'membership.uid' => '= ?'
+                            ), array(
+                                $uid
+                            ))
+                        ->execute();*/
                 } else if (intval($parameter['verif_by']) === 2) { //Whatsapp
                     $Verif = parent::postUrl('https://console.zenziva.net/wareguler/api/sendWA/', array(
                         'userkey' => __ZENZIVA_WA_USERKEY__,
@@ -482,14 +491,22 @@ class Membership extends Utility
                         'message' => 'Belanja Sukses! Selamat bergabung dengan kami. Password Akun Anda adalah ' . $password,
                     ));
                 }
+                return array(
+                    'response_package' => $parameter,
+                    'verif' => $Verif,
+                    'response_result' => $new['response_result'],
+                    'response_message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar'),
+                    'response_access' => array(),
+                );
+            } else {
+                return array(
+                    'response_package' => $parameter,
+                    'verif' => 'Not Verified',
+                    'response_result' => $new['response_result'],
+                    'response_message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar'),
+                    'response_access' => array(),
+                );
             }
-
-            return array(
-                'response_package' => $parameter,
-                'response_result' => $new['response_result'],
-                'response_message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar'),
-                'response_access' => array(),
-            );
         }
     }
 
