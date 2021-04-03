@@ -2499,7 +2499,8 @@ class Inventori extends Utility
                 'harga_akhir_stokis' => 0
             );
         }
-        return $data['response_data'][0];
+        $data['response_data'] = $data['response_data'][0];
+        return $data;
     }
 
     public function get_kandungan($parameter) {
