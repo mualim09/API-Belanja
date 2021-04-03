@@ -21,7 +21,6 @@ audio/
 document/
 client/template/
 client/plugins/
-api/index.php
 api/sync.php
 api/constant.php
 api/app/Connection.php
