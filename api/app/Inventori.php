@@ -336,7 +336,6 @@ class Inventori extends Utility
         }
 
         return array(
-            'detail' => $proceedDetail,
             'response_result' => ($proceed['response_result'] > 0 && $proceedDetail['response_result'] > 0) ? 1 : 0,
             'response_message' => ($proceed['response_result'] > 0 && $proceedDetail['response_result'] > 0) ? 'Keranjang Berhasil Ditambahkan' : 'Keranjang Gagal Ditambahkan'
         );
