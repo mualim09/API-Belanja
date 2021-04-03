@@ -79,7 +79,7 @@ try {
 		$jwt = JWT::encode($payload, $key);
 
 
-		header('Content-Type: application/json');
+
 		
 		$exclude_auth = array('login', 'get_module', 'register', 'register_android');
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -93,6 +93,7 @@ try {
 
                 $unauthorized = false;
                 if(in_array($ParameterBuilder['request'], $exclude_auth)) {
+                    header('Content-Type: application/json');
                     if($requestTarget == 'PondokCoder\\Pegawai') {
                         $ClassMethod = call_user_func_array('PondokCoder\\Pegawai::__POST__', array($ParameterBuilder));
                     } else {
@@ -100,6 +101,7 @@ try {
                     }
                     echo json_encode($ClassMethod);
                 } else {
+                    header('Content-Type: application/json');
                     if($requestTarget == 'PondokCoder\\JKN') {
                         $ClassMethod = call_user_func_array('PondokCoder\\JKN::__POST__', array($ParameterBuilder));
                         echo json_encode($ClassMethod);
@@ -121,9 +123,11 @@ try {
                     $unauthorized = false;
                     $ClassMethod = call_user_func_array('PondokCoder\\Membership::__GET__', array($ParameterBuilder));
                     if($ClassMethod) {
-                        require '../miscellaneous/display_template/activate_success.php';
+                        //require '../miscellaneous/display_template/activate_success.php';
+                        echo 'Berhasil';
                     } else {
-                        require '../miscellaneous/display_template/activate_failed.php';
+                        //require '../miscellaneous/display_template/activate_failed.php';
+                        echo 'Gagal';
                     }
                 } else if($ParameterBuilder[1] === 'decline') {
                     $unauthorized = false;
@@ -133,11 +137,12 @@ try {
                     $unauthorized = true;
                 }
             } else if($requestTarget == 'PondokCoder\\Inventori') {
+                header('Content-Type: application/json');
                 $unauthorized = false;
                 $ClassMethod = call_user_func_array('PondokCoder\\Inventori::__GET__', array($ParameterBuilder));
                 echo json_encode($ClassMethod);
             } else {
-                $unauthorized = false;
+                $unauthorized = true;
             }
         } else {
 			$unauthorized = true;
@@ -145,6 +150,7 @@ try {
 
 
 		if($unauthorized) {
+            header('Content-Type: application/json');
             $Authorization = new Authorization();
             $BearerToken = $Authorization->getBearerToken($_SERVER);
 
