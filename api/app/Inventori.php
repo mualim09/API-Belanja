@@ -332,7 +332,7 @@ class Inventori extends Utility
                     'jumlah' => $parameter['qty'],
                     'keranjang' => $target_uid,
                     'het' => floatval($detailProduk['het']),
-                    'harga' => (($UserData['data']->jenis_member === 'M') ? floatval($detailProduk['harga']['harga_jual_member']) : floatval($detailProduk['harga']['harga_jual_member'])),
+                    'harga' => (($UserData['data']->jenis_member === 'M') ? floatval($detailProduk['harga']['harga_akhir_member']) : floatval($detailProduk['harga']['harga_akhir_stokis'])),
                     'jenis_member' => $UserData['data']->jenis_member,
                     'created_at' => parent::format_date(),
                     'updated_at' => parent::format_date()
@@ -2425,16 +2425,19 @@ class Inventori extends Utility
 
             //Text
             $data['response_data'][$key]['id'] = $value['uid'];
-            $data['response_data'][$key]['text'] = $value['nama'];
+            $data['response_data'][$key]['text'] = strtoupper($value['nama']);
 
-            //Kategori Obat
-            $data['response_data'][$key]['kategori_obat'] = self::get_kategori_obat_item($value['uid']);
+            $data['response_data'][$key]['nama'] = strtoupper($value['nama']);
 
-            //Prepare Image File
-            $data['response_data'][$key]['image'] = file_exists('../images/produk/' . $value['uid'] . '.png');
+            $data['response_data'][$key]['kode_barang'] = strtoupper($value['kode_barang']);
+            if(file_exists('../images/produk/' . $value['uid'] . '.png')) {
+                $data['response_data'][$key]['url_gambar'] = array(__HOST__ . 'images/produk/' . $value['uid'] . '.png');
+            } else {
+                $data['response_data'][$key]['url_gambar'] = array(__HOST__ . 'images/product.png');
+            }
 
             //Satuan Terkecil
-            $data['response_data'][$key]['satuan_terkecil_info'] = self::get_satuan_detail($value['satuan_terkecil'])['response_data'][0];
+            $data['response_data'][$key]['satuan_terkecil_nama'] = self::get_satuan_detail($value['satuan_terkecil'])['response_data'][0]['nama'];
 
 
             //Paket
@@ -2454,8 +2457,7 @@ class Inventori extends Utility
             }
             $data['response_data'][$key]['paket'] = $getPaket['response_data'];
 
-
-
+            $data['response_data'][$key]['het'] = floatval($value['het']);
 
             $dataHarga = self::$query->select('strategi_penjualan', array(
                 'id', 'produk', 'tanggal',
@@ -2482,9 +2484,22 @@ class Inventori extends Utility
                     date('Y-m-d')
                 ))
                 ->execute();
-            $data['response_data'][$key]['harga'] = $dataHarga['response_data'][0];
+
+            $data['response_data'][$key]['harga'] = (count($dataHarga['response_data']) > 0) ? $dataHarga['response_data'][0] : array(
+                'member_cashback' => 0,
+                'member_royalti' => 0,
+                'member_reward' => 0,
+                'member_insentif_personal' => 0,
+                'harga_akhir_member' => 0,
+
+                'stokis_cashback' => 0,
+                'stokis_royalti' => 0,
+                'stokis_reward' => 0,
+                'stokis_insentif_personal' => 0,
+                'harga_akhir_stokis' => 0
+            );
         }
-        return $data;
+        return $data['response_data'][0];
     }
 
     public function get_kandungan($parameter) {

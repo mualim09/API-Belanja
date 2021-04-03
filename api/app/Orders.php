@@ -24,6 +24,15 @@ class Orders extends Utility
         self::$query = new Query(self::$pdo);
     }
 
+    public function __GET__($parameter = array())
+    {
+        switch ($parameter[1]) {
+            case 'get_all':
+                return array();
+                break;
+        }
+    }
+
     public function __POST__($parameter = array())
     {
         //

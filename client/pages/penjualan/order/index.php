@@ -36,7 +36,7 @@
 
                                 </div>
                                 <div class="col-12" style="padding-top: 10px">
-                                    <table class="table table-bordered table-striped largeDataType" id="table-customer">
+                                    <table class="table table-bordered table-striped largeDataType" id="table-order">
                                         <thead class="thead-dark">
                                         <tr>
                                             <th class="wrap_content">No</th>
