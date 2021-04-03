@@ -120,7 +120,11 @@ try {
                 if($ParameterBuilder[1] === 'activate') {
                     $unauthorized = false;
                     $ClassMethod = call_user_func_array('PondokCoder\\Membership::__GET__', array($ParameterBuilder));
-                    echo json_encode($ClassMethod);
+                    if($ClassMethod) {
+                        require '../miscellaneous/display_template/activate_success.php';
+                    } else {
+                        require '../miscellaneous/display_template/activate_failed.php';
+                    }
                 } else if($ParameterBuilder[1] === 'decline') {
                     $unauthorized = false;
                     $ClassMethod = call_user_func_array('PondokCoder\\Membership::__GET__', array($ParameterBuilder));

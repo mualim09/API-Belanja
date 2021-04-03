@@ -32,6 +32,12 @@ class Membership extends Utility
                 case 'get_customer_select2':
                     return self::get_customer_select2($parameter);
                     break;
+                case 'activate':
+                    return self::activate($parameter);
+                    break;
+                case 'decline':
+                    return self::decline($parameter);
+                    break;
                 default:
                     return array();
                     break;
@@ -133,6 +139,29 @@ class Membership extends Utility
             $autonum++;
         }
         return $data;
+    }
+
+    private function activate($parameter) {
+        $proceed = self::$query->update('membership', array(
+            'status_member' => 'V',
+            'updated_at' => parent::format_date()
+        ))
+            ->where(array(
+                'membership.uid' => '= ?',
+                'AND',
+                'membership.status_member' => '= ?',
+                'AND',
+                'membership.deleted_at' => 'IS NULL'
+            ), array(
+                $parameter[2],
+                'N'
+            ))
+            ->execute();
+        if($proceed['response_result'] > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function customer_detail($parameter)
