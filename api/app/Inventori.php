@@ -103,6 +103,11 @@ class Inventori extends Utility
                 case 'android_cari_produk':
                     return self::android_cari_produk($parameter);
                     break;
+
+                case 'get_keranjang':
+                    return self::get_keranjang($parameter);
+                    break;
+
                 default:
                     return self::get_item_select2($parameter);
             }
@@ -232,10 +237,113 @@ class Inventori extends Utility
                 return self::update_data_harga($parameter);
                 break;
 
+            case 'tambah_item_keranjang':
+                return self::tambah_item_keranjang($parameter);
+                break;
+
             default:
                 return $parameter;
                 break;
         }
+    }
+
+    private function check_keranjang($parameter) {
+        $data = self::$query->select('keranjang', array(
+            'uid'
+        ))
+            ->where(array(
+                'keranjang.member' => '= ?',
+                'AND',
+                'keranjang.status' => '= ?',
+                'AND',
+                'keranjang.deleted_at' => 'IS NULL'
+            ), array(
+                $parameter, 'N'
+            ))
+            ->execute();
+        return $data;
+    }
+
+    private function tambah_item_keranjang($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+
+        $check = self::check_keranjang($UserData['data']->uid);
+        if(count($check['response_data']) > 0) {
+            $target_uid = $check['response_data'][0]['uid'];
+            $proceed = self::$query->update('keranjang', array(
+                'updated_at' => parent::format_date()
+            ))
+                ->where(array(
+                    'keranjang.uid' => '= ?',
+                    'AND',
+                    'keranjang.deleted_at' => 'IS NULL'
+                ), array(
+                    $target_uid
+                ))
+                ->execute();
+        } else {
+            $target_uid = parent::gen_uuid();
+
+            $proceed = self::$query->insert('keranjang', array(
+                'uid' => $target_uid,
+                'member' => $UserData['data']->uid,
+                'status' => 'N',
+                'created_at' => parent::format_date(),
+                'updated_at' => parent::format_date()
+            ))
+                ->execute();
+        }
+
+        if($proceed['response_result'] > 0) {
+            //check detail
+            $checkDetail = self::$query->select('keranjang_detail', array(
+                'id'
+            ))
+                ->where(array(
+                    'keranjang_detail.keranjang' => '= ?',
+                    'AND',
+                    'keranjang_detail.produk' => '= ?'
+                ), array(
+                    $target_uid, $parameter['uid_barang']
+                ))
+                ->execute();
+            if(count($checkDetail['response_data']) > 0) {
+                $proceedDetail = self::$query->update('keranjang_detail', array(
+                    'jumlah' => $parameter['jumlah']
+                ))
+                    ->where(array(
+                        'keranjang_detail.keranjang' => '= ?',
+                        'AND',
+                        'keranjang_detail.produk' => '= ?'
+                    ), array(
+                        $target_uid, $parameter['uid_barang']
+                    ))
+                    ->execute();
+            } else {
+                $proceedDetail = self::$query->insert('keranjang_detail', array(
+                    'produk' => $parameter['uid_barang'],
+                    'jumlah' => $parameter['jumlah'],
+                    'keranjang' => $target_uid,
+                    'het' => 0,
+                    'harga' => 0,
+                    'jenis_member' => $UserData['data']->jenis_member,
+                    'created_at' => parent::format_date(),
+                    'updated_at' => parent::format_date()
+                ))
+                    ->execute();
+            }
+        }
+
+        return array(
+            'response_result' => ($proceed['response_result'] > 0 && $proceedDetail['response_result'] > 0) ? 1 : 0,
+            'response_message' => ($proceed['response_result'] > 0 && $proceedDetail['response_result'] > 0) ? 'Keranjang Berhasil Ditambahkan' : 'Keranjang Gagal Ditambahkan'
+        );
+    }
+
+    private function get_keranjang($parameter) {
+        //$data = self::$query->select('keranjang', )
+        return array();
     }
 
     private function android_cari_produk($parameter) {

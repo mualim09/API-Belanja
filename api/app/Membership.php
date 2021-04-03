@@ -730,6 +730,7 @@ class Membership extends Utility
                     'uid' => $read[0]['uid'],
                     'email' => $read[0]['email'],
                     'nama' => $read[0]['nama'],
+                    'jenis_member' => $read[0]['jenis_member'],
                     'log_id' => $log,
                 );
                 //$secret_key = bin2hex(random_bytes(32));
