@@ -127,7 +127,7 @@ try {
                         echo 'Berhasil';
                     } else {
                         //require '../miscellaneous/display_template/activate_failed.php';
-                        echo 'Gagal';
+                        echo 'Akun sudah di aktivasi';
                     }
                 } else if($ParameterBuilder[1] === 'decline') {
                     $unauthorized = false;
