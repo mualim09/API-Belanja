@@ -100,6 +100,9 @@ class Inventori extends Utility
                 case 'get_mutasi_item':
                     return self::get_mutasi_item($parameter);
                     break;
+                case 'antroid_cari_produk':
+                    return self::android_cari_produk($parameter);
+                    break;
                 default:
                     return self::get_item_select2($parameter);
             }
@@ -233,6 +236,73 @@ class Inventori extends Utility
                 return $parameter;
                 break;
         }
+    }
+
+    private function android_cari_produk($parameter) {
+        $data = self::$query
+            ->select('master_inv', array(
+                'uid',
+                'kode_barang',
+                'nama as nama_produk',
+                'kategori',
+                'satuan_terkecil',
+                'het as harga',
+                'created_at',
+                'updated_at'
+            ))
+            ->where(array(
+                'master_inv.deleted_at' => 'IS NULL',
+                'AND',
+                '(master_inv.kode_barang' => 'ILIKE ' . '\'%' . $_GET['query_string'] . '%\'',
+                'OR',
+                'master_inv.nama' => 'ILIKE ' . '\'%' . $_GET['query_string'] . '%\')'
+            ))
+            ->limit(10)
+            ->execute();
+
+        $autonum = 1;
+        foreach ($data['response_data'] as $key => $value) {
+            $data['response_data'][$key]['autonum'] = $autonum;
+            $data['response_data'][$key]['rating'] = 5.0;
+            if(file_exists('../images/produk/' . $value['uid'] . '.png')) {
+                $data['response_data'][$key]['url_gambar'] = 'images/produk/' . $value['uid'] . '.png';
+            } else {
+                $data['response_data'][$key]['url_gambar'] = 'images/product.png';
+            }
+            $data['response_data'][$key]['satuan_terkecil'] = self::get_satuan_detail($value['satuan_terkecil'])['response_data'][0];
+            $data['response_data'][$key]['kategori'] = self::get_kategori_detail($value['kategori'])['response_data'][0];
+
+
+            $dataHarga = self::$query->select('strategi_penjualan', array(
+                'id', 'produk', 'tanggal',
+                'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
+                'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
+                'harga_jual_member',
+                'discount_type_member',
+                'discount_member',
+                'harga_akhir_member',
+
+                'harga_jual_stokis',
+                'discount_type_stokis',
+                'discount_stokis',
+                'harga_akhir_stokis'
+            ))
+                ->where(array(
+                    'strategi_penjualan.produk' => '= ?',
+                    'AND',
+                    'strategi_penjualan.tanggal' => '= ?',
+                    'AND',
+                    'strategi_penjualan.deleted_at' => 'IS NULL'
+                ), array(
+                    $value['uid'],
+                    date('Y-m-d')
+                ))
+                ->execute();
+            $data['response_data'][$key]['harga'] = $dataHarga['response_data'][0];
+
+            $autonum++;
+        }
+        return $data;
     }
 
     private function update_data_harga($parameter) {
