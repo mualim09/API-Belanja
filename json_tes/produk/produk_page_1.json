@@ -1,0 +1,87 @@
+{
+	"response_result" : 1,
+	"response_message" : "Data Tersedia",
+	"response_token" : "",
+	"response_access" : [],
+	"response_data" : {
+	    "page" : 1,
+	    "total_page" : 3,
+	    "data_per_page" : 10,
+	    "total_data" : 30,
+	    "list_items" : 
+    	[
+    		{
+    			"uid" : "61c3fd79-7c55-4d70-b2fb-68ab4759002f",
+    			"nama_produk" : "Beras Rantang Pelangi 10 kg",
+    			"harga" : 110000,
+    			"rating" : 4.5,
+    			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/beras_1.png"
+    		},
+    		{
+    			"uid" : "61c3fd79-7c55-4d70-b2fb-68ab4759002f",
+    			"nama_produk" : "Beras Rantang Pelangi 10 kg",
+    			"harga" : 110000,
+    			"rating" : 4.5,
+    			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/beras_1.png"
+    		},
+    		{
+    			"uid" : "61c3fd79-7c55-4d70-b2fb-68ab4759002f",
+    			"nama_produk" : "Beras Rantang Pelangi 10 kg",
+    			"harga" : 110000,
+    			"rating" : 4.5,
+    			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/beras_1.png"
+    		},
+    		{
+    			"uid" : "61c3fd79-7c55-4d70-b2fb-68ab4759002f",
+    			"nama_produk" : "Beras Rantang Pelangi 10 kg",
+    			"harga" : 110000,
+    			"rating" : 4.5,
+    			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/beras_1.png"
+    		},
+    		{
+    			"uid" : "61c3fd79-7c55-4d70-b2fb-68ab4759002f",
+    			"nama_produk" : "Beras Rantang Pelangi 10 kg",
+    			"harga" : 110000,
+    			"rating" : 4.5,
+    			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/beras_1.png"
+    		},
+    		{
+    			"uid" : "61c3fd79-7c55-4d70-b2fb-68ab4759002f",
+    			"nama_produk" : "Beras Rantang Pelangi 10 kg",
+    			"harga" : 110000,
+    			"rating" : 4.5,
+    			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/beras_1.png"
+    		},
+    		{
+    			"uid" : "61c3fd79-7c55-4d70-b2fb-68ab4759002f",
+    			"nama_produk" : "Beras Rantang Pelangi 10 kg",
+    			"harga" : 110000,
+    			"rating" : 4.5,
+    			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/beras_1.png"
+    		},
+    		{
+    			"uid" : "61c3fd79-7c55-4d70-b2fb-68ab4759002f",
+    			"nama_produk" : "Beras Rantang Pelangi 10 kg",
+    			"harga" : 110000,
+    			"rating" : 4.5,
+    			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/beras_1.png"
+    		},
+    		{
+    			"uid" : "61c3fd79-7c55-4d70-b2fb-68ab4759002f",
+    			"nama_produk" : "Beras Rantang Pelangi 10 kg",
+    			"harga" : 110000,
+    			"rating" : 4.5,
+    			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/beras_1.png"
+    		},
+    		{
+    			"uid" : "61c3fd79-7c55-4d70-b2fb-68ab4759002f",
+    			"nama_produk" : "Beras Rantang Pelangi 10 kg",
+    			"harga" : 110000,
+    			"rating" : 4.5,
+    			"url_gambar" : "http://belanjasukses.pondokcoder.com/images/product/beras_1.png"
+    		}
+    	]
+	    
+	}
+}
+
