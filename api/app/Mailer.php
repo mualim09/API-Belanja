@@ -18,13 +18,13 @@
             $mail = new PHPMailer(true);
             try {
                 //Server settings
-                $mail->SMTPOptions = array(
+                /*$mail->SMTPOptions = array(
                     'ssl' => array(
                         'verify_peer' => false,
                         'verify_peer_name' => false,
                         'allow_self_signed' => true
                     )
-                );
+                );*/
 
                 //$mail->SMTPDebug = SMTP::DEBUG_SERVER;
                 $mail->SMTPDebug = 0;

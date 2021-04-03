@@ -447,7 +447,7 @@ class Membership extends Utility
                     $Mailer = new Mailer();
                     $Verif = $Mailer->send(array(
                         'server' => 'mail.pondokcoder.com',
-                        'secure_type' => false,
+                        'secure_type' => 'ssl',
                         'port' => 587,
                         'username' => 'belanja_sukses@pondokcoder.com',
                         'password' => __MAIL_PASSWORD__,
@@ -465,7 +465,7 @@ class Membership extends Utility
                         '__UID__' => $uid
                     ), 'Registrasi ' . __PC_CUSTOMER__, 'Uji html', '
                     Selamat Bergabung, Anda telah terdaftar menjadi member pada ' . __PC_CUSTOMER__ . '. Password Anda : ' . $password . '.Untuk menyelesaikan pendaftaran silahkan akses link ' . __HOSTAPI__ . '/Membership/activate/' . $uid, array(
-                        'tanaka@pondokcoder.com' => 'Hendry Tanaka',
+                        $parameter['email'] => $parameter['nama'],
                     ));
 
                     /*$hard = self::$query->hard_delete('membership')
