@@ -342,8 +342,41 @@ class Inventori extends Utility
     }
 
     private function get_keranjang($parameter) {
-        //$data = self::$query->select('keranjang', )
-        return array();
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+        $data = self::$query->select('keranjang', array(
+            'uid',
+            'status'
+        ))
+            ->where(array(
+                'keranjang.member' => '= ?',
+                'AND',
+                'keranjang.deleted_at' => 'IS NULL'
+            ), array(
+                $UserData['data']->uid
+            ))
+            ->execute();
+        foreach ($data['response_data'] as $key => $value) {
+            $detail = self::$query->select('keranjang_detail', array(
+                'id',
+                'produk',
+                'jumlah',
+                'keranjang',
+                'het',
+                'harga',
+                'jenis_member'
+            ))
+                ->where(array(
+                    'keranjang_detail.keranjang' => '= ?',
+                    'AND',
+                    'keranjang_detail.deleted_at' => 'IS NULL'
+                ), array(
+                    $value['uid']
+                ))
+                ->execute();
+            $data['response_data']['list_items'] = $detail['response_data'];
+        }
+        return $data;
     }
 
     private function android_cari_produk($parameter) {
