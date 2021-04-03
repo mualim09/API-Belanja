@@ -308,6 +308,7 @@ class Inventori extends Utility
                     $target_uid, $parameter['uid_barang']
                 ))
                 ->execute();
+
             if(count($checkDetail['response_data']) > 0) {
                 $proceedDetail = self::$query->update('keranjang_detail', array(
                     'jumlah' => $parameter['qty']
@@ -321,12 +322,13 @@ class Inventori extends Utility
                     ))
                     ->execute();
             } else {
+                $detailProduk = self::get_item_detail($parameter['uid_barang'])['response_data'][0];
                 $proceedDetail = self::$query->insert('keranjang_detail', array(
                     'produk' => $parameter['uid_barang'],
                     'jumlah' => $parameter['qty'],
                     'keranjang' => $target_uid,
-                    'het' => 0,
-                    'harga' => 0,
+                    'het' => floatval($detailProduk['het']),
+                    'harga' => (($UserData['data']->jenis_member === 'M') ? floatval($detailProduk['harga']['harga_jual_member']) : floatval($detailProduk['harga']['harga_jual_member'])),
                     'jenis_member' => $UserData['data']->jenis_member,
                     'created_at' => parent::format_date(),
                     'updated_at' => parent::format_date()
@@ -374,7 +376,30 @@ class Inventori extends Utility
                     $value['uid']
                 ))
                 ->execute();
-            $data['response_data']['list_items'] = $detail['response_data'];
+            foreach ($detail['response_data'] as $dKey => $dValue) {
+                $detailProduk = self::get_item_detail($dValue['produk'])['response_data'][0];
+
+                $detailProduk['nama_produk'] = strtoupper($detailProduk['nama']);
+                unset($detailProduk['het']);
+                unset($detailProduk['harga']);
+                unset($detailProduk['text']);
+                unset($detailProduk['kategori_obat']);
+
+                foreach ($detailProduk as $pKey => $pValue) {
+                    $detail['response_data'][$dKey][$pKey] = $pValue;
+                }
+                $detail['response_data'][$dKey]['satuan_terkecil'] = $dValue['satuan_terkecil_info']['nama'];
+                $detail['response_data'][$dKey]['qty'] = floatval($dValue['jumlah']);
+                $detail['response_data'][$dKey]['het'] = floatval($dValue['het']);
+                $detail['response_data'][$dKey]['harga'] = floatval($dValue['harga']);
+
+                unset($detail['response_data'][$dKey]['jumlah']);
+                unset($detail['response_data'][$dKey]['nama']);
+                unset($detail['response_data'][$dKey]['satuan_terkecil_info']);
+                unset($detail['response_data'][$dKey]['produk']);
+                unset($detail['response_data'][$dKey]['keranjang']);
+            }
+            $data['response_data'][$key]['list_items'] = $detail['response_data'];
         }
         return $data;
     }
@@ -3921,7 +3946,7 @@ class Inventori extends Utility
             $data['response_data'][$key]['tanggal'] = date('d F Y', strtotime($value['tanggal']));
 
             $Pegawai = new Pegawai(self::$pdo);
-            $data['response_data'][$key]['pegawai'] = $Pegawai::get_detail($value['pegawai'])['response_data'][0];
+            $data['response_data'][$key]['pegawai'] = $Pegawai->get_detail($value['pegawai'])['response_data'][0];
             $data['response_data'][$key]['diproses'] = ((empty($value['diproses'])) ? "-" : $Pegawai::get_detail($value['pegawai'])['response_data'][0]);
 
 
