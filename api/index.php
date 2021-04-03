@@ -117,11 +117,11 @@ try {
             }
 		} else if($_SERVER['REQUEST_METHOD'] === 'GET') {
             if($requestTarget == 'PondokCoder\\Membership') {
-                if($ParameterBuilder[0] === 'activate') {
+                if($ParameterBuilder[1] === 'activate') {
                     $unauthorized = false;
                     $ClassMethod = call_user_func_array('PondokCoder\\Membership::__GET__', array($ParameterBuilder));
                     echo json_encode($ClassMethod);
-                } else if($ParameterBuilder[0] === 'activate') {
+                } else if($ParameterBuilder[1] === 'decline') {
                     $unauthorized = false;
                     $ClassMethod = call_user_func_array('PondokCoder\\Membership::__GET__', array($ParameterBuilder));
                     echo json_encode($ClassMethod);
