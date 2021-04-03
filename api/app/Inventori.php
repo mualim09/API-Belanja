@@ -267,9 +267,9 @@ class Inventori extends Utility
             $data['response_data'][$key]['nama_produk'] = strtoupper($value['nama_produk']);
             $data['response_data'][$key]['rating'] = 5.0;
             if(file_exists('../images/produk/' . $value['uid'] . '.png')) {
-                $data['response_data'][$key]['url_gambar'] = 'images/produk/' . $value['uid'] . '.png';
+                $data['response_data'][$key]['url_gambar'] = __HOST__ . '/images/produk/' . $value['uid'] . '.png';
             } else {
-                $data['response_data'][$key]['url_gambar'] = 'images/product.png';
+                $data['response_data'][$key]['url_gambar'] = __HOST__ . '/images/product.png';
             }
             $data['response_data'][$key]['satuan_terkecil'] = self::get_satuan_detail($value['satuan_terkecil'])['response_data'][0]['nama'];
             $data['response_data'][$key]['kategori'] = self::get_kategori_detail($value['kategori'])['response_data'][0]['nama'];
