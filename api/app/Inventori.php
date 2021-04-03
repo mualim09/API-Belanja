@@ -310,7 +310,7 @@ class Inventori extends Utility
                 ->execute();
             if(count($checkDetail['response_data']) > 0) {
                 $proceedDetail = self::$query->update('keranjang_detail', array(
-                    'jumlah' => $parameter['jumlah']
+                    'jumlah' => $parameter['qty']
                 ))
                     ->where(array(
                         'keranjang_detail.keranjang' => '= ?',
@@ -323,7 +323,7 @@ class Inventori extends Utility
             } else {
                 $proceedDetail = self::$query->insert('keranjang_detail', array(
                     'produk' => $parameter['uid_barang'],
-                    'jumlah' => $parameter['jumlah'],
+                    'jumlah' => $parameter['qty'],
                     'keranjang' => $target_uid,
                     'het' => 0,
                     'harga' => 0,
@@ -336,6 +336,7 @@ class Inventori extends Utility
         }
 
         return array(
+            'detail' => $proceedDetail,
             'response_result' => ($proceed['response_result'] > 0 && $proceedDetail['response_result'] > 0) ? 1 : 0,
             'response_message' => ($proceed['response_result'] > 0 && $proceedDetail['response_result'] > 0) ? 'Keranjang Berhasil Ditambahkan' : 'Keranjang Gagal Ditambahkan'
         );
