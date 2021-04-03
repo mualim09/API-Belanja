@@ -100,7 +100,7 @@ class Inventori extends Utility
                 case 'get_mutasi_item':
                     return self::get_mutasi_item($parameter);
                     break;
-                case 'antroid_cari_produk':
+                case 'android_cari_produk':
                     return self::android_cari_produk($parameter);
                     break;
                 default:
@@ -246,7 +246,7 @@ class Inventori extends Utility
                 'nama as nama_produk',
                 'kategori',
                 'satuan_terkecil',
-                'het as harga',
+                'het',
                 'created_at',
                 'updated_at'
             ))
@@ -263,14 +263,16 @@ class Inventori extends Utility
         $autonum = 1;
         foreach ($data['response_data'] as $key => $value) {
             $data['response_data'][$key]['autonum'] = $autonum;
+            $data['response_data'][$key]['kode_barang'] = strtoupper($value['kode_barang']);
+            $data['response_data'][$key]['nama_produk'] = strtoupper($value['nama_produk']);
             $data['response_data'][$key]['rating'] = 5.0;
             if(file_exists('../images/produk/' . $value['uid'] . '.png')) {
                 $data['response_data'][$key]['url_gambar'] = 'images/produk/' . $value['uid'] . '.png';
             } else {
                 $data['response_data'][$key]['url_gambar'] = 'images/product.png';
             }
-            $data['response_data'][$key]['satuan_terkecil'] = self::get_satuan_detail($value['satuan_terkecil'])['response_data'][0];
-            $data['response_data'][$key]['kategori'] = self::get_kategori_detail($value['kategori'])['response_data'][0];
+            $data['response_data'][$key]['satuan_terkecil'] = self::get_satuan_detail($value['satuan_terkecil'])['response_data'][0]['nama'];
+            $data['response_data'][$key]['kategori'] = self::get_kategori_detail($value['kategori'])['response_data'][0]['nama'];
 
 
             $dataHarga = self::$query->select('strategi_penjualan', array(
@@ -298,10 +300,13 @@ class Inventori extends Utility
                     date('Y-m-d')
                 ))
                 ->execute();
-            $data['response_data'][$key]['harga'] = $dataHarga['response_data'][0];
+            $data['response_data'][$key]['harga_member'] = floatval($dataHarga['response_data'][0]['harga_jual_member']);
+            $data['response_data'][$key]['harga_stokis'] = floatval($dataHarga['response_data'][0]['harga_jual_stokis']);
 
             $autonum++;
         }
+
+        $data['response_message'] = (count($data['response_data']) > 0) ? 'Data Tersedia' : 'Data Tidak Tersedia';
         return $data;
     }
 
