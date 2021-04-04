@@ -396,7 +396,7 @@ class Inventori extends Utility
                 ))
                 ->execute();
             foreach ($detail['response_data'] as $dKey => $dValue) {
-                $detailProduk = self::get_item_detail($dValue['produk']);
+                $detailProduk = self::get_item_detail($dValue['produk'])['response_data'];
 
                 $detailProduk['nama_produk'] = strtoupper($detailProduk['nama']);
                 unset($detailProduk['het']);
