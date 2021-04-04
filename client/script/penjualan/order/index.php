@@ -179,7 +179,7 @@
                             "<td>" + id + "</td>" +
                             "<td>" + data.detail[a].barang.nama + "</td>" +
                             "<td class=\"number_style\">" + data.detail[a].qty + "</td>" +
-                            "<td class=\"number_style\">" + data.detail[a].harga + "</td>" +
+                            "<td class=\"number_style\">" + number_format(data.detail[a].harga, 2, ".", ",") + "</td>" +
                             "<td class=\"number_style\">" + number_format(data.detail[a].cashback, 2, ".", ",") + "</td>" +
                             "<td class=\"number_style\">"  + number_format(data.detail[a].royalti, 2, ".", ",") + "</td>" +
                             "<td class=\"number_style\">" + number_format(data.detail[a].reward, 2, ".", ",") + "</td>" +
