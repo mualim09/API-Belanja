@@ -27,43 +27,80 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="order_customer">Customer:</label>
+                                        <label for="order_customer">Customer: <b id="warn_customer"></b></label>
                                         <select class="form-control" id="order_customer"></select>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="order_customer">Penerima a/n:</label>
+                                        <label for="order_customer">Penerima a/n: <button id="btn-samakan-customer" class="btn btn-info pull-right" style="margin-left: 50px;"><i class="fa fa-copy"></i></button></label>
                                         <input class="form-control" id="order_receiver" placeholder="Nama Penerima" />
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="order_customer">Kurir:</label>
+                                        <label for="order_customer">Kurir: <b id="warn_kurir"></b></label>
                                         <input class="form-control" id="order_kurir" placeholder="Kurir" />
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
+                                    <h6>Detail Pesanan: <b id="warn_item"></b></h6>
                                     <table class="table table-bordered largeDataType" id="auto_produk">
                                         <thead class="thead-dark">
                                             <tr>
                                                 <th rowspan="2" class="wrap_content">No</th>
-                                                <th rowspan="2" style="width: 300px;">Produk</th>
-                                                <th rowspan="2" style="width: 100px;">Qty</th>
-                                                <th rowspan="2" class="wrap_content">Harga Jual</th>
+                                                <th rowspan="2" style="width: 250px;">Produk</th>
+                                                <th rowspan="2" style="width: 80px;">Qty</th>
+                                                <th rowspan="2" style="width: 100px;">Harga Jual</th>
                                                 <th colspan="4">Bonus</th>
                                                 <th rowspan="2" class="wrap_content">Aksi</th>
                                             </tr>
                                             <tr>
-                                                <th class="wrap_content">Cashback</th>
-                                                <th class="wrap_content">Royalti</th>
-                                                <th class="wrap_content">Reward</th>
-                                                <th class="wrap_content">Insentif</th>
+                                                <th style="width: 100px;">Cashback</th>
+                                                <th style="width: 100px;">Royalti</th>
+                                                <th style="width: 100px;">Reward</th>
+                                                <th style="width: 100px;">Insentif</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
+                                        <tfoot style="background: #fafafa">
+                                            <tr>
+                                                <td colspan="3" class="text-right">
+                                                    <b>TOTAL (Pre Disc.)</b>
+                                                </td>
+                                                <td class="number_style" id="order_total_belanja">0.00</td>
+                                                <td class="number_style" id="order_total_cashback">0.00</td>
+                                                <td class="number_style" id="order_total_royalti">0.00</td>
+                                                <td class="number_style" id="order_total_reward">0.00</td>
+                                                <td class="number_style" id="order_total_insentif">0.00</td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3" class="text-right">
+                                                    <b>DISCOUNT</b>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" id="order_disc_type">
+                                                        <option value="N">Tidak Ada</option>
+                                                        <option value="P">Percentage</option>
+                                                        <option value="A">Amount</option>
+                                                    </select>
+                                                    <input type="text" class="form-control" id="order_disc" />
+                                                </td>
+                                                <td colspan="5" rowspan="2">
+                                                    <b>Remark:</b>
+                                                    <textarea id="order_remark" class="form-control" placeholder="Exp: Keterangan diskon, Catatan pesanan" style="min-height: 200px;"></textarea>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3" class="text-right">
+                                                    <b>Grand TOTAL</b>
+                                                </td>
+                                                <td class="number_style" id="order_grand_total" style="font-size: 14pt">0.00</td>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>
@@ -78,38 +115,38 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="order_customer">Provinsi:</label>
+                                    <label for="order_customer">Provinsi: <b id="warn_provinsi"></b></label>
                                     <select class="form-control" id="order_provinsi"></select>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="order_customer">Kabupaten:</label>
+                                    <label for="order_customer">Kabupaten: <b id="warn_kabupaten"></b></label>
                                     <select class="form-control" id="order_kabupaten"></select>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="order_customer">Kecamatan:</label>
+                                    <label for="order_customer">Kecamatan: <b id="warn_kecamatan"></b></label>
                                     <select class="form-control" id="order_kecamatan"></select>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="order_customer">Kelurahan:</label>
+                                    <label for="order_customer">Kelurahan: <b id="warn_kelurahan"></b></label>
                                     <select class="form-control" id="order_kelurahan"></select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="order_customer">Alamat Antar:</label>
-                                    <textarea class="form-control" id="order_address" placeholder="Alamat Antar"></textarea>
+                                    <label for="order_customer">Alamat Antar: <b id="warn_delivery"></b></label>
+                                    <textarea class="form-control" id="order_delivery" placeholder="Alamat Antar"></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="order_customer">Alamat Tagih:</label>
-                                    <textarea class="form-control" id="order_address" placeholder="Alamat Antar"></textarea>
+                                    <label for="order_customer">Alamat Tagih: <b id="warn_billing"></b></label>
+                                    <textarea class="form-control" id="order_charge" placeholder="Alamat Antar"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -122,8 +159,8 @@
                         </a>
                     </div>
                     <div class="col-md-4">
-                        <button class="btn btn-success pull-right">
-                            <i class="fa fa-plus"></i> Tambah
+                        <button class="btn btn-success pull-right" id="btnOrder">
+                            <i class="fa fa-plus"></i> Tambah Order
                         </button>
                     </div>
                 </div>

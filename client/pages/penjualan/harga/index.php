@@ -31,7 +31,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive border-bottom">
-                        <table class="table table-bordered largeDataType" id="tableHarga">
+                        <table class="table table-bordered table-striped largeDataType" id="tableHarga">
                             <thead class="thead-dark">
                             <tr>
                                 <th class="wrap_content">No</th>

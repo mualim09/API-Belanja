@@ -164,9 +164,13 @@
                             }
                         }
                     });
-                    $("#txt_bank").append("<option value=\"" + data.bank.uid + "\">" + data.bank.kode_transaksi + " - " + data.bank.nama + "</option>");
-                    $("#txt_bank").select2("data", {id: data.bank.uid, text: data.bank.kode_transaksi + " - " + data.bank.nama});
-                    $("#txt_bank").trigger("change");
+                    if(data.bank !== undefined && data.bank !== null) {
+                        $("#txt_bank").append("<option value=\"" + data.bank.uid + "\">" + data.bank.kode_transaksi + " - " + data.bank.nama + "</option>");
+                        $("#txt_bank").select2("data", {id: data.bank.uid, text: data.bank.kode_transaksi + " - " + data.bank.nama});
+                        $("#txt_bank").trigger("change");
+                    }
+
+
 
 
 

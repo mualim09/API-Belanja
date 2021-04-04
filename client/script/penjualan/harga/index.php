@@ -64,11 +64,14 @@
                         return "<div class=\"row\">" +
                             "<div class=\"col-lg-2 text-right text-success\">S</div>" +
                             "<div class=\"col-lg-10\">" +
-                            "<h6 class=\"number_style text-success\" id=\"hjs_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_jual_stokis : 0), 2, ".", ",") + "</h6>" +
+                            "<h6 class=\"number_style text-success\" id=\"hjs_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_akhir_stokis : 0), 2, ".", ",") + "</h6>" +
+                            "</div>" +
+                            "<div class=\"col-lg-12\">" +
+                            "<hr />" +
                             "</div>" +
                             "<div class=\"col-lg-2 text-right text-info\">M</div>" +
                             "<div class=\"col-lg-10\">" +
-                            "<h6 class=\"number_style text-info\" id=\"hjm_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_jual_member : 0), 2, ".", ",") + "</h6>" +
+                            "<h6 class=\"number_style text-info\" id=\"hjm_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_akhir_member : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
                             "</div>";
                     }
@@ -79,6 +82,9 @@
                             "<div class=\"col-lg-2 text-right text-success\">S</div>" +
                             "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"dts_" + row.uid + "\">" + ((row.harga !== undefined && row.harga !== null) ? row.harga.discount_type_stokis : "P") + "</h6>" +
+                            "</div>" +
+                            "<div class=\"col-lg-12\">" +
+                            "<hr />" +
                             "</div>" +
                             "<div class=\"col-lg-2 text-right text-info\">M</div>" +
                             "<div class=\"col-lg-10\">" +
@@ -94,6 +100,9 @@
                             "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"ds_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.discount_stokis : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
+                            "<div class=\"col-lg-12\">" +
+                            "<hr />" +
+                            "</div>" +
                             "<div class=\"col-lg-2 text-right text-info\">M</div>" +
                             "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"dm_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.discount_member : 0), 2, ".", ",") + "</h6>" +
@@ -107,6 +116,9 @@
                             "<div class=\"col-lg-2 text-right text-success\">S</div>" +
                             "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"has_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.harga_akhir_stokis : 0), 2, ".", ",") + "</h6>" +
+                            "</div>" +
+                            "<div class=\"col-lg-12\">" +
+                            "<hr />" +
                             "</div>" +
                             "<div class=\"col-lg-2 text-right text-info\">M</div>" +
                             "<div class=\"col-lg-10\">" +
@@ -122,6 +134,9 @@
                             "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hscb_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.stokis_cashback : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
+                            "<div class=\"col-lg-12\">" +
+                            "<hr />" +
+                            "</div>" +
                             "<div class=\"col-lg-2 text-right text-info\">M</div>" +
                             "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"hmcb_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.member_cashback : 0), 2, ".", ",") + "</h6>" +
@@ -135,6 +150,9 @@
                             "<div class=\"col-lg-2 text-right text-success\">S</div>" +
                             "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hsry_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.stokis_royalti : 0), 2, ".", ",") + "</h6>" +
+                            "</div>" +
+                            "<div class=\"col-lg-12\">" +
+                            "<hr />" +
                             "</div>" +
                             "<div class=\"col-lg-2 text-right text-info\">M</div>" +
                             "<div class=\"col-lg-10\">" +
@@ -150,6 +168,9 @@
                             "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hsrw_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.stokis_reward : 0), 2, ".", ",") + "</h6>" +
                             "</div>" +
+                            "<div class=\"col-lg-12\">" +
+                            "<hr />" +
+                            "</div>" +
                             "<div class=\"col-lg-2 text-right text-info\">M</div>" +
                             "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-info\" id=\"hmrw_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.member_reward : 0), 2, ".", ",") + "</h6>" +
@@ -163,6 +184,9 @@
                             "<div class=\"col-lg-2 text-right text-success\">S</div>" +
                             "<div class=\"col-lg-10\">" +
                             "<h6 class=\"number_style text-success\" id=\"hsip_" + row.uid + "\">" + number_format(((row.harga !== undefined && row.harga !== null) ? row.harga.stokis_insentif_personal : 0), 2, ".", ",") + "</h6>" +
+                            "</div>" +
+                            "<div class=\"col-lg-12\">" +
+                            "<hr />" +
                             "</div>" +
                             "<div class=\"col-lg-2 text-right text-info\">M</div>" +
                             "<div class=\"col-lg-10\">" +

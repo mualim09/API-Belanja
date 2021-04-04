@@ -731,7 +731,7 @@ class Inventori extends Utility
                 ))
                 ->execute();
             $data['response_data'][$key]['harga'] = $dataHarga['response_data'][0];
-            if(date('Y-m-d') < date('Y-m-d', strtotime($parameter['tanggal']))) {
+            if(date('Y-m-d') <= date('Y-m-d', strtotime($parameter['tanggal']))) {
                 /*if(count($dataHarga['response_data']) > 0) {
                     $allowEdit = true;
                 } else {
@@ -2121,7 +2121,19 @@ class Inventori extends Utility
                     date('Y-m-d')
                 ))
                 ->execute();
-            $data['response_data'][$key]['harga'] = $dataHarga['response_data'][0];
+            $data['response_data'][$key]['harga'] = (count($dataHarga['response_data']) > 0) ? $dataHarga['response_data'][0] : array(
+                'member_cashback' => 0,
+                'member_royalti' => 0,
+                'member_reward' => 0,
+                'member_insentif_personal' => 0,
+                'harga_akhir_member' => 0,
+
+                'stokis_cashback' => 0,
+                'stokis_royalti' => 0,
+                'stokis_reward' => 0,
+                'stokis_insentif_personal' => 0,
+                'harga_akhir_stokis' => 0
+            );
 
             $autonum++;
         }

@@ -30,20 +30,21 @@
                         <div class="tab-pane active show fade" id="customer-modul">
                             <div class="row">
                                 <div class="col-9 text-right">
-
+                                    <input id="range_order" type="text" class="form-control" placeholder="Flatpickr range example" data-toggle="flatpickr" data-flatpickr-mode="range" value="<?php echo $day->format('Y-m-1'); ?> to <?php echo $day->format('Y-m-d'); ?>" />
                                 </div>
                                 <div class="col-3">
-
                                 </div>
                                 <div class="col-12" style="padding-top: 10px">
                                     <table class="table table-bordered table-striped largeDataType" id="table-order">
                                         <thead class="thead-dark">
                                         <tr>
                                             <th class="wrap_content">No</th>
-                                            <th>Nomor</th>
+                                            <th class="wrap_content">Nomor</th>
                                             <th>Customer</th>
-                                            <th>Total</th>
-                                            <th>Tanggal</th>
+                                            <th>Jenis</th>
+                                            <th class="wrap_content">Status</th>
+                                            <th class="wrap_content">Total</th>
+                                            <th class="wrap_content">Tanggal</th>
                                             <th class="wrap_content">Aksi</th>
                                         </tr>
                                         </thead>

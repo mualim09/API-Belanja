@@ -30,9 +30,7 @@
 			},
 			type:"GET",
 			success:function(response) {
-			    if(response.response_package.response_data !== undefined) {
-					invData = response.response_package.response_data[0];
-				}
+                invData = response.response_data;
 
 				$("#txt_nama").val(invData.nama);
                 $("#txt_het").val(invData.het);
