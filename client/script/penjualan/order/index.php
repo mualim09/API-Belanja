@@ -155,6 +155,23 @@
                     $("#order_total_belanja").html(number_format(data.total_pre_disc, 2, ".", ","));
                     $("#order_grand_total").html(number_format(data.total_after_disc, 2 ,".", ","));
 
+                    if(data.disc_type === "N") {
+                        $("#invoice_disc_type").html("DISCOUNT");
+                        $("#invoice_disc").html("-");
+                    } else if(data.disc_type === "P") {
+                        $("#invoice_disc_type").html("DISCOUNT");
+                        $("#invoice_disc").html(data.disc + "%");
+                    } else {
+                        $("#invoice_disc_type").html("DISCOUNT");
+                        $("#invoice_disc").html("(" + data.disc + ")");
+                    }
+
+
+                    var cashback = 0;
+                    var royalti = 0;
+                    var reward = 0;
+                    var insentif = 0;
+                    $("#auto_produk tbody").html("");
                     for(var a in data.detail) {
                         var id = parseInt(a) + 1;
                         $("#auto_produk tbody").append("" +
@@ -168,7 +185,17 @@
                             "<td class=\"number_style\">" + number_format(data.detail[a].reward, 2, ".", ",") + "</td>" +
                             "<td class=\"number_style\">" + number_format(data.detail[a].insentif_personal, 2, ".", ",") + "</td>" +
                             "</tr>");
+
+                        cashback += parseFloat(data.detail[a].cashback);
+                        royalti += parseFloat(data.detail[a].royalti);
+                        reward += parseFloat(data.detail[a].reward);
+                        insentif += parseFloat(data.detail[a].insentif_personal);
                     }
+
+                    $("#order_total_cashback").html(number_format(cashback, 2, ".", ","));
+                    $("#order_total_royalti").html(number_format(royalti, 2, ".", ","));
+                    $("#order_total_reward").html(number_format(reward, 2, ".", ","));
+                    $("#order_total_insentif").html(number_format(insentif, 2, ".", ","));
 
                     $("#modal-order").modal("show");
                 },
@@ -270,10 +297,10 @@
                                 </tr>
                                 <tr>
                                     <td colspan="3" class="text-right">
-                                        <b id="invoice_disc">DISCOUNT</b>
+                                        <b id="invoice_disc_type">DISCOUNT</b>
                                     </td>
-                                    <td>
-
+                                    <td class="text-right">
+                                        <b id="invoice_disc" class="text-right"></b>
                                     </td>
                                     <td colspan="4" rowspan="2">
                                         <b>Remark:</b>

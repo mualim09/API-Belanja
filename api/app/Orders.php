@@ -73,6 +73,8 @@ class Orders extends Utility
             'total_after_disc',
             'keranjang',
             'remark',
+            'disc',
+            'disc_type',
             'created_at',
             'updated_at'
         ))

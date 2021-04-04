@@ -43,4 +43,5 @@ api/*.sql
 *.sql
 *.png
 *.zip
-error_log
+api/error_log
+client/error_log
