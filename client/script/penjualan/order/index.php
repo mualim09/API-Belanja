@@ -65,7 +65,7 @@
                 },
                 {
                     "data" : null, render: function(data, type, row, meta) {
-                        return "<h6 class=\"wrap_content\">" + ((row.source === 'A') ? "<i class=\"fa fa-tablet-alt\"></i>" : "<i class=\"fa fa-desktop\"></i>") + " " + row.nomor_invoice + "</h6>";
+                        return "<h6 class=\"wrap_content\">" + ((row.created_on === 'A') ? "<i class=\"fa fa-tablet-alt\"></i>" : "<i class=\"fa fa-desktop\"></i>") + " " + row.nomor_invoice + "</h6>";
                     }
                 },
                 {

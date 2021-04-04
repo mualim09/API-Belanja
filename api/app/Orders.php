@@ -47,8 +47,105 @@ class Orders extends Utility
             case 'tambah_order':
                 return self::tambah_order($parameter);
                 break;
+            case 'keranjang_proceed_orders':
+                return self::keranjang_proceed_orders($parameter);
+                break;
             default:
                 return array();
+        }
+    }
+
+    private function keranjang_proceed_orders($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+
+        $Inventori = new Inventori(self::$pdo);
+        $Customer = new Membership(self::$pdo);
+        $CustomerInfo = $Customer->customer_detail($UserData['data']->uid)['response_data'][0];
+
+
+        $check = $Inventori->check_keranjang($UserData['data']->uid);
+        if(count($check['response_data']) > 0) {
+            $uid_keranjang = $check['response_data'][0]['uid'];
+            $itemDetailParsed = array();
+
+            $total_pre_discount = 0;
+
+            $data = self::$query->select('keranjang_detail', array(
+                'id',
+                'produk',
+                'jumlah'
+            ))
+                ->where(array(
+                    'keranjang_detail.keranjang' => '= ?',
+                    'AND',
+                    'keranjang_detail.deleted_at' => 'IS NULL'
+                ), array(
+                    $uid_keranjang
+                ))
+                ->execute();
+
+            foreach ($data['response_data'] as $key => $value) {
+                $ItemDetail = $Inventori->get_item_detail($value['produk'])['response_data'];
+
+                array_push($itemDetailParsed, array(
+                    'produk' => $value['produk'],
+                    'qty' => $value['jumlah'],
+                    'cashback' => (($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['member_cashback'] : $ItemDetail['harga']['stokis_cashback']),
+                    'royalti' => (($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['member_royalti'] : $ItemDetail['harga']['stokis_royalti']),
+                    'reward' => (($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['member_reward'] : $ItemDetail['harga']['stokis_reward']),
+                    'insentif' => (($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['member_insentif_personal'] : $ItemDetail['harga']['stokis_insentif_personal'])
+                ));
+
+                $total_pre_discount += floatval($value['jumlah'] * (($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['harga_akhir_member'] : $ItemDetail['harga']['harga_akhir_stokis']));
+            }
+
+            $prepare = array(
+                'penerima' => $CustomerInfo['nama'],
+                'customer' => $UserData['data']->uid,
+                'kurir' => '',
+                'alamat_billing' => $CustomerInfo['alamat_domisili'],
+                'alamat_antar' => $CustomerInfo['alamat_domisili'],
+                'provinsi' => intval($CustomerInfo['provinsi_domisili']),
+                'kabupaten' => intval($parameter['kabupaten_domisili']),
+                'kecamatan' => intval($parameter['kecamatan_domisili']),
+                'kelurahan' => intval($parameter['kelurahan_domisili']),
+                'total_pre_disc' => floatval($total_pre_discount),
+                'total_after_disc' => floatval($total_pre_discount),
+                'disc_type' => 'N',
+                'disc' => 0,
+                'via' => 'A',
+                'remark' => '',
+                'itemDetail' => $itemDetailParsed
+            );
+            $newOrder = self::tambah_order($prepare);
+            if($newOrder['response_result'] > 0) {
+                //Update Keranjang Status
+                $keranjang = self::$query->update('keranjang', array(
+                    'status' => 'D',
+                    'deleted_at' => parent::format_date()
+                ))
+                    ->where(array(
+                        'keranjang.uid' => '= ?',
+                        'AND',
+                        'keranjang.deleted_at' => 'IS NULL'
+                    ), array(
+                        $uid_keranjang
+                    ))
+                    ->execute();
+            }
+            unset($newOrder['response_query']);
+            unset($newOrder['response_values']);
+            unset($newOrder['detail']);
+
+            return $newOrder;
+
+            //return $CustomerInfo;
+        } else {
+            return array(
+                'response_result' => 0,
+                'response_message' => 'Gagal proses order'
+            );
         }
     }
 
@@ -133,9 +230,9 @@ class Orders extends Utility
 
     private function tambah_order($parameter) {
         $Authorization = new Authorization();
-        $UserData = $Authorization::readBearerToken($parameter['access_token']);
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
 
-        $latestOrder = self::$query->select('inventori_po', array(
+        $latestOrder = self::$query->select('orders', array(
             'uid'
         ))
             ->where(array(
@@ -168,7 +265,7 @@ class Orders extends Utility
             'disc_type' => $parameter['disc_type'],
             'disc' => floatval($parameter['disc']),
             'remark' => $parameter['remark'],
-            'created_on' => 'W',
+            'created_on' => isset($parameter['via']) ? 'A' : 'W',
             'created_at' => parent::format_date(),
             'updated_at' => parent::format_date()
 
@@ -281,6 +378,7 @@ class Orders extends Utility
                 'kelurahan',
                 'total_pre_disc',
                 'total_after_disc',
+                'created_on',
                 'keranjang',
                 'created_at',
                 'updated_at'
@@ -304,6 +402,7 @@ class Orders extends Utility
                 'kelurahan',
                 'total_pre_disc',
                 'total_after_disc',
+                'created_on',
                 'keranjang',
                 'created_at',
                 'updated_at'

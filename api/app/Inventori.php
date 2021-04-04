@@ -255,7 +255,7 @@ class Inventori extends Utility
         }
     }
 
-    private function check_keranjang($parameter) {
+    public function check_keranjang($parameter) {
         $data = self::$query->select('keranjang', array(
             'uid'
         ))
