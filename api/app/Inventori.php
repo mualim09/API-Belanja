@@ -241,6 +241,10 @@ class Inventori extends Utility
                 return self::tambah_item_keranjang($parameter);
                 break;
 
+            case 'edit_item_keranjang':
+                return self::edit_item_keranjang($parameter);
+                break;
+
             case 'tambah_order_android':
                 return self::tambah_order_android($parameter);
                 break;
@@ -266,6 +270,39 @@ class Inventori extends Utility
             ))
             ->execute();
         return $data;
+    }
+
+    private function edit_item_keranjang($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+
+        $check = self::check_keranjang($UserData['data']->uid);
+        if(count($check['response_data']) > 0) {
+            $target_uid = $check['response_data'][0]['uid'];
+
+            $proceedDetail = self::$query->update('keranjang_detail', array(
+                'jumlah' => $parameter['qty']
+            ))
+                ->where(array(
+                    'keranjang_detail.keranjang' => '= ?',
+                    'AND',
+                    'keranjang_detail.produk' => '= ?'
+                ), array(
+                    $target_uid, $parameter['uid_barang']
+                ))
+                ->execute();
+            return array(
+                'response_result' => ($proceedDetail['response_result'] > 0) ? 1 : 0,
+                'response_message' => ($proceedDetail['response_result'] > 0) ? 'Keranjang Berhasil Diubah' : 'Keranjang Gagal Diubah'
+            );
+        } else {
+            return array(
+                'response_result' => 0,
+                'response_message' => 'Item tidak ditemukan'
+            );
+        }
+
+
     }
 
     private function tambah_item_keranjang($parameter) {
@@ -407,6 +444,7 @@ class Inventori extends Utility
                 foreach ($detailProduk as $pKey => $pValue) {
                     $detail['response_data'][$dKey][$pKey] = $pValue;
                 }
+
                 $detail['response_data'][$dKey]['satuan_terkecil'] = $dValue['satuan_terkecil_info']['nama'];
                 $detail['response_data'][$dKey]['qty'] = floatval($dValue['jumlah']);
                 $detail['response_data'][$dKey]['het'] = floatval($dValue['het']);
