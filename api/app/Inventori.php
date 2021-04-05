@@ -385,7 +385,8 @@ class Inventori extends Utility
 
             if(count($checkDetail['response_data']) > 0) {
                 $proceedDetail = self::$query->update('keranjang_detail', array(
-                    'jumlah' => $parameter['qty']
+                    'jumlah' => $parameter['qty'],
+                    'deleted_at' => NULL
                 ))
                     ->where(array(
                         'keranjang_detail.keranjang' => '= ?',
