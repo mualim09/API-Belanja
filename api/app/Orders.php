@@ -134,9 +134,10 @@ class Orders extends Utility
                     ))
                     ->execute();
             }
-            unset($newOrder['response_query']);
+            
+            /*unset($newOrder['response_query']);
             unset($newOrder['response_values']);
-            unset($newOrder['detail']);
+            unset($newOrder['detail']);*/
 
             return $newOrder;
 
