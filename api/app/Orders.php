@@ -377,7 +377,7 @@ class Orders extends Utility
             $data['response_data'][$key]['tanggal_order'] = date('d F Y (H:i)', strtotime($value['tanggal_order']));
         }
 
-        return $data;
+        return $data['response_data'];
     }
 
     private function get_order_backend($parameter) {
