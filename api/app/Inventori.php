@@ -448,7 +448,7 @@ class Inventori extends Utility
                 $detail['response_data'][$dKey]['satuan_terkecil'] = $dValue['satuan_terkecil_info']['nama'];
                 $detail['response_data'][$dKey]['qty'] = floatval($dValue['jumlah']);
                 $detail['response_data'][$dKey]['het'] = floatval($dValue['het']);
-                $detail['response_data'][$dKey]['harga'] = floatval($dValue['harga']);
+                $detail['response_data'][$dKey]['harga'] = ($dValue['jenis_member'] === 'M') ? floatval($dValue['harga']['harga_akhir_member']) : floatval($dValue['harga']['harga_akhir_stokis']);
 
                 unset($detail['response_data'][$dKey]['jumlah']);
                 unset($detail['response_data'][$dKey]['nama']);
