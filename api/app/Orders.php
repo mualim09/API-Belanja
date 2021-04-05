@@ -33,6 +33,9 @@ class Orders extends Utility
             case 'get_all':
                 return array();
                 break;
+            case 'get_detail_android':
+                return self::get_detail_android($parameter[2]);
+                break;
             case 'detail':
                 return self::order_detail($parameter[2]);
                 break;
@@ -151,6 +154,11 @@ class Orders extends Utility
                 'response_message' => 'Gagal proses order'
             );
         }
+    }
+
+    private function get_detail_android($parameter) {
+        $data = self::order_detail($parameter);
+        return $data['response_data'][0];
     }
 
     public function order_detail($parameter) {

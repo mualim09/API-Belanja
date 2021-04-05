@@ -1,5 +1,7 @@
 <script type="text/javascript">
     $(function () {
+        $(".btnProceed").hide();
+
         function getDateRange(target) {
             var rangeKwitansi = $(target).val().split(" to ");
             if(rangeKwitansi.length > 1) {
@@ -320,9 +322,13 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <!--button class="btn btn-success" id="btnProsesSEP">
-                    <i class="fa fa-check"></i> Tambah
-                </button-->
+                <button class="btn btn-success btnProceed" id="btnAntar">
+                    <i class="fa fa-check"></i> Antar
+                </button>
+
+                <button class="btn btn-success btnProceed" id="btnTerima">
+                    <i class="fa fa-check"></i> Sudah Terima
+                </button>
 
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
