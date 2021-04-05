@@ -13,8 +13,8 @@
 			},
 			type:"GET",
 			success:function(response) {
-				if(response.response_package.response_data !== undefined) {
-					invData = response.response_package.response_data[0];
+				if(response.response_data !== undefined) {
+					invData = response.response_data[0];
 				}
 
 				load_kategori("#txt_kategori", invData);
@@ -212,7 +212,7 @@
                     },
                     cache: true,
                     processResults: function (response) {
-                        var data = response.response_package.response_data;
+                        var data = response.response_data;
                         return {
                             results: $.map(data, function (item) {
                                 return {
@@ -375,7 +375,7 @@
 				},
 				type:"GET",
 				success:function(response) {
-					satuanData = response.response_package.response_data;
+					satuanData = response.response_data;
 					$(target).find("option").remove();
 					for(var a = 0; a < satuanData.length; a++) {
 						if(selectedData.indexOf(satuanData[a].uid) < 0) {
@@ -402,7 +402,7 @@
 				},
 				type:"GET",
 				success:function(response) {
-					kategoriObatData = response.response_package.response_data;
+					kategoriObatData = response.response_data;
 					render_kategori_obat(kategoriObatData);
 				},
 				error: function(response) {
@@ -422,7 +422,7 @@
 				},
 				type:"GET",
 				success:function(response) {
-					kategoriData = response.response_package.response_data;
+					kategoriData = response.response_data;
 					$(target).find("option").remove();
 					for(var a = 0; a < kategoriData.length; a++) {
 						$(target).append("<option value=\"" + kategoriData[a].uid + "\">" + kategoriData[a].nama + "</option>");
@@ -446,7 +446,7 @@
 				},
 				type:"GET",
 				success:function(response) {
-					manufactureData = response.response_package.response_data;
+					manufactureData = response.response_data;
 					$(target).find("option").remove();
 					for(var a = 0; a < manufactureData.length; a++) {
 						$(target).append("<option value=\"" + manufactureData[a].uid + "\">" + manufactureData[a].nama + "</option>");
@@ -637,7 +637,7 @@
 				},
 				type:"GET",
 				success:function(response) {
-					penjaminData = response.response_package.response_data;
+					penjaminData = response.response_data;
 					for(var a = 0; a < penjaminData.length; a++) {
 						var newHargaRow = document.createElement("TR");
 						$(newHargaRow).attr({
@@ -700,7 +700,7 @@
 				},
 				type:"GET",
 				success:function(response) {
-					gudangData = response.response_package.response_data;
+					gudangData = response.response_data;
 					for(var a = 0; a < gudangData.length; a++) {
 						var newGudangRow = document.createElement("TR");
 						$(newGudangRow).attr({
@@ -1006,9 +1006,10 @@
 							},
 							type:"POST",
 							success:function(response) {
-								if(response.response_package > 0) {
+                                notification ("success", "Data berhasil diproses", 3000, "hasil_tambah");
+								/*if(response.response_package > 0) {
 									notification ("success", "Data berhasil diproses", 3000, "hasil_tambah");
-								}
+								}*/
 							},
 							error: function(response) {
 								console.clear();
@@ -1127,12 +1128,14 @@
 						},
 						type:"POST",
 						success:function(response) {
-							if(response.response_package == 0) {
+							/*if(response.response_package == 0) {
 								notification ("success", "Data berhasil diproses", 3000, "hasil_tambah");
 								location.href = __HOSTNAME__ + "/master/inventori";
 							} else {
 								notification ("danger", "Data gagal diproses", 3000, "hasil_tambah");
-							}
+							}*/
+                            notification ("success", "Data berhasil diproses", 3000, "hasil_tambah");
+                            location.href = __HOSTNAME__ + "/master/inventori";
 						},
 						error: function(response) {
 							console.clear();
