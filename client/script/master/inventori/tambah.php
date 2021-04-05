@@ -14,7 +14,7 @@
 			type:"GET",
 			success:function(response) {
 				if(response.response_data !== undefined) {
-					invData = response.response_data[0];
+					//invData = response.response_data[0];
 				}
 
 				load_kategori("#txt_kategori", invData);
@@ -23,8 +23,8 @@
 				if(selectedDariSatuanList.indexOf($("#txt_satuan_terkecil").val()) < 0) {
 					selectedDariSatuanList.push($("#txt_satuan_terkecil").val());
 				}
-				load_kategori_obat();
-				autoSatuan(selectedDariSatuanList);
+				//load_kategori_obat();
+				//autoSatuan(selectedDariSatuanList);
 			}
 		});
 
