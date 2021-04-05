@@ -511,16 +511,18 @@ class Inventori extends Utility
     }
 
     private function android_highlight($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
         $data = self::$query
             ->select('master_inv', array(
                 'uid',
                 'kode_barang',
                 'nama as nama_produk',
-                'kategori',
-                'satuan_terkecil',
-                'het',
-                'created_at',
-                'updated_at'
+                //'kategori',
+                //'satuan_terkecil',
+                //'het',
+                //'created_at',
+                //'updated_at'
             ))
             ->where(array(
                 'master_inv.deleted_at' => 'IS NULL'
@@ -531,10 +533,43 @@ class Inventori extends Utility
             ->limit(3)
             ->execute();
 
+        foreach ($data['response_data'] as $key => $value) {
+            $data['response_data'][$key]['rating'] = 5;
+            $dataHarga = self::$query->select('strategi_penjualan', array(
+                'id', 'produk', 'tanggal',
+                'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
+                'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
+                'harga_jual_member',
+                'discount_type_member',
+                'discount_member',
+                'harga_akhir_member',
+
+                'harga_jual_stokis',
+                'discount_type_stokis',
+                'discount_stokis',
+                'harga_akhir_stokis'
+            ))
+                ->where(array(
+                    'strategi_penjualan.produk' => '= ?',
+                    'AND',
+                    'strategi_penjualan.tanggal' => '= ?',
+                    'AND',
+                    'strategi_penjualan.deleted_at' => 'IS NULL'
+                ), array(
+                    $value['uid'],
+                    date('Y-m-d')
+                ))
+                ->execute();
+
+            $data['response_data'][$key]['harga'] = ($UserData['data']->jenis_member === 'M') ? floatval($dataHarga['response_data'][0]['harga_akhir_member']) : floatval($dataHarga['response_data'][0]['harga_akhir_stokis']);
+        }
         return $data;
     }
 
     private function android_non_highlight($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+
         $high = self::android_highlight($parameter);
         $high_data = array();
         $not_high = array();
@@ -547,11 +582,11 @@ class Inventori extends Utility
                 'uid',
                 'kode_barang',
                 'nama as nama_produk',
-                'kategori',
-                'satuan_terkecil',
-                'het',
-                'created_at',
-                'updated_at'
+                //'kategori',
+                //'satuan_terkecil',
+                //'het',
+                //'created_at',
+                //'updated_at'
             ))
             ->where(array(
                 'master_inv.deleted_at' => 'IS NULL'
@@ -561,7 +596,39 @@ class Inventori extends Utility
             ))
             ->execute();
         foreach ($data['response_data'] as $key => $value) {
+            //$data['response_data'][$key]['rating'] = 5;
+            $value['rating'] = 5;
+
+            $dataHarga = self::$query->select('strategi_penjualan', array(
+                'id', 'produk', 'tanggal',
+                'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
+                'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
+                'harga_jual_member',
+                'discount_type_member',
+                'discount_member',
+                'harga_akhir_member',
+
+                'harga_jual_stokis',
+                'discount_type_stokis',
+                'discount_stokis',
+                'harga_akhir_stokis'
+            ))
+                ->where(array(
+                    'strategi_penjualan.produk' => '= ?',
+                    'AND',
+                    'strategi_penjualan.tanggal' => '= ?',
+                    'AND',
+                    'strategi_penjualan.deleted_at' => 'IS NULL'
+                ), array(
+                    $value['uid'],
+                    date('Y-m-d')
+                ))
+                ->execute();
+
+            $value['harga'] = ($UserData['data']->jenis_member === 'M') ? floatval($dataHarga['response_data'][0]['harga_akhir_member']) : floatval($dataHarga['response_data'][0]['harga_akhir_stokis']);
+
             if(!in_array($high, $value['uid'])) {
+
                 array_push($not_high, $value);
             }
         }
