@@ -439,9 +439,10 @@ class Inventori extends Utility
                 ->execute();
             foreach ($detail['response_data'] as $dKey => $dValue) {
                 $detailProduk = self::get_item_detail($dValue['produk'])['response_data'];
-
+                //$detail['response_data'][$dKey]['item'] = $detailProduk;
 
                 $detailProduk['nama_produk'] = strtoupper($detailProduk['nama']);
+                $detail['response_data'][$dKey]['harga'] = ($dValue['jenis_member'] === 'M') ? floatval($detailProduk['harga']['harga_akhir_member']) : floatval($detailProduk['harga']['harga_akhir_stokis']);
                 unset($detailProduk['het']);
                 unset($detailProduk['harga']);
                 unset($detailProduk['text']);
@@ -454,7 +455,8 @@ class Inventori extends Utility
                 $detail['response_data'][$dKey]['satuan_terkecil'] = $dValue['satuan_terkecil_info']['nama'];
                 $detail['response_data'][$dKey]['qty'] = floatval($dValue['jumlah']);
                 $detail['response_data'][$dKey]['het'] = floatval($dValue['het']);
-                $detail['response_data'][$dKey]['harga'] = ($dValue['jenis_member'] === 'M') ? floatval($detailProduk['harga']['harga_akhir_member']) : floatval($detailProduk['harga']['harga_akhir_stokis']);
+
+                //
 
                 unset($detail['response_data'][$dKey]['jumlah']);
                 unset($detail['response_data'][$dKey]['nama']);

@@ -27,6 +27,9 @@ class Orders extends Utility
     public function __GET__($parameter = array())
     {
         switch ($parameter[1]) {
+            case 'get_order_android':
+                return self::get_order_android($parameter);
+                break;
             case 'get_all':
                 return array();
                 break;
@@ -329,6 +332,52 @@ class Orders extends Utility
         $proceed['detail'] = $detail_proceed;
 
         return $proceed;
+    }
+
+    private function get_order_android($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+
+
+        $data = self::$query->select('orders', array(
+            'uid',
+            'nomor_invoice',
+            'status',
+            'penerima',
+            'customer',
+            'tanggal_order',
+            'kurir',
+            'alamat_billing',
+            'alamat_antar',
+            'provinsi',
+            'kabupaten',
+            'kecamatan',
+            'kelurahan',
+            'total_pre_disc',
+            'total_after_disc',
+            'created_on',
+            'keranjang',
+            'created_at',
+            'updated_at'
+        ))
+            ->where(array(
+                'orders.customer' => '= ?',
+                'AND',
+                'orders.deleted_at' => 'IS NULL'
+            ), array(
+                $UserData['data']->uid
+            ))
+            ->order(array(
+                'created_at' => 'DESC'
+            ))
+            ->limit(50)
+            ->execute();
+
+        foreach ($data['response_data'] as $key => $value) {
+            $data['response_data'][$key]['tanggal_order'] = date('d F Y (H:i)', strtotime($value['tanggal_order']));
+        }
+
+        return $data;
     }
 
     private function get_order_backend($parameter) {
