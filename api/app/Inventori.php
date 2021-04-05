@@ -245,6 +245,10 @@ class Inventori extends Utility
                 return self::edit_item_keranjang($parameter);
                 break;
 
+            case 'hapus_item_keranjang':
+                return self::hapus_item_keranjang($parameter);
+                break;
+
             case 'tambah_order_android':
                 return self::tambah_order_android($parameter);
                 break;
@@ -270,6 +274,35 @@ class Inventori extends Utility
             ))
             ->execute();
         return $data;
+    }
+
+    private function hapus_item_keranjang($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+
+        $check = self::check_keranjang($UserData['data']->uid);
+        if(count($check['response_data']) > 0) {
+            $target_uid = $check['response_data'][0]['uid'];
+            $proceed = self::$query->delete('keranjang_detail')
+                ->where(array(
+                    'keranjang_detail.keranjang' => '= ?',
+                    'AND',
+                    'keranjang_detail.produk' => '= ?',
+                    'AND',
+                    'keranjang_detail.deleted_at' => 'IS NULL'
+                ), array(
+                    $target_uid, $parameter['uid_barang']
+                ))
+                ->execute();
+            unset($proceed['response_query']);
+            unset($proceed['response_values']);
+            return $proceed;
+        } else {
+            return array(
+                'response_result' => 0,
+                'response_message' => 'Item tidak ditemukan'
+            );
+        }
     }
 
     private function edit_item_keranjang($parameter) {

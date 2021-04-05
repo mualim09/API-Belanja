@@ -29,6 +29,9 @@ class Membership extends Utility
                 case 'detail':
                     return self::customer_detail($parameter[2]);
                     break;
+                case 'detail_android':
+                    return self::customer_detail_android($parameter[2]);
+                    break;
                 case 'get_customer_select2':
                     return self::get_customer_select2($parameter);
                     break;
@@ -164,6 +167,12 @@ class Membership extends Utility
         }
     }
 
+    private function customer_detail_android($parameter) {
+        $data = self::customer_detail($parameter)['response_data'][0];
+
+        return $data;
+    }
+
     public function customer_detail($parameter)
     {
         $data = self::$query->select('membership', array(
@@ -217,9 +226,55 @@ class Membership extends Utility
             ->execute();
         $Bank = new Bank(self::$pdo);
         $Pegawai = new Pegawai(self::$pdo);
+
+        $cashback = 0;
+        $royalti = 0;
+        $reward = 0;
+        $insentif = 0;
+
         foreach ($data['response_data'] as $key => $value) {
+
             $data['response_data'][$key]['bank'] = $Bank->bank_detail($value['bank'])['response_data'][0];
             $data['response_data'][$key]['mentor'] = $Pegawai->get_detail($value['mentor'])['response_data'][0];
+
+            //get data cashback
+            $order = self::$query->select('orders', array(
+                'uid'
+            ))
+                ->where(array(
+                    'orders.customer' => '= ?',
+                    'AND',
+                    'orders.status' => '= ?',
+                    'AND',
+                    'orders.deleted_at' => 'IS NULL'
+                ), array(
+                    $value['uid'], 'D'
+                ))
+                ->execute();
+            foreach ($order['response_data'] as $OKey => $oValue) {
+                $detail_set = self::$query->select('orders_detail', array(
+                    'cashback', 'royalti', 'reward', 'insentif_personal'
+                ))
+                    ->where(array(
+                        'orders_detail.deleted_at' => 'IS NULL',
+                        'AND',
+                        'orders_detail.orders' => '= ?'
+                    ), array(
+                        $oValue['uid']
+                    ))
+                    ->execute();
+                if(count($detail_set['response_data']) > 0) {
+                    $cashback += floatval($detail_set['response_data'][0]['cashback']);
+                    $royalti += floatval($detail_set['response_data'][0]['royalti']);
+                    $reward += floatval($detail_set['response_data'][0]['reward']);
+                    $insentif += floatval($detail_set['response_data'][0]['insentif_personal']);
+                }
+            }
+
+            $data['response_data'][$key]['cashback'] = $cashback;
+            $data['response_data'][$key]['royalti'] = $royalti;
+            $data['response_data'][$key]['reward'] = $reward;
+            $data['response_data'][$key]['insentif_personal'] = $insentif;
         }
         return $data;
     }
