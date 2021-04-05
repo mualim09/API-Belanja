@@ -103,6 +103,13 @@ class Inventori extends Utility
                 case 'android_cari_produk':
                     return self::android_cari_produk($parameter);
                     break;
+                case 'android_highlight':
+                    return self::android_highlight($parameter);
+                    break;
+
+                case 'android_non_highlight':
+                    return self::android_non_highlight($parameter);
+                    break;
 
                 case 'get_keranjang':
                     return self::get_keranjang($parameter);
@@ -500,6 +507,65 @@ class Inventori extends Utility
             }
             $data['response_data'][$key]['list_items'] = $detail['response_data'];
         }
+        return $data;
+    }
+
+    private function android_highlight($parameter) {
+        $data = self::$query
+            ->select('master_inv', array(
+                'uid',
+                'kode_barang',
+                'nama as nama_produk',
+                'kategori',
+                'satuan_terkecil',
+                'het',
+                'created_at',
+                'updated_at'
+            ))
+            ->where(array(
+                'master_inv.deleted_at' => 'IS NULL'
+            ))
+            ->order(array(
+                'master_inv.created_at' => 'DESC'
+            ))
+            ->limit(3)
+            ->execute();
+
+        return $data;
+    }
+
+    private function android_non_highlight($parameter) {
+        $high = self::android_highlight($parameter);
+        $high_data = array();
+        $not_high = array();
+        foreach ($high['response_data'] as $key => $value) {
+            array_push($high_data, $value['uid']);
+        }
+
+        $data = self::$query
+            ->select('master_inv', array(
+                'uid',
+                'kode_barang',
+                'nama as nama_produk',
+                'kategori',
+                'satuan_terkecil',
+                'het',
+                'created_at',
+                'updated_at'
+            ))
+            ->where(array(
+                'master_inv.deleted_at' => 'IS NULL'
+            ))
+            ->order(array(
+                'master_inv.created_at' => 'DESC'
+            ))
+            ->execute();
+        foreach ($data['response_data'] as $key => $value) {
+            if(!in_array($high, $value['uid'])) {
+                array_push($not_high, $value);
+            }
+        }
+        $data['response_data'] = $not_high;
         return $data;
     }
 
