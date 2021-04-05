@@ -402,9 +402,12 @@ class Inventori extends Utility
     private function get_keranjang($parameter) {
         $Authorization = new Authorization();
         $UserData = $Authorization->readBearerToken($parameter['access_token']);
+        //$Customer = new Membership(self::$pdo);
+        $Inventori = new Inventori(self::$pdo);
         $data = self::$query->select('keranjang', array(
             'uid',
-            'status'
+            'status',
+            'member'
         ))
             ->where(array(
                 'keranjang.member' => '= ?',
@@ -415,6 +418,8 @@ class Inventori extends Utility
             ))
             ->execute();
         foreach ($data['response_data'] as $key => $value) {
+
+            //$CustomerInfo = $Customer->customer_detail($value['member'])['response_data'][0];
             $detail = self::$query->select('keranjang_detail', array(
                 'id',
                 'produk',
@@ -435,6 +440,7 @@ class Inventori extends Utility
             foreach ($detail['response_data'] as $dKey => $dValue) {
                 $detailProduk = self::get_item_detail($dValue['produk'])['response_data'];
 
+
                 $detailProduk['nama_produk'] = strtoupper($detailProduk['nama']);
                 unset($detailProduk['het']);
                 unset($detailProduk['harga']);
@@ -448,7 +454,7 @@ class Inventori extends Utility
                 $detail['response_data'][$dKey]['satuan_terkecil'] = $dValue['satuan_terkecil_info']['nama'];
                 $detail['response_data'][$dKey]['qty'] = floatval($dValue['jumlah']);
                 $detail['response_data'][$dKey]['het'] = floatval($dValue['het']);
-                $detail['response_data'][$dKey]['harga'] = ($dValue['jenis_member'] === 'M') ? floatval($dValue['harga']['harga_akhir_member']) : floatval($dValue['harga']['harga_akhir_stokis']);
+                $detail['response_data'][$dKey]['harga'] = ($dValue['jenis_member'] === 'M') ? floatval($detailProduk['harga']['harga_akhir_member']) : floatval($detailProduk['harga']['harga_akhir_stokis']);
 
                 unset($detail['response_data'][$dKey]['jumlah']);
                 unset($detail['response_data'][$dKey]['nama']);
