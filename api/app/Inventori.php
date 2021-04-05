@@ -597,7 +597,7 @@ class Inventori extends Utility
             ->execute();
         foreach ($data['response_data'] as $key => $value) {
             //$data['response_data'][$key]['rating'] = 5;
-            if(!in_array($high, $value['uid'])) {
+            if(!in_array($high_data, $value['uid'])) {
                 $value['rating'] = 5;
 
                 $dataHarga = self::$query->select('strategi_penjualan', array(
@@ -627,7 +627,7 @@ class Inventori extends Utility
                     ->execute();
 
                 $value['harga'] = ($UserData['data']->jenis_member === 'M') ? floatval($dataHarga['response_data'][0]['harga_akhir_member']) : floatval($dataHarga['response_data'][0]['harga_akhir_stokis']);
-                
+
                 array_push($not_high, $value);
             }
         }
