@@ -104,8 +104,8 @@ class Orders extends Utility
                 'penerima' => $CustomerInfo['nama'],
                 'customer' => $UserData['data']->uid,
                 'kurir' => '',
-                'alamat_billing' => $CustomerInfo['alamat_domisili'],
-                'alamat_antar' => $CustomerInfo['alamat_domisili'],
+                'alamat_billing' => (isset($CustomerInfo['alamat_domisili']) || empty($CustomerInfo['alamat_domisili']) || $CustomerInfo['alamat_domisili'] === '') ? '' : $CustomerInfo['alamat_domisili'],
+                'alamat_antar' => (isset($CustomerInfo['alamat_domisili']) || empty($CustomerInfo['alamat_domisili']) || $CustomerInfo['alamat_domisili'] === '') ? '' : $CustomerInfo['alamat_domisili'],
                 'provinsi' => intval($CustomerInfo['provinsi_domisili']),
                 'kabupaten' => intval($parameter['kabupaten_domisili']),
                 'kecamatan' => intval($parameter['kecamatan_domisili']),
@@ -135,9 +135,9 @@ class Orders extends Utility
                     ->execute();
             }
             
-            /*unset($newOrder['response_query']);
+            unset($newOrder['response_query']);
             unset($newOrder['response_values']);
-            unset($newOrder['detail']);*/
+            unset($newOrder['detail']);
 
             return $newOrder;
 
