@@ -1,6 +1,8 @@
 <script type="text/javascript">
     $(function () {
         $(".btnProceed").hide();
+        var selectedStatus = "";
+        var selectedUID = "";
 
         function getDateRange(target) {
             var rangeKwitansi = $(target).val().split(" to ");
@@ -20,6 +22,10 @@
             }
         });
 
+        $("#invoice_status_filter").select2().on("select2:select", function(e) {
+            orderData.ajax.reload();
+        });
+
         var orderData = $("#table-order").DataTable({
             processing: true,
             serverSide: true,
@@ -32,7 +38,7 @@
                 type: "POST",
                 data: function(d) {
                     d.request = "get_order_backend";
-                    d.status = "N";
+                    d.status = $("#invoice_status_filter").val();
                     d.from = getDateRange("#range_order")[0];
                     d.to = getDateRange("#range_order")[1];
                 },
@@ -88,13 +94,13 @@
                     "data" : null, render: function(data, type, row, meta) {
                         var parseStatus = "";
                         if(row.status === "N") {
-                            parseStatus = "<span class=\"text-info\"><i class=\"fa fa-info-circle\"></i> Baru</span>";
+                            parseStatus = "<span status=\"" + row.status + "\" id=\"status_" + row.uid + "\" class=\"text-info\"><i class=\"fa fa-info-circle\"></i> Baru</span>";
                         } else if(row.status === "P") {
-                            parseStatus = "<span class=\"text-warning\"><i class=\"fa fa-truck\"></i> Sedang Diantar</span>";
+                            parseStatus = "<span status=\"" + row.status + "\" id=\"status_" + row.uid + "\" class=\"text-warning\"><i class=\"fa fa-truck\"></i> Sedang Diantar</span>";
                         } else if(row.status === "R") {
-                            parseStatus = "<span class=\"text-success\"><i class=\"fa fa-boxes\"></i> Diterima</span>";
+                            parseStatus = "<span status=\"" + row.status + "\" id=\"status_" + row.uid + "\" class=\"text-success\"><i class=\"fa fa-boxes\"></i> Diterima</span>";
                         } else {
-                            parseStatus = "<span class=\"text-muted\"><i class=\"fa fa-check-circle\"></i> Selesai</span>";
+                            parseStatus = "<span status=\"" + row.status + "\" id=\"status_" + row.uid + "\" class=\"text-muted\"><i class=\"fa fa-check-circle\"></i> Selesai</span>";
                         }
 
                         return parseStatus;
@@ -118,9 +124,179 @@
             ]
         });
 
+        function condition_status(status) {
+            $(".btnProceed").hide();
+
+            if(status === "N") {    //Baru
+                $("#invoice_kurir").removeAttr("disabled");
+                $("#btnAntar").show();
+            } else if(status === "P") {     //Antar
+                $("#invoice_kurir").attr("disabled", "disabled");
+                $("#btnTerima").show();
+            } else if(status === "R") {     //Diterima
+                $("#invoice_kurir").attr("disabled", "disabled");
+                $(".btnProceed").hide();
+            } else {    //Selesai
+                $("#invoice_kurir").attr("disabled", "disabled");
+                $(".btnProceed").hide();
+            }
+        }
+
+        $("#btnAntar").click(function () {
+            var kurir = $("#invoice_kurir").val();
+
+            if(kurir !== "") {
+                Swal.fire({
+                    title: "Order sudah sesuai?",
+                    showDenyButton: true,
+                    type: "warning",
+                    confirmButtonText: "Ya",
+                    confirmButtonColor: "#1297fb",
+                    denyButtonText: "Cek Kembali",
+                    denyButtonColor: "#ff2a2a"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            async: false,
+                            url: __HOSTAPI__ + "/Orders",
+                            beforeSend: function (request) {
+                                request.setRequestHeader("Authorization", "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>);
+                            },
+                            type: "POST",
+                            data: {
+                                request: "update_order",
+                                uid: selectedUID,
+                                kurir: kurir,
+                                status: "P"
+                            },
+                            success: function (response) {
+                                if(response.response_package.response_result > 0) {
+                                    Swal.fire(
+                                        "Proses Order",
+                                        "Berhasil diproses",
+                                        "success"
+                                    ).then((result) => {
+                                        orderData.ajax.reload();
+                                        $("#modal-order").modal("hide");
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        "Order",
+                                        "Gagal ditambahkan",
+                                        "error"
+                                    ).then((result) => {
+                                        $("#modal-order").modal("hide");
+                                    });
+                                }
+                            },
+                            error: function (response) {
+                                console.log(response);
+                            }
+                        });
+                    }
+                });
+            } else {
+                Swal.fire(
+                    "Proses Order",
+                    "Isi Nama Kurir",
+                    "error"
+                ).then((result) => {
+                    //
+                });
+            }
+
+            return false;
+        });
+
+
+
+
+
+
+
+
+
+        $("#btnTerima").click(function () {
+            var kurir = $("#invoice_kurir").val();
+
+            if(kurir !== "") {
+                Swal.fire({
+                    title: "Barang sudah diterima?",
+                    showDenyButton: true,
+                    type: "warning",
+                    confirmButtonText: "Ya",
+                    confirmButtonColor: "#1297fb",
+                    denyButtonText: "Belum",
+                    denyButtonColor: "#ff2a2a"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            async: false,
+                            url: __HOSTAPI__ + "/Orders",
+                            beforeSend: function (request) {
+                                request.setRequestHeader("Authorization", "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>);
+                            },
+                            type: "POST",
+                            data: {
+                                request: "update_order",
+                                uid: selectedUID,
+                                kurir: kurir,
+                                status: "R"
+                            },
+                            success: function (response) {
+                                if(response.response_package.response_result > 0) {
+                                    Swal.fire(
+                                        "Proses Order",
+                                        "Berhasil diproses",
+                                        "success"
+                                    ).then((result) => {
+                                        orderData.ajax.reload();
+                                        $("#modal-order").modal("hide");
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        "Order",
+                                        "Gagal ditambahkan",
+                                        "error"
+                                    ).then((result) => {
+                                        $("#modal-order").modal("hide");
+                                    });
+                                }
+                            },
+                            error: function (response) {
+                                console.log(response);
+                            }
+                        });
+                    }
+                });
+            } else {
+                Swal.fire(
+                    "Proses Order",
+                    "Isi Nama Kurir",
+                    "error"
+                ).then((result) => {
+                    //
+                });
+            }
+
+            return false;
+        });
+
+
+
+
+
+
+
+
+
         $("body").on("click", ".detailOrder", function () {
             var id = $(this).attr("id").split("_");
             id = id[id.length - 1];
+
+            selectedStatus = $("#status_" + id).attr("status");
+            selectedUID = id;
+            condition_status(selectedStatus);
 
             $.ajax({
                 async: false,
@@ -150,7 +326,7 @@
                     $("#invoice_nomor").html(data.nomor_invoice);
                     $("#alamat_antar").html(data.alamat_antar);
                     $("#alamat_tagih").html(data.alamat_billing);
-                    $("#invoice_kurir").html(data.kurir);
+                    $("#invoice_kurir").val(data.kurir);
                     $("#invoice_status").html(parseStatus);
                     $("#invoice_total").html(number_format(data.total_after_disc, 2, ".", ","));
                     $("#invoice_remark").html(data.remark);
@@ -245,7 +421,142 @@
                                 </div>
                                 <div class="col-4">
                                     <label for="">Kurir</label><br />
-                                    <b id="invoice_kurir"></b>
+                                    <input id="invoice_kurir" class="form-control uppercase" placeholder="Nama Kurir" />
+                                </div>
+                                <div class="col-4">
+                                    <label for="">Tanggal</label><br />
+                                    <b id="invoice_tanggal"></b>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="form-row">
+                                <div class="col-4">
+                                    <label for="">Total Invoice</label><br />
+                                    <h4 class="text-info" id="invoice_total"></h4>
+                                </div>
+                                <div class="col-4">
+                                    <label for="">Status</label><br />
+                                    <b id="invoice_status"></b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card card-form">
+                    <div class="row no-gutters">
+                        <div class="col-lg-12 card-body">
+                            <table class="table table-bordered largeDataType" id="auto_produk">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th rowspan="2" class="wrap_content">No</th>
+                                    <th rowspan="2" style="width: 250px;">Produk</th>
+                                    <th rowspan="2" style="width: 80px;">Qty</th>
+                                    <th rowspan="2" style="width: 100px;">Harga Jual</th>
+                                    <th colspan="4">Bonus</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 100px;">Cashback</th>
+                                    <th style="width: 100px;">Royalti</th>
+                                    <th style="width: 100px;">Reward</th>
+                                    <th style="width: 100px;">Insentif</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot style="background: #fafafa">
+                                <tr>
+                                    <td colspan="3" class="text-right">
+                                        <b>TOTAL (Pre Disc.)</b>
+                                    </td>
+                                    <td class="number_style" id="order_total_belanja">0.00</td>
+                                    <td class="number_style" id="order_total_cashback">0.00</td>
+                                    <td class="number_style" id="order_total_royalti">0.00</td>
+                                    <td class="number_style" id="order_total_reward">0.00</td>
+                                    <td class="number_style" id="order_total_insentif">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-right">
+                                        <b id="invoice_disc_type">DISCOUNT</b>
+                                    </td>
+                                    <td class="text-right">
+                                        <b id="invoice_disc" class="text-right"></b>
+                                    </td>
+                                    <td colspan="4" rowspan="2">
+                                        <b>Remark:</b>
+                                        <p style="min-height: 100px;" id="invoice_remark"></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-right">
+                                        <b>Grand TOTAL</b>
+                                    </td>
+                                    <td class="number_style" id="order_grand_total" style="font-size: 14pt">0.00</td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success btnProceed" id="btnAntar">
+                    <i class="fa fa-check"></i> Antar
+                </button>
+
+                <button class="btn btn-success btnProceed" id="btnTerima">
+                    <i class="fa fa-check"></i> Sudah Terima
+                </button>
+
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="modal-dn" class="modal fade" role="dialog" aria-labelledby="modal-large-title" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-large-title">
+                    Delivery Note
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card card-form">
+                    <div class="row no-gutters">
+                        <div class="col-lg-4 card-body">
+                            <p>
+                                <strong class="headings-color" id="nama_customer"></strong>
+                                <br />
+                                <small><b id="jenis_member"></b></small>
+                            </p>
+                            Antar:<br />
+                            <p class="text-muted" id="alamat_antar"></p>
+                            Tagih:<br />
+                            <p class="text-muted" id="alamat_tagih"></p>
+                        </div>
+                        <div class="col-lg-8 card-body">
+                            <div class="form-row">
+                                <div class="col-4">
+                                    <label for="">Nomor Invoice</label><br />
+                                    <b id="invoice_nomor"></b>
+                                </div>
+                                <div class="col-4">
+                                    <label for="">Kurir</label><br />
+                                    <input id="invoice_kurir" class="form-control" placeholder="Nama Kurir" />
                                 </div>
                                 <div class="col-4">
                                     <label for="">Tanggal</label><br />

@@ -22,15 +22,34 @@
                         <h5 class="card-header__title flex m-0">Order</h5>
                     </div>
                     <div class="card-header">
-                        <a href="<?php echo __HOSTNAME__; ?>/penjualan/order/tambah" class="btn btn-info ml-3 pull-right">
-                            <i class="fa fa-plus-circle"></i> Tambah Order
-                        </a>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                Filter Status :
+                                <select class="form-control" id="invoice_status_filter">
+                                    <option value="A" selected>Semua</option>
+                                    <option value="N">Baru</option>
+                                    <option value="P">Sedang Antar</option>
+                                    <option value="R">Diterima</option>
+                                    <option value="D">Selesai</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                Filter Tanggal :
+                                <input id="range_order" type="text" class="form-control" placeholder="Flatpickr range example" data-toggle="flatpickr" data-flatpickr-mode="range" value="<?php echo $day->format('Y-m-1'); ?> to <?php echo $day->format('Y-m-d'); ?>" />
+                            </div>
+                            <div class="col-lg-3">
+                                <br />
+                                <a href="<?php echo __HOSTNAME__; ?>/penjualan/order/tambah" class="btn btn-info ml-3 pull-right">
+                                    <i class="fa fa-plus-circle"></i> Tambah Order
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body tab-content">
                         <div class="tab-pane active show fade" id="customer-modul">
                             <div class="row">
                                 <div class="col-9 text-right">
-                                    <input id="range_order" type="text" class="form-control" placeholder="Flatpickr range example" data-toggle="flatpickr" data-flatpickr-mode="range" value="<?php echo $day->format('Y-m-1'); ?> to <?php echo $day->format('Y-m-d'); ?>" />
+
                                 </div>
                                 <div class="col-3">
                                 </div>

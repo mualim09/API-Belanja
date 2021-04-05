@@ -56,9 +56,31 @@ class Orders extends Utility
             case 'keranjang_proceed_orders':
                 return self::keranjang_proceed_orders($parameter);
                 break;
+            case 'update_order':
+                return self::update_order($parameter);
+                break;
             default:
                 return array();
         }
+    }
+
+    private function update_order($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+
+        $proceed = self::$query->update('orders', array(
+            'status' => $parameter['status'],
+            'kurir' => $parameter['kurir']
+        ))
+            ->where(array(
+                'orders.uid' => '= ?',
+                'AND',
+                'orders.deleted_at' => 'IS NULL'
+            ), array(
+                $parameter['uid']
+            ))
+            ->execute();
+        return $proceed;
     }
 
     private function keranjang_proceed_orders($parameter) {
@@ -392,31 +414,57 @@ class Orders extends Utility
         $Authorization = new Authorization();
         $UserData = $Authorization->readBearerToken($parameter['access_token']);
         if (isset($parameter['search']['value']) && !empty($parameter['search']['value'])) {
-            $paramData = array(
-                'orders.deleted_at' => 'IS NULL',
-                'AND',
-                'orders.created_at' => 'BETWEEN ? AND ?',
-                'AND',
-                'orders.status' => '= ?',
-                'AND',
-                'orders.nomor_invoice' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\''
-            );
+            if($parameter['status'] === 'A') {
+                $paramData = array(
+                    'orders.deleted_at' => 'IS NULL',
+                    'AND',
+                    'orders.created_at' => 'BETWEEN ? AND ?',
+                    'AND',
+                    'orders.nomor_invoice' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\''
+                );
 
-            $paramValue = array(
-                $parameter['from'], $parameter['to'], $parameter['status']
-            );
+                $paramValue = array(
+                    $parameter['from'], $parameter['to']
+                );
+            } else {
+                $paramData = array(
+                    'orders.deleted_at' => 'IS NULL',
+                    'AND',
+                    'orders.created_at' => 'BETWEEN ? AND ?',
+                    'AND',
+                    'orders.status' => '= ?',
+                    'AND',
+                    'orders.nomor_invoice' => 'ILIKE ' . '\'%' . $parameter['search']['value'] . '%\''
+                );
+
+                $paramValue = array(
+                    $parameter['from'], $parameter['to'], $parameter['status']
+                );
+            }
         } else {
-            $paramData = array(
-                'orders.deleted_at' => 'IS NULL',
-                'AND',
-                'orders.created_at' => 'BETWEEN ? AND ?',
-                'AND',
-                'orders.status' => '= ?'
-            );
+            if($parameter['status'] === 'A') {
+                $paramData = array(
+                    'orders.deleted_at' => 'IS NULL',
+                    'AND',
+                    'orders.created_at' => 'BETWEEN ? AND ?'
+                );
 
-            $paramValue = array(
-                $parameter['from'], $parameter['to'], $parameter['status']
-            );
+                $paramValue = array(
+                    $parameter['from'], $parameter['to']
+                );
+            } else {
+                $paramData = array(
+                    'orders.deleted_at' => 'IS NULL',
+                    'AND',
+                    'orders.created_at' => 'BETWEEN ? AND ?',
+                    'AND',
+                    'orders.status' => '= ?'
+                );
+
+                $paramValue = array(
+                    $parameter['from'], $parameter['to'], $parameter['status']
+                );
+            }
         }
 
         if ($parameter['length'] < 0) {
