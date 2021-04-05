@@ -597,38 +597,37 @@ class Inventori extends Utility
             ->execute();
         foreach ($data['response_data'] as $key => $value) {
             //$data['response_data'][$key]['rating'] = 5;
-            $value['rating'] = 5;
-
-            $dataHarga = self::$query->select('strategi_penjualan', array(
-                'id', 'produk', 'tanggal',
-                'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
-                'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
-                'harga_jual_member',
-                'discount_type_member',
-                'discount_member',
-                'harga_akhir_member',
-
-                'harga_jual_stokis',
-                'discount_type_stokis',
-                'discount_stokis',
-                'harga_akhir_stokis'
-            ))
-                ->where(array(
-                    'strategi_penjualan.produk' => '= ?',
-                    'AND',
-                    'strategi_penjualan.tanggal' => '= ?',
-                    'AND',
-                    'strategi_penjualan.deleted_at' => 'IS NULL'
-                ), array(
-                    $value['uid'],
-                    date('Y-m-d')
-                ))
-                ->execute();
-
-            $value['harga'] = ($UserData['data']->jenis_member === 'M') ? floatval($dataHarga['response_data'][0]['harga_akhir_member']) : floatval($dataHarga['response_data'][0]['harga_akhir_stokis']);
-
             if(!in_array($high, $value['uid'])) {
+                $value['rating'] = 5;
 
+                $dataHarga = self::$query->select('strategi_penjualan', array(
+                    'id', 'produk', 'tanggal',
+                    'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
+                    'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
+                    'harga_jual_member',
+                    'discount_type_member',
+                    'discount_member',
+                    'harga_akhir_member',
+
+                    'harga_jual_stokis',
+                    'discount_type_stokis',
+                    'discount_stokis',
+                    'harga_akhir_stokis'
+                ))
+                    ->where(array(
+                        'strategi_penjualan.produk' => '= ?',
+                        'AND',
+                        'strategi_penjualan.tanggal' => '= ?',
+                        'AND',
+                        'strategi_penjualan.deleted_at' => 'IS NULL'
+                    ), array(
+                        $value['uid'],
+                        date('Y-m-d')
+                    ))
+                    ->execute();
+
+                $value['harga'] = ($UserData['data']->jenis_member === 'M') ? floatval($dataHarga['response_data'][0]['harga_akhir_member']) : floatval($dataHarga['response_data'][0]['harga_akhir_stokis']);
+                
                 array_push($not_high, $value);
             }
         }
