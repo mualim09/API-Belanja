@@ -279,7 +279,10 @@ class Membership extends Utility
             $data['response_data'][$key]['royalti'] = $royalti;
             $data['response_data'][$key]['reward'] = $reward;
             $data['response_data'][$key]['insentif_personal'] = $insentif;*/
-            $data['response_data'][$key]['insentif_personal'] = $value['insentif'];
+            $data['response_data'][$key]['cashback'] = floatval($value['cashback']);
+            $data['response_data'][$key]['royalti'] = floatval($value['royalti']);
+            $data['response_data'][$key]['reward'] = floatval($value['reward']);
+            $data['response_data'][$key]['insentif_personal'] = floatval($value['insentif']);
         }
         return $data;
     }
