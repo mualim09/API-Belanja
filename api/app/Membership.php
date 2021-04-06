@@ -242,7 +242,7 @@ class Membership extends Utility
             $data['response_data'][$key]['mentor'] = $Pegawai->get_detail($value['mentor'])['response_data'][0];
 
             //get data cashback
-            $order = self::$query->select('orders', array(
+            /*$order = self::$query->select('orders', array(
                 'uid'
             ))
                 ->where(array(
@@ -278,7 +278,8 @@ class Membership extends Utility
             $data['response_data'][$key]['cashback'] = $cashback;
             $data['response_data'][$key]['royalti'] = $royalti;
             $data['response_data'][$key]['reward'] = $reward;
-            $data['response_data'][$key]['insentif_personal'] = $insentif;
+            $data['response_data'][$key]['insentif_personal'] = $insentif;*/
+            $data['response_data'][$key]['insentif_personal'] = $value['insentif'];
         }
         return $data;
     }
