@@ -73,50 +73,61 @@ class Orders extends Utility
 
         $Order = self::order_detail($parameter['uid']);
 
-        $proc = self::update_order(array(
-            'status' => 'D',
-            'uid' => $parameter['uid'],
-            'kurir' => isset($Order['response_data'][0]['kurir']) ? $Order['response_data'][0]['kurir'] : ''
-        ));
-
-        if($proc['response_result'] > 0) {
-
-            $cashback = 0;
-            $royalti = 0;
-            $reward = 0;
-            $insentif = 0;
+        if($Order['response_data'][0]['status'] === 'R') {
+            $proc = self::update_order(array(
+                'status' => 'D',
+                'uid' => $parameter['uid'],
+                'kurir' => isset($Order['response_data'][0]['kurir']) ? $Order['response_data'][0]['kurir'] : ''
+            ));
 
 
-            //calculate bonus
-            $Customer = new Membership(self::$pdo);
+            if($proc['response_result'] > 0) {
 
-            foreach ($Order['response_data'] as $key => $value) {
-                $CustomerInfo = $Customer->customer_detail($UserData['data']->uid)['response_data'][0];
-                foreach ($value['detail'] as $DKey => $DValue) {
-                    $cashback += floatval($DValue['cashback']);
-                    $royalti += floatval($DValue['royalti']);
-                    $reward += floatval($DValue['reward']);
-                    $insentif += floatval($DValue['insentif']);
-                }
+                $cashback = 0;
+                $royalti = 0;
+                $reward = 0;
+                $insentif = 0;
 
-                $update_member = self::$query->update('membership', array(
-                    'cashback' => floatval($CustomerInfo['response_data'][0]['cashback']) + $cashback,
-                    'royalti' => floatval($CustomerInfo['response_data'][0]['royalti']) + $royalti,
-                    'reward' => floatval($CustomerInfo['response_data'][0]['reward']) + $reward,
-                    'insentif' => floatval($CustomerInfo['response_data'][0]['insentif']) + $insentif
-                ))
-                    ->where(array(
-                        'membership.uid' => '= ?',
-                        'AND',
-                        'membership.deleted_at' => 'IS NULL'
-                    ), array(
-                        $UserData['data']->uid
+
+                //calculate bonus
+                $Customer = new Membership(self::$pdo);
+
+                foreach ($Order['response_data'] as $key => $value) {
+                    $CustomerInfo = $Customer->customer_detail($UserData['data']->uid)['response_data'][0];
+                    foreach ($value['detail'] as $DKey => $DValue) {
+                        $cashback += floatval($DValue['cashback']);
+                        $royalti += floatval($DValue['royalti']);
+                        $reward += floatval($DValue['reward']);
+                        $insentif += floatval($DValue['insentif']);
+                    }
+
+                    $update_member = self::$query->update('membership', array(
+                        'cashback' => floatval($CustomerInfo['response_data'][0]['cashback']) + $cashback,
+                        'royalti' => floatval($CustomerInfo['response_data'][0]['royalti']) + $royalti,
+                        'reward' => floatval($CustomerInfo['response_data'][0]['reward']) + $reward,
+                        'insentif' => floatval($CustomerInfo['response_data'][0]['insentif']) + $insentif
                     ))
-                    ->execute();
+                        ->where(array(
+                            'membership.uid' => '= ?',
+                            'AND',
+                            'membership.deleted_at' => 'IS NULL'
+                        ), array(
+                            $UserData['data']->uid
+                        ))
+                        ->execute();
+                }
             }
-        }
 
-        return $proc;
+            return array(
+                'response_message' => ($proc['response_result'] > 0) ? 'Pesan berhasil di tutup. Cek point Anda' : 'Pesan gagal ditutup',
+                'response_result' => $proc['response_result']
+            );
+        } else {
+            return array(
+                'response_message' => 'Status pesanan tidak memenuhi syarat',
+                'response_result' => 0
+            );
+        }
     }
 
     private function update_order($parameter) {
