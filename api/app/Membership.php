@@ -215,6 +215,10 @@ class Membership extends Utility
             'status_member',
             'created_at',
             'updated_at',
+            'cashback',
+            'royalti',
+            'reward',
+            'insentif'
         ))
             ->where(array(
                 'membership.deleted_at' => 'IS NULL',

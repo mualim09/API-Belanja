@@ -338,7 +338,7 @@
 
 		basic.croppie("bind", {
 			zoom: 1,
-			url: __HOST__ + "/assets/images/inventori/unset.png"
+			url: __HOST__ + "/images/product.png"
 		});
 
 		$("#upload-image").change(function(){
@@ -871,7 +871,7 @@
 		});
 
 
-		$("#btn_save_data").click(function(){
+		$("#btn_save_data").click(function() {  
 			var nama = $("#txt_nama").val();
 			var kode = $("#txt_kode").val();
             var het = $("#txt_het").inputmask("unmaskedvalue");
@@ -1006,7 +1006,8 @@
 							},
 							type:"POST",
 							success:function(response) {
-                                notification ("success", "Data berhasil diproses", 3000, "hasil_tambah");
+                                console.log(response);
+							    notification ("success", "Data berhasil diproses", 3000, "hasil_tambah");
 								/*if(response.response_package > 0) {
 									notification ("success", "Data berhasil diproses", 3000, "hasil_tambah");
 								}*/
@@ -1128,6 +1129,7 @@
 						},
 						type:"POST",
 						success:function(response) {
+                            console.log(response);
 							/*if(response.response_package == 0) {
 								notification ("success", "Data berhasil diproses", 3000, "hasil_tambah");
 								location.href = __HOSTNAME__ + "/master/inventori";

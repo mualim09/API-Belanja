@@ -59,9 +59,64 @@ class Orders extends Utility
             case 'update_order':
                 return self::update_order($parameter);
                 break;
+            case 'close_pesanan':
+                return self::selesaikan_pesanan($parameter);
+                break;
             default:
                 return array();
         }
+    }
+
+    private function selesaikan_pesanan($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+
+        $Order = self::order_detail($parameter['uid']);
+
+        $proc = self::update_order(array(
+            'status' => 'D',
+            'uid' => $parameter['uid'],
+            'kurir' => isset($Order['response_data'][0]['kurir']) ? $Order['response_data'][0]['kurir'] : ''
+        ));
+
+        if($proc['response_result'] > 0) {
+
+            $cashback = 0;
+            $royalti = 0;
+            $reward = 0;
+            $insentif = 0;
+
+
+            //calculate bonus
+            $Customer = new Membership(self::$pdo);
+
+            foreach ($Order['response_data'] as $key => $value) {
+                $CustomerInfo = $Customer->customer_detail($UserData['data']->uid)['response_data'][0];
+                foreach ($value['detail'] as $DKey => $DValue) {
+                    $cashback += floatval($DValue['cashback']);
+                    $royalti += floatval($DValue['royalti']);
+                    $reward += floatval($DValue['reward']);
+                    $insentif += floatval($DValue['insentif']);
+                }
+
+                $update_member = self::$query->update('membership', array(
+                    'cashback' => floatval($CustomerInfo['response_data'][0]['cashback']) + $cashback,
+                    'royalti' => floatval($CustomerInfo['response_data'][0]['royalti']) + $royalti,
+                    'reward' => floatval($CustomerInfo['response_data'][0]['reward']) + $reward,
+                    'insentif' => floatval($CustomerInfo['response_data'][0]['insentif']) + $insentif
+                ))
+                    ->where(array(
+                        'membership.uid' => '= ?',
+                        'AND',
+                        'membership.deleted_at' => 'IS NULL'
+                    ), array(
+                        $UserData['data']->uid
+                    ))
+                    ->execute();
+            }
+        }
+
+        return $proc;
     }
 
     private function update_order($parameter) {
@@ -80,6 +135,9 @@ class Orders extends Utility
                 $parameter['uid']
             ))
             ->execute();
+
+
+
         return $proceed;
     }
 
@@ -125,7 +183,7 @@ class Orders extends Utility
                     'insentif' => (($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['member_insentif_personal'] : $ItemDetail['harga']['stokis_insentif_personal'])
                 ));
 
-                $total_pre_discount += floatval($value['jumlah'] * (($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['harga_akhir_member'] : $ItemDetail['harga']['harga_akhir_stokis']));
+                $total_pre_discount += $value['jumlah'] * floatval((($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['harga_akhir_member'] : $ItemDetail['harga']['harga_akhir_stokis']));
             }
 
             $prepare = array(
@@ -138,8 +196,8 @@ class Orders extends Utility
                 'kabupaten' => intval($parameter['kabupaten_domisili']),
                 'kecamatan' => intval($parameter['kecamatan_domisili']),
                 'kelurahan' => intval($parameter['kelurahan_domisili']),
-                'total_pre_disc' => floatval($total_pre_discount),
-                'total_after_disc' => floatval($total_pre_discount),
+                'total_pre_discount' => floatval($total_pre_discount),
+                'total_after_discount' => floatval($total_pre_discount),
                 'disc_type' => 'N',
                 'disc' => 0,
                 'via' => 'A',
