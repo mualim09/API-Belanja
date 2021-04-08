@@ -95,27 +95,27 @@ class Orders extends Utility
                 foreach ($Order['response_data'] as $key => $value) {
                     $CustomerInfo = $Customer->customer_detail($UserData['data']->uid)['response_data'][0];
                     foreach ($value['detail'] as $DKey => $DValue) {
-                        $cashback += floatval($DValue['cashback']);
-                        $royalti += floatval($DValue['royalti']);
-                        $reward += floatval($DValue['reward']);
-                        $insentif += floatval($DValue['insentif']);
+                        $cashback += (floatval($DValue['cashback']) * floatval($DValue['qty']));
+                        $royalti += (floatval($DValue['royalti']) * floatval($DValue['qty']));
+                        $reward += (floatval($DValue['reward']) * floatval($DValue['qty']));
+                        $insentif += (floatval($DValue['insentif_personal']) * floatval($DValue['qty']));
                     }
-
-                    $update_member = self::$query->update('membership', array(
-                        'cashback' => floatval($CustomerInfo['response_data'][0]['cashback']) + $cashback,
-                        'royalti' => floatval($CustomerInfo['response_data'][0]['royalti']) + $royalti,
-                        'reward' => floatval($CustomerInfo['response_data'][0]['reward']) + $reward,
-                        'insentif' => floatval($CustomerInfo['response_data'][0]['insentif']) + $insentif
-                    ))
-                        ->where(array(
-                            'membership.uid' => '= ?',
-                            'AND',
-                            'membership.deleted_at' => 'IS NULL'
-                        ), array(
-                            $UserData['data']->uid
-                        ))
-                        ->execute();
                 }
+
+                $update_member = self::$query->update('membership', array(
+                    'cashback' => floatval($CustomerInfo['response_data'][0]['cashback']) + $cashback,
+                    'royalti' => floatval($CustomerInfo['response_data'][0]['royalti']) + $royalti,
+                    'reward' => floatval($CustomerInfo['response_data'][0]['reward']) + $reward,
+                    'insentif' => floatval($CustomerInfo['response_data'][0]['insentif']) + $insentif
+                ))
+                    ->where(array(
+                        'membership.uid' => '= ?',
+                        'AND',
+                        'membership.deleted_at' => 'IS NULL'
+                    ), array(
+                        $UserData['data']->uid
+                    ))
+                    ->execute();
             }
 
             return array(
