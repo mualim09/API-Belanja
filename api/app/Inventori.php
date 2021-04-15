@@ -545,7 +545,7 @@ class Inventori extends Utility
                     ))
                     ->execute();
             } else {
-                $detailProduk = self::get_item_detail($parameter['uid_barang'])['response_data'][0];
+                $detailProduk = self::get_item_detail($parameter['uid_barang'])['response_data'];
                 $proceedDetail = self::$query->insert('keranjang_detail', array(
                     'produk' => $parameter['uid_barang'],
                     'jumlah' => $parameter['qty'],
