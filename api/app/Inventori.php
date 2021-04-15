@@ -131,6 +131,9 @@ class Inventori extends Utility
     public function __POST__($parameter = array())
     {
         switch ($parameter['request']) {
+            case 'migrate_harga':
+                return self::migrate_harga($parameter);
+                break;
             case 'tambah_kategori':
                 return self::tambah_kategori($parameter);
                 break;
@@ -678,7 +681,7 @@ class Inventori extends Utility
             } else {
                 $data['response_data'][$key]['url_gambar'] = __HOST__ . 'images/product.png';
             }
-            $dataHarga = self::$query->select('strategi_penjualan', array(
+            /*$dataHarga = self::$query->select('strategi_penjualan', array(
                 'id', 'produk', 'tanggal',
                 'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
                 'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
@@ -704,7 +707,56 @@ class Inventori extends Utility
                 ))
                 ->execute();
 
-            $data['response_data'][$key]['harga'] = ($UserData['data']->jenis_member === 'M') ? floatval($dataHarga['response_data'][0]['harga_akhir_member']) : floatval($dataHarga['response_data'][0]['harga_akhir_stokis']);
+            $data['response_data'][$key]['harga'] = ($UserData['data']->jenis_member === 'M') ? floatval($dataHarga['response_data'][0]['harga_akhir_member']) : floatval($dataHarga['response_data'][0]['harga_akhir_stokis']);*/
+
+
+            $harga_builder = array();
+
+            $dataHarga = self::$query->select('master_inv_harga', array(
+                'id', 'produk',
+                'member_type',
+                'id_table',
+                'het',
+                'discount_type',
+                'discount',
+                'jual',
+                'cashback',
+                'royalti',
+                'reward',
+                'insentif'
+            ))
+                ->order(array(
+                    'created_at' => 'DESC'
+                ))
+                ->limit(1)
+                ->where(array(
+                    'master_inv_harga.produk' => '= ?',
+                    'AND',
+                    'master_inv_harga.deleted_at' => 'IS NULL'
+                ), array(
+                    $value['uid']
+                ))
+                ->execute();
+
+            foreach ($dataHarga['response_data'] as $HKey => $HValue) {
+                if(!isset($harga_builder['cashback'])) {
+                    $harga_builder['jual'] = 0;
+                    $harga_builder['cashback'] = 0;
+                    $harga_builder['reward'] = 0;
+                    $harga_builder['royalti'] = 0;
+                    $harga_builder['insentif'] = 0;
+                }
+                if($HValue['member_type'] === $UserData['data']->jenis_member) {
+
+                    $harga_builder['jual'] = $HValue['jual'];
+                    $harga_builder['cashback'] = $HValue['cashback'];
+                    $harga_builder['reward'] = $HValue['reward'];
+                    $harga_builder['royalti'] = $HValue['royalti'];
+                    $harga_builder['insentif'] = $HValue['insentif'];
+                }
+            }
+
+            $data['response_data'][$key]['harga'] = floatval($harga_builder['jual']);
         }
         return $data;
     }
@@ -744,12 +796,60 @@ class Inventori extends Utility
                 $value['rating'] = 5;
 
                 if(file_exists('../images/produk/' . $value['uid'] . '.png')) {
-                    $data['response_data'][$key]['url_gambar'] = __HOST__ . 'images/produk/' . $value['uid'] . '.png';
+                    $value['url_gambar'] = __HOST__ . 'images/produk/' . $value['uid'] . '.png';
                 } else {
-                    $data['response_data'][$key]['url_gambar'] = __HOST__ . 'images/product.png';
+                    $value['url_gambar'] = __HOST__ . 'images/product.png';
                 }
-                
-                $dataHarga = self::$query->select('strategi_penjualan', array(
+
+                $harga_builder = array();
+
+                $dataHarga = self::$query->select('master_inv_harga', array(
+                    'id', 'produk',
+                    'member_type',
+                    'id_table',
+                    'het',
+                    'discount_type',
+                    'discount',
+                    'jual',
+                    'cashback',
+                    'royalti',
+                    'reward',
+                    'insentif'
+                ))
+                    ->order(array(
+                        'created_at' => 'DESC'
+                    ))
+                    ->limit(1)
+                    ->where(array(
+                        'master_inv_harga.produk' => '= ?',
+                        'AND',
+                        'master_inv_harga.deleted_at' => 'IS NULL'
+                    ), array(
+                        $value['uid']
+                    ))
+                    ->execute();
+
+                foreach ($dataHarga['response_data'] as $HKey => $HValue) {
+                    if(!isset($harga_builder['cashback'])) {
+                        $harga_builder['jual'] = 0;
+                        $harga_builder['cashback'] = 0;
+                        $harga_builder['reward'] = 0;
+                        $harga_builder['royalti'] = 0;
+                        $harga_builder['insentif'] = 0;
+                    }
+
+                    if($HValue['member_type'] === $UserData['data']->jenis_member) {
+                        $harga_builder['jual'] = $HValue['jual'];
+                        $harga_builder['cashback'] = $HValue['cashback'];
+                        $harga_builder['reward'] = $HValue['reward'];
+                        $harga_builder['royalti'] = $HValue['royalti'];
+                        $harga_builder['insentif'] = $HValue['insentif'];
+                    }
+                }
+
+                $value['harga'] = floatval($harga_builder['jual']);
+
+                /*$dataHarga = self::$query->select('strategi_penjualan', array(
                     'id', 'produk', 'tanggal',
                     'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
                     'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
@@ -773,9 +873,9 @@ class Inventori extends Utility
                         $value['uid'],
                         date('Y-m-d')
                     ))
-                    ->execute();
+                    ->execute();*/
 
-                $value['harga'] = ($UserData['data']->jenis_member === 'M') ? floatval($dataHarga['response_data'][0]['harga_akhir_member']) : floatval($dataHarga['response_data'][0]['harga_akhir_stokis']);
+                //$value['harga'] = ($UserData['data']->jenis_member === 'M') ? floatval($dataHarga['response_data'][0]['harga_akhir_member']) : floatval($dataHarga['response_data'][0]['harga_akhir_stokis']);
 
                 array_push($not_high, $value);
             }
@@ -785,8 +885,9 @@ class Inventori extends Utility
     }
 
     private function android_cari_produk($parameter) {
-        $data = self::$query
-            ->select('master_inv', array(
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+        $data = self::$query->select('master_inv', array(
                 'uid',
                 'kode_barang',
                 'nama as nama_produk',
@@ -803,7 +904,6 @@ class Inventori extends Utility
                 'OR',
                 'master_inv.nama' => 'ILIKE ' . '\'%' . $_GET['query_string'] . '%\')'
             ))
-            ->limit(10)
             ->execute();
 
         $autonum = 1;
@@ -821,7 +921,7 @@ class Inventori extends Utility
             $data['response_data'][$key]['kategori'] = self::get_kategori_detail($value['kategori'])['response_data'][0]['nama'];
 
 
-            $dataHarga = self::$query->select('strategi_penjualan', array(
+            /*$dataHarga = self::$query->select('strategi_penjualan', array(
                 'id', 'produk', 'tanggal',
                 'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
                 'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
@@ -847,7 +947,71 @@ class Inventori extends Utility
                 ))
                 ->execute();
             $data['response_data'][$key]['harga_member'] = floatval($dataHarga['response_data'][0]['harga_jual_member']);
-            $data['response_data'][$key]['harga_stokis'] = floatval($dataHarga['response_data'][0]['harga_jual_stokis']);
+            $data['response_data'][$key]['harga_stokis'] = floatval($dataHarga['response_data'][0]['harga_jual_stokis']);*/
+
+
+
+            $harga_builder = array();
+            $harga_stokis = 0;
+            $harga_member = 0;
+            $het_member = 0;
+            $het_stokis = 0;
+
+            $dataHarga = self::$query->select('master_inv_harga', array(
+                'id', 'produk',
+                'member_type',
+                'id_table',
+                'het',
+                'discount_type',
+                'discount',
+                'jual',
+                'cashback',
+                'royalti',
+                'reward',
+                'insentif'
+            ))
+                ->order(array(
+                    'created_at' => 'DESC'
+                ))
+                ->limit(1)
+                ->where(array(
+                    'master_inv_harga.produk' => '= ?',
+                    'AND',
+                    'master_inv_harga.deleted_at' => 'IS NULL'
+                ), array(
+                    $value['uid']
+                ))
+                ->execute();
+
+            foreach ($dataHarga['response_data'] as $HKey => $HValue) {
+                if(!isset($harga_builder['cashback'])) {
+                    $harga_builder['jual'] = 0;
+                    $harga_builder['cashback'] = 0;
+                    $harga_builder['reward'] = 0;
+                    $harga_builder['royalti'] = 0;
+                    $harga_builder['insentif'] = 0;
+                }
+                if($HValue['member_type'] === $UserData['data']->jenis_member) {
+                    $harga_builder['jual'] = $HValue['jual'];
+                    $harga_builder['cashback'] = $HValue['cashback'];
+                    $harga_builder['reward'] = $HValue['reward'];
+                    $harga_builder['royalti'] = $HValue['royalti'];
+                    $harga_builder['insentif'] = $HValue['insentif'];
+                }
+
+                if($HValue['member_type'] === 'M') {
+                    $harga_member = $HValue['jual'];
+                    $het_member = $HValue['het'];
+                } else {
+                    $harga_stokis = $HValue['jual'];
+                    $het_stokis = $HValue['het'];
+                }
+            }
+
+            $data['response_data'][$key]['het'] = floatval(($UserData['data']->jenis_member === 'M') ? $het_member : $het_stokis);
+            $data['response_data'][$key]['harga_member'] = floatval($harga_member);
+            $data['response_data'][$key]['harga_stokis'] = floatval($harga_stokis);
+
 
             $autonum++;
         }
@@ -2768,7 +2932,7 @@ class Inventori extends Utility
      * @param $parameter Require item uid
      * @return array
      */
-    public function get_item_detail($parameter)
+    public function get_item_detail($parameter, $Old = false)
     {
         $data = self::$query
             ->select('master_inv', array(
@@ -2861,9 +3025,14 @@ class Inventori extends Utility
                 ->execute();
             foreach ($hargaItem['response_data'] as $pointKey => $pointValue) {
                 $hargaItem['response_data'][$pointKey]['tanggal'] = date('d F Y', strtotime($pointValue['created_at']));
-                $hargaItem['response_data'][$pointKey]['het'] = floatval($pointValue['het']);
-                $hargaItem['response_data'][$pointKey]['discount'] = floatval($pointValue['discount']);
+                $hargaItem['response_data'][$pointKey]['het'] = (isset($pointValue['het']) ? floatval($pointValue['het']) : 0);
+                $hargaItem['response_data'][$pointKey]['discount'] = (isset($pointValue['discount']) ? floatval($pointValue['discount']) : 0);
                 $hargaItem['response_data'][$pointKey]['jual'] = floatval($pointValue['jual']);
+
+                $hargaItem['response_data'][$pointKey]['cashback'] = (isset($pointValue['cashback']) ? floatval($pointValue['cashback']) : 0);
+                $hargaItem['response_data'][$pointKey]['reward'] = (isset($pointValue['reward']) ? floatval($pointValue['reward']) : 0);
+                $hargaItem['response_data'][$pointKey]['royalti'] = (isset($pointValue['royalti']) ? floatval($pointValue['royalti']) : 0);
+                $hargaItem['response_data'][$pointKey]['insentif'] = (isset($pointValue['insentif']) ? floatval($pointValue['insentif']) : 0);
             }
 
             $data['response_data'][$key]['point'] = (count($hargaItem['response_data']) > 0) ? $hargaItem['response_data'] : array(
@@ -2878,7 +3047,41 @@ class Inventori extends Utility
 
             $data['response_data'][$key]['het'] = floatval($value['het']);
 
-            $dataHarga = self::$query->select('strategi_penjualan', array(
+
+
+            $proc_end = array();
+            foreach ($hargaItem['response_data'] as $harga_set_key => $harga_set_value) {
+                if(!isset($proc_end['member_cashback'])) {
+                    $proc_end['member_cashback'] = 0;
+                    $proc_end['member_reward'] = 0;
+                    $proc_end['member_royalti'] = 0;
+                    $proc_end['member_insentif_personal'] = 0;
+                    $proc_end['harga_akhir_member'] = 0;
+
+                    $proc_end['stokis_cashback'] = 0;
+                    $proc_end['stokis_reward'] = 0;
+                    $proc_end['stokis_royalti'] = 0;
+                    $proc_end['stokis_insentif_personal'] = 0;
+                    $proc_end['harga_akhir_stokis'] = 0;
+                }
+
+                if($harga_set_value['member_type'] === 'M') {
+                    $proc_end['member_cashback'] = $harga_set_value['cashback'];
+                    $proc_end['member_reward'] = $harga_set_value['reward'];
+                    $proc_end['member_royalti'] = $harga_set_value['royalti'];
+                    $proc_end['member_insentif_personal'] = $harga_set_value['insentif'];
+                    $proc_end['harga_akhir_member'] = $harga_set_value['jual'];
+                } else {
+                    $proc_end['stokis_cashback'] = $harga_set_value['cashback'];
+                    $proc_end['stokis_reward'] = $harga_set_value['reward'];
+                    $proc_end['stokis_royalti'] = $harga_set_value['royalti'];
+                    $proc_end['stokis_insentif_personal'] = $harga_set_value['insentif'];
+                    $proc_end['harga_akhir_stokis'] = $harga_set_value['jual'];
+                }
+
+            }
+
+            /*$dataHarga = self::$query->select('strategi_penjualan', array(
                 'id', 'produk', 'tanggal',
                 'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
                 'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
@@ -2916,7 +3119,9 @@ class Inventori extends Utility
                 'stokis_reward' => 0,
                 'stokis_insentif_personal' => 0,
                 'harga_akhir_stokis' => 0
-            );
+            );*/
+
+            $data['response_data'][$key]['harga'] = $proc_end;
         }
         $data['response_data'] = $data['response_data'][0];
         return $data;
@@ -6673,5 +6878,119 @@ class Inventori extends Utility
                 $parameter['check']
             ))
             ->execute();
+    }
+
+    private function migrate_harga($parameter) {
+        $proceed_data = array();
+        $dataLama = self::$query->select('strategi_penjualan', array(
+            'id', 'produk', 'tanggal',
+            'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
+            'stokis_cashback', 'stokis_royalti', 'stokis_reward', 'stokis_insentif_personal',
+            'harga_jual_member',
+            'discount_type_member',
+            'discount_member',
+            'harga_akhir_member',
+
+            'harga_jual_stokis',
+            'discount_type_stokis',
+            'discount_stokis',
+            'harga_akhir_stokis'
+        ))
+            ->where(array(
+                'strategi_penjualan.deleted_at' => 'IS NULL',
+                'AND',
+                'strategi_penjualan.tanggal' => '= ?'
+            ), array(
+                $parameter['tanggal']
+            ))
+            ->execute();
+
+        foreach ($dataLama['response_data'] as $key => $value) {
+            $Detail = self::get_item_detail($value['produk']);
+
+            //Check Baru
+            $check = self::$query->select('master_inv_harga', array(
+                'id',
+                'produk',
+                'member_type',
+                'id_table',
+                'het',
+                'discount_type',
+                'discount',
+                'jual',
+                'created_at',
+                'updated_at',
+                'cashback',
+                'reward',
+                'royalti',
+                'insentif'
+            ))
+                ->where(array(
+                    'master_inv_harga.produk' => '= ?'
+                ), array(
+                    $value['produk']
+                ))
+                ->execute();
+            if(count($check['response_data']) > 0) {
+                foreach ($check['response_data'] as $newKey => $newValue) {
+                    $proceed = self::$query->update('master_inv_harga', array(
+                        'het' => $Detail['response_data']['het'],
+                        'discount_type' => ($newValue['member_type'] === 'M') ? $value['discount_type_member'] : $value['discount_type_stokis'],
+                        'discount' => ($newValue['member_type'] === 'M') ? $value['discount_member'] : $value['discount_stokis'],
+                        'jual' => ($newValue['member_type'] === 'M') ? $value['harga_akhir_member'] : $value['harga_akhir_stokis'],
+                        'cashback' => ($newValue['member_type'] === 'M') ? $value['member_cashback'] : $value['stokis_cashback'],
+                        'reward' => ($newValue['member_type'] === 'M') ? $value['member_reward'] : $value['stokis_reward'],
+                        'royalti' => ($newValue['member_type'] === 'M') ? $value['member_royalti'] : $value['stokis_royalti'],
+                        'insentif' => ($newValue['member_type'] === 'M') ? $value['member_insentif_personal'] : $value['stokis_insentif_personal'],
+                        'updated_at' => parent::format_date(),
+                        'deleted_at' => NULL
+                    ))
+                        ->where(array(
+                            'master_inv_harga.produk' => '= ?',
+                            'AND',
+                            'master_inv_harga.id' => '= ?'
+                        ), array(
+                            $value['produk'],
+                            $newValue['id']
+                        ))
+                        ->execute();
+                }
+            } else {
+                $proceed_member = self::$query->insert('master_inv_harga', array(
+                    'produk' => $value['produk'],
+                    'member_type' => 'M',
+                    'id_table' => 0,
+                    'het' => $Detail['response_data']['het'],
+                    'discount_type' => $value['discount_type_member'],
+                    'discount' => $value['discount_member'],
+                    'jual' => $value['harga_akhir_member'],
+                    'cashback' => $value['member_cashback'],
+                    'reward' => $value['member_reward'],
+                    'royalti' => $value['member_royalti'],
+                    'insentif' => $value['member_insentif_personal'],
+                    'created_at' => parent::format_date(),
+                    'updated_at' => parent::format_date()
+                ))
+                    ->execute();
+
+                $proceed_stokis = self::$query->insert('master_inv_harga', array(
+                    'produk' => $value['produk'],
+                    'member_type' => 'S',
+                    'id_table' => 0,
+                    'het' => $Detail['response_data']['het'],
+                    'discount_type' => $value['discount_type_stokis'],
+                    'discount' => $value['discount_stokis'],
+                    'jual' => $value['harga_akhir_stokis'],
+                    'cashback' => $value['stokis_cashback'],
+                    'reward' => $value['stokis_reward'],
+                    'royalti' => $value['stokis_royalti'],
+                    'insentif' => $value['stokis_insentif_personal'],
+                    'created_at' => parent::format_date(),
+                    'updated_at' => parent::format_date()
+                ))
+                    ->execute();
+            }
+        }
+        return $proceed_data;
     }
 }
