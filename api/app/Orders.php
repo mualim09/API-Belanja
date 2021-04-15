@@ -321,7 +321,6 @@ class Orders extends Utility
 
             $data['response_data'][$key]['detail'] = $detail['response_data'];
 
-
             $data['response_data'][$key]['tanggal_order'] = date('d F Y [H:i]', strtotime($value['tanggal_order']));
             $data['response_data'][$key]['total_after_disc'] = floatval($value['total_after_disc']);
             $data['response_data'][$key]['total_pre_disc'] = floatval($value['total_pre_disc']);
@@ -389,7 +388,7 @@ class Orders extends Utility
                     'barang' => $value['produk'],
                     'qty' => floatval($value['qty']),
                     'satuan' => $ItemDetail['satuan_terkecil'],
-                    'harga' => floatval(($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['harga_jual_member'] : $ItemDetail['harga']['harga_jual_stokis']),
+                    'harga' => floatval(($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['harga_akhir_member'] : $ItemDetail['harga']['harga_akhir_stokis']),
                     'total' => floatval($value['qty'] * (($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['harga_akhir_member'] : $ItemDetail['harga']['harga_akhir_stokis'])),
                     'bonus_type' => $CustomerInfo['jenis_member'],
                     'cashback' => floatval($value['cashback']),
