@@ -390,7 +390,7 @@ class Orders extends Utility
                     'qty' => floatval($value['qty']),
                     'satuan' => $ItemDetail['satuan_terkecil'],
                     'harga' => floatval(($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['harga_jual_member'] : $ItemDetail['harga']['harga_jual_stokis']),
-                    'total' => floatval($value['qty'] * (($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['harga_jual_member'] : $ItemDetail['harga']['harga_jual_stokis'])),
+                    'total' => floatval($value['qty'] * (($CustomerInfo['jenis_member'] === 'M') ? $ItemDetail['harga']['harga_akhir_member'] : $ItemDetail['harga']['harga_akhir_stokis'])),
                     'bonus_type' => $CustomerInfo['jenis_member'],
                     'cashback' => floatval($value['cashback']),
                     'royalti' => floatval($value['royalti']),
