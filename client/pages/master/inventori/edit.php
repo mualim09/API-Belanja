@@ -20,7 +20,7 @@
 			<div class="z-0">
 				<ul class="nav nav-tabs nav-tabs-custom" role="tablist">
 					<li class="nav-item">
-						<a href="#tab-informasi" class="nav-link active" data-toggle="tab" role="tab" aria-selected="true" aria-controls="tab-informasi" >
+						<a href="#tab-informasi" class="nav-link" data-toggle="tab" role="tab" aria-selected="true" aria-controls="tab-informasi" >
 							<span class="nav-link__count">
 								<i class="fa fa-info-circle"></i>
 								<b class="inv-tab-status text-success" id="status-informasi"><i class="fa fa-check-circle"></i></b>
@@ -29,21 +29,21 @@
 						</a>
 					</li>
 					<li class="nav-item">
-						<a href="#tab-satuan" class="nav-link" data-toggle="tab" role="tab" aria-selected="false">
-							<span class="nav-link__count">
-								<i class="fa fa-cubes"></i>
-								<b class="inv-tab-status text-success" id="status-satuan"><i class="fa fa-check-circle"></i></b>
-							</span>
-							Satuan
-						</a>
-					</li>
-                    <li class="nav-item">
                         <a href="#tab-paket" class="nav-link" data-toggle="tab" role="tab" aria-selected="false">
 							<span class="nav-link__count">
 								<i class="fa fa-cash-register"></i>
 								<b class="inv-tab-status text-success" id="status-paket"><i class="fa fa-check-circle"></i></b>
 							</span>
                             Paket
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tab-satuan" class="nav-link active" data-toggle="tab" role="tab" aria-selected="false">
+							<span class="nav-link__count">
+								<i class="fa fa-dollar-sign"></i>
+								<b class="inv-tab-status text-success" id="status-satuan"><i class="fa fa-check-circle"></i></b>
+							</span>
+                            Harga
                         </a>
                     </li>
 					<!--li class="nav-item">
@@ -66,10 +66,10 @@
 					</li-->
 				</ul>
 				<div class="card card-body tab-content">
-					<div class="tab-pane active show fade" id="tab-informasi">
+					<div class="tab-pane show fade" id="tab-informasi">
 						<?php require 'form-dasar.php'; ?>
 					</div>
-					<div class="tab-pane show fade" id="tab-satuan">
+					<div class="tab-pane active show fade" id="tab-satuan">
 						<?php require 'form-satuan.php'; ?>
 					</div>
                     <div class="tab-pane show fade" id="tab-paket">

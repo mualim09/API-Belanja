@@ -93,7 +93,6 @@ class Orders extends Utility
                 $Customer = new Membership(self::$pdo);
 
                 foreach ($Order['response_data'] as $key => $value) {
-                    $CustomerInfo = $Customer->customer_detail($UserData['data']->uid)['response_data'][0];
                     foreach ($value['detail'] as $DKey => $DValue) {
                         $cashback += (floatval($DValue['cashback']) * floatval($DValue['qty']));
                         $royalti += (floatval($DValue['royalti']) * floatval($DValue['qty']));
@@ -101,6 +100,8 @@ class Orders extends Utility
                         $insentif += (floatval($DValue['insentif_personal']) * floatval($DValue['qty']));
                     }
                 }
+
+                $CustomerInfo = $Customer->customer_detail($UserData['data']->uid)['response_data'][0];
 
                 $update_member = self::$query->update('membership', array(
                     'cashback' => floatval($CustomerInfo['response_data'][0]['cashback']) + $cashback,

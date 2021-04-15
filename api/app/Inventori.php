@@ -260,10 +260,148 @@ class Inventori extends Utility
                 return self::tambah_order_android($parameter);
                 break;
 
+            case 'update_harga':
+                return self::update_harga($parameter);
+                break;
+
             default:
                 return $parameter;
                 break;
         }
+    }
+
+    private function update_harga($parameter) {
+        $Authorization = new Authorization();
+        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+
+        $check_harga = self::$query->select('master_inv_harga', array(
+            'id',
+            'produk',
+            'member_type',
+            'id_table',
+            'het',
+            'discount_type',
+            'discount',
+            'jual',
+            'created_at',
+            'updated_at',
+            'cashback',
+            'reward',
+            'royalti',
+            'insentif'
+        ))
+            ->where(array(
+                'master_inv_harga.id_table' => '= ?',
+                'AND',
+                'master_inv_harga.produk' => '= ?',
+                'AND',
+                'master_inv_harga.deleted_at' => 'IS NULL'
+            ), array(
+                $parameter['id'],
+                $parameter['produk']
+            ))
+            ->execute();
+        if(count($check_harga['response_data']) > 0) {
+            foreach ($check_harga['response_data'] as $key => $value) {
+                if($value['member_type'] === 'M') {
+                    $proceed_member = self::$query->update('master_inv_harga', array(
+                        'produk' => $parameter['produk'],
+                        'member_type' => 'M',
+                        'id_table' => $parameter['id'],
+                        'het' => $parameter['member_het'],
+                        'discount_type' => $parameter['member_discount_type'],
+                        'discount' => $parameter['member_discount'],
+                        'jual' => $parameter['member_jual'],
+                        'cashback' => $parameter['member_cashback'],
+                        'reward' => $parameter['member_reward'],
+                        'royalti' => $parameter['member_royalti'],
+                        'insentif' => $parameter['member_insentif'],
+                        'created_at' => parent::format_date(),
+                        'updated_at' => parent::format_date()
+                    ))
+                        ->where(array(
+                            'master_inv_harga.member_type' => '= ?',
+                            'AND',
+                            'master_inv_harga.id_table' => '= ?',
+                            'AND',
+                            'master_inv_harga.produk' => '= ?',
+                            'AND',
+                            'master_inv_harga.deleted_at' => 'IS NULL'
+                        ), array(
+                            'M',
+                            $parameter['id'],
+                            $parameter['produk']
+                        ))
+                        ->execute();
+                } else {
+                    $proceed_stokis = self::$query->update('master_inv_harga', array(
+                        'produk' => $parameter['produk'],
+                        'member_type' => 'S',
+                        'id_table' => $parameter['id'],
+                        'het' => $parameter['stokis_het'],
+                        'discount_type' => $parameter['stokis_discount_type'],
+                        'discount' => $parameter['stokis_discount'],
+                        'jual' => $parameter['stokis_jual'],
+                        'cashback' => $parameter['stokis_cashback'],
+                        'reward' => $parameter['stokis_reward'],
+                        'royalti' => $parameter['stokis_royalti'],
+                        'insentif' => $parameter['stokis_insentif'],
+                        'created_at' => parent::format_date(),
+                        'updated_at' => parent::format_date()
+                    ))
+                        ->where(array(
+                            'master_inv_harga.member_type' => '= ?',
+                            'AND',
+                            'master_inv_harga.id_table' => '= ?',
+                            'AND',
+                            'master_inv_harga.produk' => '= ?',
+                            'AND',
+                            'master_inv_harga.deleted_at' => 'IS NULL'
+                        ), array(
+                            'S',
+                            $parameter['id'],
+                            $parameter['produk']
+                        ))
+                        ->execute();
+                }
+            }
+        } else {
+            $proceed_member = self::$query->insert('master_inv_harga', array(
+                'produk' => $parameter['produk'],
+                'member_type' => 'M',
+                'id_table' => $parameter['id'],
+                'het' => $parameter['member_het'],
+                'discount_type' => $parameter['member_discount_type'],
+                'discount' => $parameter['member_discount'],
+                'jual' => $parameter['member_jual'],
+                'cashback' => $parameter['member_cashback'],
+                'reward' => $parameter['member_reward'],
+                'royalti' => $parameter['member_royalti'],
+                'insentif' => $parameter['member_insentif'],
+                'created_at' => parent::format_date(),
+                'updated_at' => parent::format_date()
+            ))
+                ->execute();
+
+            $proceed_stokis = self::$query->insert('master_inv_harga', array(
+                'produk' => $parameter['produk'],
+                'member_type' => 'S',
+                'id_table' => $parameter['id'],
+                'het' => $parameter['stokis_het'],
+                'discount_type' => $parameter['stokis_discount_type'],
+                'discount' => $parameter['stokis_discount'],
+                'jual' => $parameter['stokis_jual'],
+                'cashback' => $parameter['stokis_cashback'],
+                'reward' => $parameter['stokis_reward'],
+                'royalti' => $parameter['stokis_royalti'],
+                'insentif' => $parameter['stokis_insentif'],
+                'created_at' => parent::format_date(),
+                'updated_at' => parent::format_date()
+            ))
+                ->execute();
+        }
+
+        return 1;
     }
 
     public function check_keranjang($parameter) {
@@ -535,6 +673,11 @@ class Inventori extends Utility
 
         foreach ($data['response_data'] as $key => $value) {
             $data['response_data'][$key]['rating'] = 5;
+            if(file_exists('../images/produk/' . $value['uid'] . '.png')) {
+                $data['response_data'][$key]['url_gambar'] = __HOST__ . 'images/produk/' . $value['uid'] . '.png';
+            } else {
+                $data['response_data'][$key]['url_gambar'] = __HOST__ . 'images/product.png';
+            }
             $dataHarga = self::$query->select('strategi_penjualan', array(
                 'id', 'produk', 'tanggal',
                 'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
@@ -600,6 +743,12 @@ class Inventori extends Utility
             if(!in_array($high_data, $value['uid'])) {
                 $value['rating'] = 5;
 
+                if(file_exists('../images/produk/' . $value['uid'] . '.png')) {
+                    $data['response_data'][$key]['url_gambar'] = __HOST__ . 'images/produk/' . $value['uid'] . '.png';
+                } else {
+                    $data['response_data'][$key]['url_gambar'] = __HOST__ . 'images/product.png';
+                }
+                
                 $dataHarga = self::$query->select('strategi_penjualan', array(
                     'id', 'produk', 'tanggal',
                     'member_cashback', 'member_royalti', 'member_reward', 'member_insentif_personal',
@@ -2676,10 +2825,56 @@ class Inventori extends Utility
                     $value['uid']
                 ))
                 ->execute();
+
             foreach ($getPaket['response_data'] as $pakKey => $pakValue) {
                 $getPaket['response_data'][$pakKey]['barang'] = self::get_item_detail($pakValue['barang'])['response_data'][0];
             }
+
             $data['response_data'][$key]['paket'] = $getPaket['response_data'];
+
+            $hargaItem = self::$query->select('master_inv_harga', array(
+                'id',
+                'produk',
+                'member_type',
+                'id_table',
+                'het',
+                'discount_type',
+                'discount',
+                'jual',
+                'cashback',
+                'reward',
+                'royalti',
+                'insentif',
+                'created_at',
+                'updated_at'
+            ))
+                ->where(array(
+                    'master_inv_harga.produk' => '= ?',
+                    'AND',
+                    'master_inv_harga.deleted_at' => 'IS NULL'
+                ), array(
+                    $value['uid']
+                ))
+                ->order(array(
+                    'master_inv_harga.created_at' => 'ASC'
+                ))
+                ->execute();
+            foreach ($hargaItem['response_data'] as $pointKey => $pointValue) {
+                $hargaItem['response_data'][$pointKey]['tanggal'] = date('d F Y', strtotime($pointValue['created_at']));
+                $hargaItem['response_data'][$pointKey]['het'] = floatval($pointValue['het']);
+                $hargaItem['response_data'][$pointKey]['discount'] = floatval($pointValue['discount']);
+                $hargaItem['response_data'][$pointKey]['jual'] = floatval($pointValue['jual']);
+            }
+
+            $data['response_data'][$key]['point'] = (count($hargaItem['response_data']) > 0) ? $hargaItem['response_data'] : array(
+                'jual' =>  0,
+                'discount_type' =>  'N',
+                'discount' =>  0,
+                'cashback' =>  0,
+                'reward' =>  0,
+                'royalti' =>  0,
+                'insentif' =>  0
+            );
 
             $data['response_data'][$key]['het'] = floatval($value['het']);
 

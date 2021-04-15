@@ -35,6 +35,12 @@
 										<select class="form-control" id="txt_kategori"></select>
 									</div>
 								</div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Satuan Terkecil:</label>
+                                        <select class="form-control" id="txt_satuan_terkecil"></select>
+                                    </div>
+                                </div>
 							</div>
 							<div class="row">
 								<div class="col-md-6">

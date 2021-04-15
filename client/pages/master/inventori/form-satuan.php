@@ -6,17 +6,16 @@
 				<h5 class="card-header__title flex m-0">Konversi Satuan</h5>
 			</div>
 			<div class="card-body tab-content">
-				<div class="form-group">
-					<label>Satuan Terkecil:</label>
-					<select class="form-control" id="txt_satuan_terkecil"></select>
-				</div>
-				<table class="table table-bordered table-data" id="table-konversi-satuan">
+				<table class="table table-bordered largeDataType" id="table-harga">
 					<thead class="thead-dark">
 						<tr>
 							<th class="wrap_content">No</th>
-							<th>Dari</th>
-							<th>Ke Satuan Terkecil</th>
-							<th style="width: 200px;">Rasio</th>
+                            <th class="wrap_content">Tanggal</th>
+                            <th class="wrap_content">Jenis</th>
+							<th style="width: 100px;">HET</th>
+                            <th style="width: 200px;">Diskon</th>
+                            <th style="width: 100px;">Harga Jual</th>
+                            <th style="width: 200px;">Point</th>
 							<th class="wrap_content">Aksi</th>
 						</tr>
 					</thead>

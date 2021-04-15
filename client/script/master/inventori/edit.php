@@ -30,8 +30,64 @@
 			},
 			type:"GET",
 			success:function(response) {
-			    console.log(response);
+                console.clear();
+
                 invData = response.response_data;
+
+                var populatePoint = {};
+
+                for(var ap in invData.point) {
+                    if(populatePoint["data_" + invData.point[ap].id_table] === undefined) {
+                        populatePoint["data_" + invData.point[ap].id_table] = {
+                            tanggal:invData.point[ap].tanggal,
+                            stokis_het: 0,
+                            stokis_discount_type: "",
+                            stokis_discount: 0,
+                            stokis_harga_jual: 0,
+
+                            member_het: 0,
+                            member_discount_type: "",
+                            member_discount: 0,
+                            member_harga_jual: 0,
+
+                            member_cashback: 0,
+                            member_reward: 0,
+                            member_royalti: 0,
+                            member_insentif: 0,
+
+                            stokis_cashback: 0,
+                            stokis_reward: 0,
+                            stokis_royalti: 0,
+                            stokis_insentif: 0
+                        };
+                    }
+
+                    if(invData.point[ap].member_type === "M") {
+                        populatePoint["data_" + invData.point[ap].id_table].member_het = (invData.point[ap].het !== undefined) ? parseFloat(invData.point[ap].het) : 0;
+                        populatePoint["data_" + invData.point[ap].id_table].member_discount_type = (invData.point[ap].discount_type !== undefined) ? invData.point[ap].discount_type : "N";
+                        populatePoint["data_" + invData.point[ap].id_table].member_discount = (invData.point[ap].discount !== undefined) ? parseFloat(invData.point[ap].discount) : 0;
+                        populatePoint["data_" + invData.point[ap].id_table].member_harga_jual = (invData.point[ap].jual !== undefined) ? parseFloat(invData.point[ap].jual) : 0;
+
+                        populatePoint["data_" + invData.point[ap].id_table].member_cashback = (invData.point[ap].cashback !== undefined) ? parseFloat(invData.point[ap].cashback) : 0;
+                        populatePoint["data_" + invData.point[ap].id_table].member_reward = (invData.point[ap].reward !== undefined) ? parseFloat(invData.point[ap].reward) : 0;
+                        populatePoint["data_" + invData.point[ap].id_table].member_royalti = (invData.point[ap].royalti !== undefined) ? parseFloat(invData.point[ap].royalti) : 0;
+                        populatePoint["data_" + invData.point[ap].id_table].member_insentif = parseFloat(invData.point[ap].insentif);
+                    } else {
+                        populatePoint["data_" + invData.point[ap].id_table].stokis_het = (invData.point[ap].het !== undefined) ? parseFloat(invData.point[ap].het) : 0;
+                        populatePoint["data_" + invData.point[ap].id_table].stokis_discount_type = (invData.point[ap].discount_type !== undefined) ? invData.point[ap].discount_type : "N";
+                        populatePoint["data_" + invData.point[ap].id_table].stokis_discount = (invData.point[ap].discount !== undefined) ? parseFloat(invData.point[ap].discount) : 0;
+                        populatePoint["data_" + invData.point[ap].id_table].stokis_harga_jual = (invData.point[ap].jual !== undefined) ? parseFloat(invData.point[ap].jual) : 0;
+
+                        populatePoint["data_" + invData.point[ap].id_table].stokis_cashback = (invData.point[ap].cashback !== undefined) ? parseFloat(invData.point[ap].cashback) : 0;
+                        populatePoint["data_" + invData.point[ap].id_table].stokis_reward = (invData.point[ap].reward !== undefined) ? parseFloat(invData.point[ap].reward) : 0;
+                        populatePoint["data_" + invData.point[ap].id_table].stokis_royalti = (invData.point[ap].royalti !== undefined) ? parseFloat(invData.point[ap].royalti) : 0;
+                        populatePoint["data_" + invData.point[ap].id_table].stokis_insentif = (invData.point[ap].insentif !== undefined) ? parseFloat(invData.point[ap].insentif) : 0;
+                    }
+                }
+
+                for(var abz in populatePoint) {
+                    autoHargaList(populatePoint[abz]);
+                }
 
 				$("#txt_nama").val(invData.nama);
                 $("#txt_het").val(invData.het);
@@ -573,6 +629,532 @@
 				$("#load-kategori-obat").append(newList);
 			}
 		}
+
+		function autoHargaList(setter = {
+		    tanggal:"",
+            stokis_het: 0,
+            stokis_discount_type: "",
+            stokis_discount: 0,
+            stokis_harga_jual: 0,
+
+            stokis_cashback: 0,
+            stokis_royalti: 0,
+            stokis_reward: 0,
+            stokis_insentif: 0,
+
+            member_het: 0,
+            member_discount_type: "",
+            member_discount: 0,
+            member_harga_jual: 0,
+
+            member_cashback: 0,
+            member_royalti: 0,
+            member_reward: 0,
+            member_insentif: 0,
+        }) {
+		    var Stokisrow = document.createElement("TR");
+            var Memberrow = document.createElement("TR");
+
+		    var CellID = document.createElement("TD");
+		    var CellTanggal = document.createElement("TD");
+            var CellStokis = document.createElement("TD");
+            var CellMember = document.createElement("TD");
+
+
+            var CellStokisHET = document.createElement("TD");
+		    var CellStokisDiskon = document.createElement("TD");
+		    var CellStokisJual = document.createElement("TD");
+            var CellStokisPoint = document.createElement("TD");
+
+            var CellMemberHET = document.createElement("TD");
+            var CellMemberDiskon = document.createElement("TD");
+            var CellMemberJual = document.createElement("TD");
+            var CellMemberPoint = document.createElement("TD");
+
+		    var CellAksi = document.createElement("TD");
+
+		    var Stokishet = document.createElement("INPUT");
+            var Stokisdiscount = document.createElement("INPUT");
+            var StokisdiscountType = document.createElement("SELECT");
+            var StokishargaJual = document.createElement("INPUT");
+
+            var StokisCashback = document.createElement("INPUT");
+            var StokisReward = document.createElement("INPUT");
+            var StokisRoyalti = document.createElement("INPUT");
+            var StokisInsentif = document.createElement("INPUT");
+
+            var Memberhet = document.createElement("INPUT");
+            var Memberdiscount = document.createElement("INPUT");
+            var MemberdiscountType = document.createElement("SELECT");
+            var MemberhargaJual = document.createElement("INPUT");
+
+            var MemberCashback = document.createElement("INPUT");
+            var MemberReward = document.createElement("INPUT");
+            var MemberRoyalti = document.createElement("INPUT");
+            var MemberInsentif = document.createElement("INPUT");
+
+
+            var btnDelete = document.createElement("BUTTON");
+
+            $(CellStokisHET).append(Stokishet);
+            $(CellStokisDiskon).append("<div class=\"row\"><div class=\"col-md-4\"></div><div class=\"col-md-8\"></div></div>");
+            $(CellStokisDiskon).find("div.col-md-4").append(StokisdiscountType);
+            $(CellStokisDiskon).find("div.col-md-8").append(Stokisdiscount);
+            $(CellStokisJual).append(StokishargaJual);
+
+            $(CellMemberHET).append(Memberhet);
+            $(CellMemberDiskon).append("<div class=\"row\"><div class=\"col-md-4\"></div><div class=\"col-md-8\"></div></div>");
+            $(CellMemberDiskon).find("div.col-md-4").append(MemberdiscountType);
+            $(CellMemberDiskon).find("div.col-md-8").append(Memberdiscount);
+            $(CellMemberJual).append(MemberhargaJual);
+
+            $(CellAksi).append(btnDelete);
+
+            $(Stokishet).addClass("form-control stokis_het").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).val(setter.stokis_het);
+            $(StokisdiscountType).addClass("form-control stokis_discount_type").append("<option value=\"N\">-</option><option value=\"P\">%</option><option value=\"A\">Amt</option>");
+            $(StokisdiscountType).find("option[value=\"" + setter.stokis_discount_type + "\"]").prop("selected", true);
+            $(StokisdiscountType).select2();
+            $(Stokisdiscount).addClass("form-control stokis_discount").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).val(setter.stokis_discount);
+            $(StokishargaJual).addClass("form-control stokis_harga").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).attr({
+                "disabled": "disabled"
+            }).val(setter.stokis_harga_jual);
+
+
+            $(Memberhet).addClass("form-control member_het").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).val(setter.member_het);
+            $(MemberdiscountType).addClass("form-control member_discount_type").append("<option value=\"N\">-</option><option value=\"P\">%</option><option value=\"A\">Amt</option>");
+            $(MemberdiscountType).find("option[value=\"" + setter.member_discount_type + "\"]").prop("selected", true);
+            $(MemberdiscountType).select2();
+            $(Memberdiscount).addClass("form-control member_discount").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).val(setter.member_discount);
+            $(MemberhargaJual).addClass("form-control member_jual").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).attr({
+                "disabled": "disabled"
+            }).val(setter.member_harga_jual);
+
+            $(btnDelete).addClass("btn btn-sm btn-danger").html("<i class=\"fa fa-trash-alt\"></i>");
+
+            $(Stokisrow).append(CellID);
+            $(Stokisrow).append(CellTanggal);
+            $(Stokisrow).append(CellStokis);
+            $(Stokisrow).append(CellStokisHET);
+            $(Stokisrow).append(CellStokisDiskon);
+            $(Stokisrow).append(CellStokisJual);
+            $(Stokisrow).append(CellStokisPoint);
+
+            $(CellStokisPoint).append("<div class=\"row\"><div class=\"col-md-6\"></div><div class=\"col-md-6\"></div><div class=\"col-md-6\"></div><div class=\"col-md-6\"></div></div>");
+            $(CellStokisPoint).find(".col-md-6:eq(0)").append("Cashback :").append(StokisCashback).append("<br />");
+            $(CellStokisPoint).find(".col-md-6:eq(1)").append("Reward :").append(StokisReward).append("<br />");
+            $(CellStokisPoint).find(".col-md-6:eq(2)").append("Royalti :").append(StokisRoyalti).append("<br />");
+            $(CellStokisPoint).find(".col-md-6:eq(3)").append("Insentif :").append(StokisInsentif).append("<br />");
+
+            $(StokisCashback).addClass("form-control");
+            $(StokisReward).addClass("form-control");
+            $(StokisRoyalti).addClass("form-control");
+            $(StokisInsentif).addClass("form-control");
+
+            $(Memberrow).append(CellMember);
+            $(Memberrow).append(CellMemberHET);
+            $(Memberrow).append(CellMemberDiskon);
+            $(Memberrow).append(CellMemberJual);
+            $(Memberrow).append(CellMemberPoint);
+
+            $(CellMemberPoint).append("<div class=\"row\"><div class=\"col-md-6\"></div><div class=\"col-md-6\"></div><div class=\"col-md-6\"></div><div class=\"col-md-6\"></div></div>");
+            $(CellMemberPoint).find(".col-md-6:eq(0)").append("Cashback :").append(MemberCashback).append("<br />");
+            $(CellMemberPoint).find(".col-md-6:eq(1)").append("Reward :").append(MemberReward).append("<br />");
+            $(CellMemberPoint).find(".col-md-6:eq(2)").append("Royalti :").append(MemberRoyalti).append("<br />");
+            $(CellMemberPoint).find(".col-md-6:eq(3)").append("Insentif :").append(MemberInsentif).append("<br />");
+
+            $(MemberCashback).addClass("form-control");
+            $(MemberReward).addClass("form-control");
+            $(MemberRoyalti).addClass("form-control");
+            $(MemberInsentif).addClass("form-control");
+
+            $(StokisCashback).addClass("form-control stokis_cashback").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).val((setter.stokis_cashback === undefined || isNaN(setter.stokis_cashback)) ? 0 : setter.stokis_cashback);
+
+            $(StokisReward).addClass("form-control stokis_reward").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).val((setter.stokis_reward === undefined) ? 0 : setter.stokis_reward);
+
+            $(StokisRoyalti).addClass("form-control stokis_royalti").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).val((setter.stokis_royalti === undefined) ? 0 : setter.stokis_royalti);
+
+            $(StokisInsentif).addClass("form-control stokis_insentif").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).val((setter.stokis_insentif === undefined) ? 0 : setter.stokis_insentif);
+
+
+
+
+            $(MemberCashback).addClass("form-control member_cashback").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).val((setter.member_cashback === undefined) ? 0 : setter.member_cashback);
+
+            $(MemberReward).addClass("form-control member_reward").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).val((setter.member_reward === undefined) ? 0 : setter.member_reward);
+
+            $(MemberRoyalti).addClass("form-control member_royali").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).val((setter.member_royalti === undefined) ? 0 : setter.member_royalti);
+
+            $(MemberInsentif).addClass("form-control member_insentif").inputmask({
+                alias: 'currency', rightAlign: true, placeholder: "0,00", prefix: "", autoGroup: false, digitsOptional: true
+            }).val((setter.member_insentif === undefined) ? 0 : setter.member_insentif);
+
+            $(CellStokis).html("Stokis");
+            $(CellMember).html("Member");
+
+            $(Stokisrow).append(CellAksi);
+
+            $(CellID).attr({
+                "rowspan": 2
+            });
+
+            $(CellTanggal).attr({
+                "rowspan": 2
+            });
+
+            $(CellAksi).attr({
+                "rowspan": 2
+            });
+
+            $("#table-harga tbody").append(Stokisrow).append(Memberrow);
+            $("#table-harga tbody tr").removeClass("last_harga_master");
+
+            $(CellTanggal).html("<i class=\"wrap_content\">" + ((setter.tanggal === "") ? <?php echo json_encode(date("d F y")); ?> : setter.tanggal) + "</i>");
+
+            $(Stokisrow).addClass("last_harga_master");
+
+            rebaseHarga();
+        }
+
+        function rebaseHarga() {
+
+
+		    $("#table-harga tbody tr").each(function (e) {
+                var id = (e + 1);
+
+                var groupID = (((e % 2) === 0) ? (id + 1) : (id + 0)) / 2;
+
+                $(this).attr({
+                    "id": "harga_inv_" + groupID
+                });
+
+                $(this).find("td:eq(0)[rowspan=\"2\"]").html(groupID);
+
+                if(e % 2 === 0) {
+                    $(this).find("td:eq(3) input").attr({
+                        "id": "stokis_het_" + groupID
+                    });
+
+                    $(this).find("td:eq(4) select").attr({
+                        "id": "stokis_discount_type_" + groupID
+                    });
+
+                    $(this).find("td:eq(4) input").attr({
+                        "id": "stokis_discount_" + groupID
+                    });
+
+                    $(this).find("td:eq(5) input").attr({
+                        "id": "stokis_jual_" + groupID
+                    });
+
+                    $(this).find("td:eq(6) .col-md-6:eq(0) input").attr({
+                        "id": "stokis_cashback_" + groupID
+                    });
+
+                    $(this).find("td:eq(6) .col-md-6:eq(1) input").attr({
+                        "id": "stokis_reward_" + groupID
+                    });
+
+                    $(this).find("td:eq(6) .col-md-6:eq(2) input").attr({
+                        "id": "stokis_royalti_" + groupID
+                    });
+
+                    $(this).find("td:eq(6) .col-md-6:eq(3) input").attr({
+                        "id": "stokis_insentif_" + groupID
+                    });
+                } else {
+                    $(this).find("td:eq(1) input").attr({
+                        "id": "member_het_" + groupID
+                    });
+
+                    $(this).find("td:eq(2) select").attr({
+                        "id": "member_discount_type_" + groupID
+                    });
+
+                    $(this).find("td:eq(2) input").attr({
+                        "id": "member_discount_" + groupID
+                    });
+
+                    $(this).find("td:eq(3) input").attr({
+                        "id": "member_jual_" + groupID
+                    });
+
+                    $(this).find("td:eq(4) .col-md-6:eq(0) input").attr({
+                        "id": "member_cashback_" + groupID
+                    });
+
+                    $(this).find("td:eq(4) .col-md-6:eq(1) input").attr({
+                        "id": "member_reward_" + groupID
+                    });
+
+                    $(this).find("td:eq(4) .col-md-6:eq(2) input").attr({
+                        "id": "member_royalti_" + groupID
+                    });
+
+                    $(this).find("td:eq(4) .col-md-6:eq(3) input").attr({
+                        "id": "member_insentif_" + groupID
+                    });
+                }
+
+                $(this).find("td:eq(6)[rowspan=\"2\"] button").attr({
+                    "id": "delete_harga_" + groupID
+                });
+
+                if($(this).hasClass("last_harga_master")) {
+                    $(this).find("td:eq(6)[rowspan=\"2\"] button").fadeOut();
+                } else {
+                    $(this).find("td:eq(6)[rowspan=\"2\"] button").show();
+                }
+            });
+        }
+
+        function checkListHarga(id, type, UID) {
+		    var stokis_het = parseFloat($("#stokis_het_" + id).inputmask("unmaskedvalue"));
+		    var stokis_discount_type = $("#stokis_discount_type_" + id).val();
+            var stokis_discount = parseFloat($("#stokis_discount_" + id).inputmask("unmaskedvalue"));
+            //var stokis_jual = parseFloat($("#stokis_jual_" + id).inputmask("unmaskedvalue"));
+
+            var stokis_cashback = parseFloat($("#stokis_cashback_" + id).inputmask("unmaskedvalue"));
+            var stokis_reward = parseFloat($("#stokis_reward_" + id).inputmask("unmaskedvalue"));
+            var stokis_royalti = parseFloat($("#stokis_royalti_" + id).inputmask("unmaskedvalue"));
+            var stokis_insentif = parseFloat($("#stokis_insentif_" + id).inputmask("unmaskedvalue"));
+
+            var member_het = parseFloat($("#member_het_" + id).inputmask("unmaskedvalue"));
+            var member_discount_type = $("#member_discount_type_" + id).val();
+            var member_discount = parseFloat($("#member_discount_" + id).inputmask("unmaskedvalue"));
+            //var member_jual = parseFloat($("#member_jual_" + id).inputmask("unmaskedvalue"));
+
+            var member_cashback = parseFloat($("#member_cashback_" + id).inputmask("unmaskedvalue"));
+            var member_reward = parseFloat($("#member_reward_" + id).inputmask("unmaskedvalue"));
+            var member_royalti = parseFloat($("#member_royalti_" + id).inputmask("unmaskedvalue"));
+            var member_insentif = parseFloat($("#member_insentif_" + id).inputmask("unmaskedvalue"));
+
+            var stokis_jual = 0;
+            var member_jual = 0;
+
+            if(stokis_discount_type === "N") {
+                stokis_jual = stokis_het;
+            } else if(stokis_discount_type === "P") {
+                stokis_jual = stokis_het - ((stokis_discount / 100) * stokis_het);
+            } else {
+                stokis_jual = stokis_het - stokis_discount;
+            }
+
+            if(member_discount_type === "N") {
+                member_jual = member_het;
+            } else if(member_discount_type === "P") {
+                member_jual = member_het - ((member_discount / 100) * member_het);
+            } else {
+                member_jual = member_het - member_discount;
+            }
+
+            $("#stokis_jual_" + id).val(parseFloat(stokis_jual));
+            $("#member_jual_" + id).val(parseFloat(member_jual));
+
+            if(
+                $("#harga_inv_" + id).hasClass("last_harga_master") &&
+                stokis_het > 0 &&
+                member_het > 0 &&
+                stokis_jual > 0 &&
+                member_jual > 0
+            ) {
+                $.ajax({
+                    url: __HOSTAPI__ + "/Inventori",
+                    async: false,
+                    beforeSend: function (request) {
+                        request.setRequestHeader("Authorization", "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>);
+                    },
+                    type: "POST",
+                    data: {
+                        request: "update_harga",
+                        id: id,
+                        produk: UID,
+                        stokis_het: (isNaN(stokis_het)) ? 0 : stokis_het,
+                        member_het: (isNaN(member_het)) ? 0 : member_het,
+                        stokis_jual: stokis_jual3
+
+                        ,
+                        member_jual: member_jual,
+                        stokis_discount_type: stokis_discount_type,
+                        stokis_discount: stokis_discount,
+                        member_discount_type: member_discount_type,
+                        member_discount: member_discount,
+
+                        member_cashback: member_cashback,
+                        member_reward: member_reward,
+                        member_royalti: member_royalti,
+                        member_insentif: member_insentif,
+
+                        stokis_cashback: stokis_cashback,
+                        stokis_reward: stokis_reward,
+                        stokis_royalti: stokis_royalti,
+                        stokis_insentif: stokis_insentif
+                    },
+                    success: function (response) {
+                        autoHargaList();
+                    },
+                    error: function (response) {
+                        //
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: __HOSTAPI__ + "/Inventori",
+                        async: false,
+                        beforeSend: function (request) {
+                        request.setRequestHeader("Authorization", "Bearer " + <?php echo json_encode($_SESSION["token"]); ?>);
+                    },
+                    type: "POST",
+                        data: {
+                        request: "update_harga",
+                            id: id,
+                            produk: UID,
+                            stokis_het: stokis_het,
+                            member_het: member_het,
+                            stokis_jual: stokis_jual,
+                            member_jual: member_jual,
+                            stokis_discount_type: stokis_discount_type,
+                            stokis_discount: stokis_discount,
+                            member_discount_type: member_discount_type,
+                            member_discount: member_discount,
+
+                            member_cashback: member_cashback,
+                            member_reward: member_reward,
+                            member_royalti: member_royalti,
+                            member_insentif: member_insentif,
+
+                            stokis_cashback: stokis_cashback,
+                            stokis_reward: stokis_reward,
+                            stokis_royalti: stokis_royalti,
+                            stokis_insentif: stokis_insentif
+                    },
+                    success: function (response) {
+                        //
+                    },
+                    error: function (response) {
+                        //
+                    }
+                });
+            }
+        }
+
+        $("body").on("keyup", ".stokis_het", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "stokis", UID);
+        });
+
+        $("body").on("keyup", ".member_het", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "member", UID);
+        });
+
+        $("body").on("keyup", ".stokis_discount", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "stokis", UID);
+        });
+
+        $("body").on("keyup", ".member_discount", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "member", UID);
+        });
+
+        $("body").on("change",".stokis_discount_type", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "stokis", UID);
+        });
+
+        $("body").on("change", ".member_discount_type", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "member", UID);
+        });
+
+        $("body").on("keyup", ".member_cashback", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "member", UID);
+        });
+
+        $("body").on("keyup", ".member_reward", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "member", UID);
+        });
+
+        $("body").on("keyup", ".member_royalti", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "member", UID);
+        });
+
+        $("body").on("keyup", ".stokis_cashback", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "member", UID);
+        });
+
+        $("body").on("keyup", ".stokis_reward", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "member", UID);
+        });
+
+        $("body").on("keyup", ".stokis_royalti", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "member", UID);
+        });
+
+        $("body").on("keyup", ".stokis_insentif", function() {
+            var id = $(this).attr("id");
+            id = id[id.length - 1];
+
+            checkListHarga(id, "member", UID);
+        });
+
+        autoHargaList();
 
 		function autoSatuan(selectedDariSatuanList, selected = {}) {
 			$("#table-konversi-satuan tbody tr").removeClass("last-satuan");
