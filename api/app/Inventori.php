@@ -728,7 +728,7 @@ class Inventori extends Utility
                 ->order(array(
                     'created_at' => 'DESC'
                 ))
-                ->limit(1)
+                ->limit(2)
                 ->where(array(
                     'master_inv_harga.produk' => '= ?',
                     'AND',
@@ -972,6 +972,7 @@ class Inventori extends Utility
                 ->order(array(
                     'created_at' => 'DESC'
                 ))
+                ->limit(2)
                 ->where(array(
                     'master_inv_harga.produk' => '= ?',
                     'AND',
@@ -3010,6 +3011,7 @@ class Inventori extends Utility
                 'created_at',
                 'updated_at'
             ))
+                ->limit(2)
                 ->where(array(
                     'master_inv_harga.produk' => '= ?',
                     'AND',
