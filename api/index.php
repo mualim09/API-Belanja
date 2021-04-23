@@ -40,7 +40,7 @@ Sentry\init(['dsn' => 'https://9754244694444cccaf869914e1e4f5a3@o412931.ingest.s
 try {
 	$PDO = Connection::get()->connect();
 	$requestTarget = 'PondokCoder\\' . ucfirst(__REQUEST__[0]);
-	
+
 	try {
 		$refMethod = new ReflectionMethod($requestTarget, '__construct');
 		$params = $refMethod->getParameters();
@@ -75,12 +75,12 @@ try {
 				$ParameterBuilder = array();
 				break;
 		}
-		
+
 		$jwt = JWT::encode($payload, $key);
 
 
 
-		
+
 		$exclude_auth = array('login', 'get_module', 'register', 'register_android');
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		    if(
@@ -142,11 +142,13 @@ try {
                     $ParameterBuilder[1] === 'android_non_highlight'
                 ) {
                     header('Content-Type: application/json');
-                    $unauthorized = false;
+
                     $ClassMethod = call_user_func_array('PondokCoder\\Inventori::__GET__', array($ParameterBuilder));
                     echo json_encode($ClassMethod);
+
+                    $unauthorized = false;
                 } else {
-                    $unauthorized = true;
+                    $unauthorized = false;
                 }
             } else {
                 $unauthorized = true;
@@ -228,10 +230,10 @@ try {
 	} catch (Exception $reflectionClass) {
 		echo $reflectionClass->getMessage();
 	}
-		
 
 
-		
+
+
 } catch (\PDOException $e) {
 	echo $e->getMessage();
 }

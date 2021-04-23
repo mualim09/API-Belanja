@@ -653,7 +653,12 @@ class Inventori extends Utility
 
     private function android_highlight($parameter) {
         $Authorization = new Authorization();
-        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+        if(!empty($Authorization::$Bearer)) {
+            $UserData = $Authorization->readBearerToken($parameter['access_token']);
+        } else {
+            //var_dump($Authorization::$Bearer);
+        }
+
         $data = self::$query
             ->select('master_inv', array(
                 'uid',
@@ -746,6 +751,7 @@ class Inventori extends Utility
                     $harga_builder['royalti'] = 0;
                     $harga_builder['insentif'] = 0;
                 }
+
                 if($HValue['member_type'] === $UserData['data']->jenis_member) {
 
                     $harga_builder['jual'] = $HValue['jual'];
@@ -763,7 +769,11 @@ class Inventori extends Utility
 
     private function android_non_highlight($parameter) {
         $Authorization = new Authorization();
-        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+        if(!empty($Authorization::$Bearer)) {
+            $UserData = $Authorization->readBearerToken($parameter['access_token']);
+        } else {
+            //var_dump($Authorization::$Bearer);
+        }
 
         $high = self::android_highlight($parameter);
         $high_data = array();
