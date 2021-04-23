@@ -137,10 +137,17 @@ try {
                     $unauthorized = true;
                 }
             } else if($requestTarget == 'PondokCoder\\Inventori') {
-                header('Content-Type: application/json');
-                $unauthorized = false;
-                $ClassMethod = call_user_func_array('PondokCoder\\Inventori::__GET__', array($ParameterBuilder));
-                echo json_encode($ClassMethod);
+                if(
+                    $ParameterBuilder[1] === 'android_highlight' ||
+                    $ParameterBuilder[1] === 'android_non_highlight'
+                ) {
+                    header('Content-Type: application/json');
+                    $unauthorized = false;
+                    $ClassMethod = call_user_func_array('PondokCoder\\Inventori::__GET__', array($ParameterBuilder));
+                    echo json_encode($ClassMethod);
+                } else {
+                    $unauthorized = true;
+                }
             } else {
                 $unauthorized = true;
             }
