@@ -138,17 +138,16 @@ try {
                 }
             } else if($requestTarget == 'PondokCoder\\Inventori') {
                 if(
+                    $ParameterBuilder[1] === 'android_cari_produk' ||
                     $ParameterBuilder[1] === 'android_highlight' ||
                     $ParameterBuilder[1] === 'android_non_highlight' ||
-                    $ParameterBuilder[1] === 'android_cari_produk' ||
                     $ParameterBuilder[1] === 'item_detail'
                 ) {
+                    $unauthorized = false;
+                    array_push($ParameterBuilder, 'not_valid_token');
                     header('Content-Type: application/json');
-
                     $ClassMethod = call_user_func_array('PondokCoder\\Inventori::__GET__', array($ParameterBuilder));
                     echo json_encode($ClassMethod);
-
-                    $unauthorized = false;
                 } else {
                     $unauthorized = true;
                 }
@@ -158,7 +157,6 @@ try {
         } else {
 			$unauthorized = true;
 		}
-
 
 		if($unauthorized) {
             header('Content-Type: application/json');

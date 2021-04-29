@@ -2,6 +2,8 @@
 
 namespace PondokCoder;
 
+use Firebase\JWT\JWK;
+use Firebase\JWT\JWT;
 use PondokCoder\Query as Query;
 use PondokCoder\Authorization as Authorization;
 use PondokCoder\QueryException as QueryException;
@@ -899,7 +901,12 @@ class Inventori extends Utility
 
     private function android_cari_produk($parameter) {
         $Authorization = new Authorization();
-        $UserData = $Authorization->readBearerToken($parameter['access_token']);
+        $token = $parameter[count($parameter) - 1];
+        if($token !== 'not_valid_token') {
+            $UserData = $Authorization->readBearerToken($token);
+        }
+
+
         $data = self::$query->select('master_inv', array(
                 'uid',
                 'kode_barang',
