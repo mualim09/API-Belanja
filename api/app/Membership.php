@@ -468,18 +468,18 @@ class Membership extends Utility
             'uid',
         ))
             ->where(array(
-                '(membership.email' => '= ?',
-                'OR',
+                'membership.email' => '= ?',
+                /*'OR',
                 'membership.kontak_telp' => '= ?',
                 'OR',
-                'membership.kontak_whatsapp' => '= ?)',
+                'membership.kontak_whatsapp' => '= ?)',*/
                 'AND',
                 'membership.deleted_at' => 'IS NULL',
             ), array(
                 $parameter['email'],
-                $parameter['nik'],
+                /*$parameter['nik'],
                 $parameter['kontak_telp'],
-                $parameter['kontak_whatsapp'],
+                $parameter['kontak_whatsapp']*/
             ))
             ->execute();
 
@@ -500,8 +500,8 @@ class Membership extends Utility
                 'tempat_lahir' => $parameter['tempat_lahir'],
                 'tanggal_lahir' => $parameter['tanggal_lahir'],
                 'email' => $parameter['email'],
-                'kontak_telp' => $parameter['kontak_telp'],
-                'kontak_whatsapp' => $parameter['kontak_whatsapp'],
+                'kontak_telp' => /*$parameter['kontak_telp']*/'',
+                'kontak_whatsapp' => /*$parameter['kontak_whatsapp']*/'',
                 /*'npwp' => $parameter['npwp'],
                 'alamat_ktp' => $parameter['alamat_ktp'],
                 'kelurahan' => $parameter['kelurahan'],
@@ -595,7 +595,7 @@ class Membership extends Utility
                     'response_package' => $parameter,
                     'verif' => 'Not Verified',
                     'response_result' => $new['response_result'],
-                    'response_message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Email sudah pernah di daftarkan' : 'Gagal daftar'),
+                    'response_message' => (intval($new['response_result']) > 0) ? 'Berhasil didaftarkan' : ((count($data['response_data']) > 0) ? 'Format data salah' : 'Gagal daftar'),
                     'response_access' => array(),
                 );
             }
