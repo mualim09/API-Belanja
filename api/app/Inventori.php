@@ -648,6 +648,10 @@ class Inventori extends Utility
             }
             $data['response_data'][$key]['list_items'] = $detail['response_data'];
         }
+        unset($data['response_query']);
+        unset($data['response_values']);
+        $data['response_message'] = (count($data['response_data']) > 0) ? 'Berhasil' : 'Data tidak ditemukan';
+        $data['token'] = $parameter[count($parameter) - 1];
         return $data;
     }
 

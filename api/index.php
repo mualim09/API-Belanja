@@ -170,7 +170,7 @@ try {
 
 
             //Permission Manager
-
+            $newToken = '';
 
             try {
                 http_response_code(200);
@@ -209,7 +209,11 @@ try {
                 if($requestTarget == 'PondokCoder\\JKN') {
                     echo json_encode($ClassMethod);
                 } else {
-                    echo json_encode(array('token' => $newToken, 'response_package' => $ClassMethod));
+                    if($ParameterBuilder[1] === 'get_keranjang') {
+                        echo json_encode($ClassMethod);
+                    } else {
+                        echo json_encode(array('token' => $newToken, 'response_package' => $ClassMethod));
+                    }
                 }
             } catch(\Exception $e){
                 http_response_code(403);
