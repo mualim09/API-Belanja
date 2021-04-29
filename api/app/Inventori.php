@@ -3133,7 +3133,7 @@ class Inventori extends Utility
 
             $data['response_data'][$key]['harga'] = $proc_end;
         }
-        //$data['response_data'] = $data['response_data'][0];
+        $data['response_data'] = $data['response_data'][0];
         return $data;
     }
 

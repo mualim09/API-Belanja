@@ -148,7 +148,7 @@ try {
 
                     $unauthorized = false;
                 } else {
-                    $unauthorized = false;
+                    $unauthorized = true;
                 }
             } else {
                 $unauthorized = true;
