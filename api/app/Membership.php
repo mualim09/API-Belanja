@@ -529,7 +529,7 @@ class Membership extends Utility
                 //'password' => password_hash($password, PASSWORD_DEFAULT),
                 'password' => password_hash('123456', PASSWORD_DEFAULT),
                 'jenis_member' => $parameter['jenis_member'],
-                'status_member' => 'N',
+                'status_member' => 'A', //Dulu N
                 'created_at' => parent::format_date(),
                 'updated_at' => parent::format_date(),
             ))

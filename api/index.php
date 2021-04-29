@@ -211,6 +211,8 @@ try {
                 } else {
                     if($ParameterBuilder[1] === 'get_keranjang') {
                         echo json_encode($ClassMethod);
+                    } else if($ParameterBuilder[1] === 'android_cari_produk') {
+                        echo json_encode($ClassMethod);
                     } else {
                         echo json_encode(array('token' => $newToken, 'response_package' => $ClassMethod));
                     }
