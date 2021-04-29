@@ -470,8 +470,6 @@ class Membership extends Utility
             ->where(array(
                 '(membership.email' => '= ?',
                 'OR',
-                'membership.nik' => '= ?',
-                'OR',
                 'membership.kontak_telp' => '= ?',
                 'OR',
                 'membership.kontak_whatsapp' => '= ?)',
@@ -489,7 +487,7 @@ class Membership extends Utility
             return array(
                 'response_package' => $parameter,
                 'response_result' => 0,
-                'response_message' => 'Email / NIK sudah pernah di daftarkan',
+                'response_message' => 'Email sudah pernah di daftarkan',
                 'response_access' => array(),
             );
         } else {
