@@ -497,7 +497,7 @@ class Membership extends Utility
             $password = parent::generatePassword(6);
             $new = self::$query->insert('membership', array(
                 'uid' => $uid,
-                'nik' => $parameter['nik'],
+                'nik' => '',
                 'nama' => $parameter['nama'],
                 'tempat_lahir' => $parameter['tempat_lahir'],
                 'tanggal_lahir' => $parameter['tanggal_lahir'],
@@ -538,7 +538,8 @@ class Membership extends Utility
             if ($new['response_result'] > 0) {
                 if (intval($parameter['verif_by']) === 1) {
                     $Mailer = new Mailer();
-                    $Verif = $Mailer->send(array(
+                    $Verif = '';
+                    /*$Verif = $Mailer->send(array(
                         'server' => 'mail.pondokcoder.com',
                         'secure_type' => 'ssl',
                         'port' => 587,
@@ -559,7 +560,7 @@ class Membership extends Utility
                     ), 'Registrasi ' . __PC_CUSTOMER__, 'Uji html', '
                     Selamat Bergabung, Anda telah terdaftar menjadi member pada ' . __PC_CUSTOMER__ . '. Password Anda : ' . $password . '.Untuk menyelesaikan pendaftaran silahkan akses link ' . __HOSTAPI__ . '/Membership/activate/' . $uid, array(
                         $parameter['email'] => $parameter['nama'],
-                    ));
+                    ));*/
 
                     /*$hard = self::$query->hard_delete('membership')
                         ->where(array(
