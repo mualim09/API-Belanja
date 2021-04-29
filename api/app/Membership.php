@@ -526,7 +526,8 @@ class Membership extends Utility
                 'kontak_telp_ahli_waris' => $parameter['kontak_telp_ahli_waris'],
                 'kontak_whatsapp_ahli_waris' => $parameter['kontak_whatsapp_ahli_waris'],*/
                 'saldo' => 0,
-                'password' => password_hash($password, PASSWORD_DEFAULT),
+                //'password' => password_hash($password, PASSWORD_DEFAULT),
+                'password' => password_hash('123456', PASSWORD_DEFAULT),
                 'jenis_member' => $parameter['jenis_member'],
                 'status_member' => 'N',
                 'created_at' => parent::format_date(),
