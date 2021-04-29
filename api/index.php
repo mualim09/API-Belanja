@@ -140,6 +140,7 @@ try {
                 if(
                     $ParameterBuilder[1] === 'android_highlight' ||
                     $ParameterBuilder[1] === 'android_non_highlight' ||
+                    $ParameterBuilder[1] === 'android_cari_produk' ||
                     $ParameterBuilder[1] === 'item_detail'
                 ) {
                     header('Content-Type: application/json');
